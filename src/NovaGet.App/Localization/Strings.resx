@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="About_License" xml:space="preserve"><value>Free software under the MIT License. No ads, no tracking.</value></data>
+  <data name="About_Notices" xml:space="preserve"><value>Third-party notices</value></data>
+  <data name="About_Text" xml:space="preserve"><value>A free download manager for Windows.</value></data>
+  <data name="About_Title" xml:space="preserve"><value>About NovaGet</value></data>
+  <data name="Arrange_Description" xml:space="preserve"><value>by _description</value></data>
+  <data name="Arrange_FileName" xml:space="preserve"><value>by _file name</value></data>
+  <data name="Arrange_LastTry" xml:space="preserve"><value>by last _try date</value></data>
+  <data name="Arrange_Order" xml:space="preserve"><value>by _order of addition</value></data>
+  <data name="Arrange_Referrer" xml:space="preserve"><value>by r_eferrer</value></data>
+  <data name="Arrange_SaveTo" xml:space="preserve"><value>by save _to</value></data>
+  <data name="Arrange_Size" xml:space="preserve"><value>by _size</value></data>
+  <data name="Arrange_Status" xml:space="preserve"><value>by s_tatus</value></data>
+  <data name="Arrange_TimeLeft" xml:space="preserve"><value>by time _left</value></data>
+  <data name="Arrange_TransferRate" xml:space="preserve"><value>by transfer _rate</value></data>
+  <data name="Category_Compressed" xml:space="preserve"><value>Compressed</value></data>
+  <data name="Category_Documents" xml:space="preserve"><value>Documents</value></data>
+  <data name="Category_General" xml:space="preserve"><value>General</value></data>
+  <data name="Category_Music" xml:space="preserve"><value>Music</value></data>
+  <data name="Category_Programs" xml:space="preserve"><value>Programs</value></data>
+  <data name="Category_Video" xml:space="preserve"><value>Video</value></data>
+  <data name="CategoryDialog_AddTitle" xml:space="preserve"><value>Add Category</value></data>
+  <data name="CategoryDialog_EditTitle" xml:space="preserve"><value>Edit Category</value></data>
+  <data name="CategoryDialog_Extensions" xml:space="preserve"><value>File _types (extensions separated by spaces):</value></data>
+  <data name="CategoryDialog_Folder" xml:space="preserve"><value>_Save files to:</value></data>
+  <data name="CategoryDialog_Name" xml:space="preserve"><value>Category _name:</value></data>
+  <data name="Cmd_About" xml:space="preserve"><value>_About NovaGet</value></data>
+  <data name="Cmd_AddBatch" xml:space="preserve"><value>Add _batch download...</value></data>
+  <data name="Cmd_AddBatchClipboard" xml:space="preserve"><value>Add batch download from _clipboard</value></data>
+  <data name="Cmd_AddCategory" xml:space="preserve"><value>_Add category...</value></data>
+  <data name="Cmd_AddNewDownload" xml:space="preserve"><value>_Add new download...</value></data>
+  <data name="Cmd_CheckUpdates" xml:space="preserve"><value>Check for _updates...</value></data>
+  <data name="Cmd_CopyAddress" xml:space="preserve"><value>_Copy address</value></data>
+  <data name="Cmd_CreateQueue" xml:space="preserve"><value>_Create new queue...</value></data>
+  <data name="Cmd_CustomizeToolbar" xml:space="preserve"><value>_Customize...</value></data>
+  <data name="Cmd_DeleteAllCompleted" xml:space="preserve"><value>Delete all _completed</value></data>
+  <data name="Cmd_DeleteCategory" xml:space="preserve"><value>_Delete category</value></data>
+  <data name="Cmd_DeleteFromQueue" xml:space="preserve"><value>Delete from _queue</value></data>
+  <data name="Cmd_DeleteQueue" xml:space="preserve"><value>_Delete</value></data>
+  <data name="Cmd_DownloadNow" xml:space="preserve"><value>_Download now</value></data>
+  <data name="Cmd_EditCategory" xml:space="preserve"><value>_Edit category...</value></data>
+  <data name="Cmd_Exit" xml:space="preserve"><value>E_xit</value></data>
+  <data name="Cmd_ExportEf2" xml:space="preserve"><value>To _EF2 file...</value></data>
+  <data name="Cmd_ExportText" xml:space="preserve"><value>To _text file...</value></data>
+  <data name="Cmd_Faq" xml:space="preserve"><value>_Frequently asked questions</value></data>
+  <data name="Cmd_Find" xml:space="preserve"><value>_Find...</value></data>
+  <data name="Cmd_FindNext" xml:space="preserve"><value>Find _next</value></data>
+  <data name="Cmd_GrabberProjects" xml:space="preserve"><value>Grabber _projects...</value></data>
+  <data name="Cmd_HelpContents" xml:space="preserve"><value>_Contents</value></data>
+  <data name="Cmd_HideCategories" xml:space="preserve"><value>Hide _categories</value></data>
+  <data name="Cmd_HideLabels" xml:space="preserve"><value>_Hide text labels</value></data>
+  <data name="Cmd_ImportEf2" xml:space="preserve"><value>From _EF2 file...</value></data>
+  <data name="Cmd_ImportText" xml:space="preserve"><value>From _text file...</value></data>
+  <data name="Cmd_LargeButtons" xml:space="preserve"><value>_Large buttons</value></data>
+  <data name="Cmd_LimiterSettings" xml:space="preserve"><value>_Settings...</value></data>
+  <data name="Cmd_MoveDown" xml:space="preserve"><value>Move do_wn in queue</value></data>
+  <data name="Cmd_MoveRename" xml:space="preserve"><value>_Move/Rename...</value></data>
+  <data name="Cmd_MoveUp" xml:space="preserve"><value>Move _up in queue</value></data>
+  <data name="Cmd_Open" xml:space="preserve"><value>_Open</value></data>
+  <data name="Cmd_OpenFolder" xml:space="preserve"><value>Open _folder</value></data>
+  <data name="Cmd_OpenWith" xml:space="preserve"><value>Open _with...</value></data>
+  <data name="Cmd_Options" xml:space="preserve"><value>_Options...</value></data>
+  <data name="Cmd_PauseAll" xml:space="preserve"><value>_Pause all</value></data>
+  <data name="Cmd_Properties" xml:space="preserve"><value>_Properties</value></data>
+  <data name="Cmd_QueueEdit" xml:space="preserve"><value>_Edit...</value></data>
+  <data name="Cmd_QueueStart" xml:space="preserve"><value>_Start</value></data>
+  <data name="Cmd_QueueStop" xml:space="preserve"><value>S_top</value></data>
+  <data name="Cmd_Redownload" xml:space="preserve"><value>Re_download</value></data>
+  <data name="Cmd_RefreshAddress" xml:space="preserve"><value>Refresh download _address</value></data>
+  <data name="Cmd_Remove" xml:space="preserve"><value>_Remove</value></data>
+  <data name="Cmd_RemoveWithFile" xml:space="preserve"><value>Remove _with file</value></data>
+  <data name="Cmd_ResumeDownload" xml:space="preserve"><value>_Resume download</value></data>
+  <data name="Cmd_RunGrabber" xml:space="preserve"><value>Run site _grabber...</value></data>
+  <data name="Cmd_Scheduler" xml:space="preserve"><value>Sc_heduler...</value></data>
+  <data name="Cmd_ShowColumns" xml:space="preserve"><value>Show/Hide _columns...</value></data>
+  <data name="Cmd_ShowDropTarget" xml:space="preserve"><value>Show _drop target</value></data>
+  <data name="Cmd_ShowTrayGraph" xml:space="preserve"><value>Show tray _speed graph</value></data>
+  <data name="Cmd_SmallButtons" xml:space="preserve"><value>_Small buttons</value></data>
+  <data name="Cmd_StopAll" xml:space="preserve"><value>_Stop all</value></data>
+  <data name="Cmd_StopDownload" xml:space="preserve"><value>_Stop download</value></data>
+  <data name="Cmd_TurnOff" xml:space="preserve"><value>Turn o_ff</value></data>
+  <data name="Cmd_TurnOn" xml:space="preserve"><value>Turn _on</value></data>
+  <data name="Col_Added" xml:space="preserve"><value>Added</value></data>
+  <data name="Col_Connections" xml:space="preserve"><value>Connections</value></data>
+  <data name="Col_Description" xml:space="preserve"><value>Description</value></data>
+  <data name="Col_FileName" xml:space="preserve"><value>File Name</value></data>
+  <data name="Col_LastTry" xml:space="preserve"><value>Last Try Date</value></data>
+  <data name="Col_Queue" xml:space="preserve"><value>Q</value></data>
+  <data name="Col_Referrer" xml:space="preserve"><value>Referrer</value></data>
+  <data name="Col_SaveTo" xml:space="preserve"><value>Save To</value></data>
+  <data name="Col_Size" xml:space="preserve"><value>Size</value></data>
+  <data name="Col_Status" xml:space="preserve"><value>Status</value></data>
+  <data name="Col_TimeLeft" xml:space="preserve"><value>Time left</value></data>
+  <data name="Col_TransferRate" xml:space="preserve"><value>Transfer rate</value></data>
+  <data name="Columns_Intro" xml:space="preserve"><value>Choose the columns to show and their order:</value></data>
+  <data name="Columns_Title" xml:space="preserve"><value>Show/Hide Columns</value></data>
+  <data name="Common_Browse" xml:space="preserve"><value>...</value></data>
+  <data name="Common_Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Common_Close" xml:space="preserve"><value>Close</value></data>
+  <data name="Common_MoveDown" xml:space="preserve"><value>Move _down</value></data>
+  <data name="Common_MoveUp" xml:space="preserve"><value>Move _up</value></data>
+  <data name="Common_No" xml:space="preserve"><value>_No</value></data>
+  <data name="Common_OK" xml:space="preserve"><value>OK</value></data>
+  <data name="Common_Reset" xml:space="preserve"><value>_Reset</value></data>
+  <data name="Common_Yes" xml:space="preserve"><value>_Yes</value></data>
+  <data name="Confirm_Delete" xml:space="preserve"><value>Are you sure you want to delete {0} file(s)?</value></data>
+  <data name="Confirm_DeleteAlsoFromDisk" xml:space="preserve"><value>Delete also from _disk</value></data>
+  <data name="Confirm_DeleteCategory" xml:space="preserve"><value>Delete the category "{0}"?
+Its downloads move to General.</value></data>
+  <data name="Confirm_DeleteCompleted" xml:space="preserve"><value>Remove all completed downloads from the list?
+The downloaded files stay on disk.</value></data>
+  <data name="Confirm_DeleteQueue" xml:space="preserve"><value>Delete the queue "{0}"?
+Its downloads stay in the list.</value></data>
+  <data name="Error_FileMissing" xml:space="preserve"><value>The file "{0}" doesn't exist any more.</value></data>
+  <data name="Error_InvalidNumber" xml:space="preserve"><value>Please enter a number between {0} and {1}.</value></data>
+  <data name="Error_NameRequired" xml:space="preserve"><value>Please enter a name.</value></data>
+  <data name="Error_QueueExists" xml:space="preserve"><value>A queue with this name already exists.</value></data>
+  <data name="Find_Label" xml:space="preserve"><value>Find _what:</value></data>
+  <data name="Find_MatchCase" xml:space="preserve"><value>Match _case</value></data>
+  <data name="Find_Next" xml:space="preserve"><value>_Find next</value></data>
+  <data name="Find_NotFound" xml:space="preserve"><value>Cannot find "{0}".</value></data>
+  <data name="Find_Title" xml:space="preserve"><value>Find</value></data>
+  <data name="LimiterDialog_Max" xml:space="preserve"><value>_Maximum download speed for all downloads:</value></data>
+  <data name="LimiterDialog_QueueOnly" xml:space="preserve"><value>Apply to _scheduler queues only</value></data>
+  <data name="LimiterDialog_Title" xml:space="preserve"><value>Speed Limiter</value></data>
+  <data name="LimiterDialog_Unit" xml:space="preserve"><value>KBytes/sec</value></data>
+  <data name="Menu_AddToQueue" xml:space="preserve"><value>Add to _queue</value></data>
+  <data name="Menu_Arrange" xml:space="preserve"><value>_Arrange files</value></data>
+  <data name="Menu_Downloads" xml:space="preserve"><value>_Downloads</value></data>
+  <data name="Menu_Export" xml:space="preserve"><value>_Export</value></data>
+  <data name="Menu_File" xml:space="preserve"><value>_File</value></data>
+  <data name="Menu_Help" xml:space="preserve"><value>_Help</value></data>
+  <data name="Menu_Import" xml:space="preserve"><value>_Import</value></data>
+  <data name="Menu_Language" xml:space="preserve"><value>_Language</value></data>
+  <data name="Menu_SpeedLimiter" xml:space="preserve"><value>Speed _Limiter</value></data>
+  <data name="Menu_StartQueue" xml:space="preserve"><value>S_tart queue</value></data>
+  <data name="Menu_StopQueue" xml:space="preserve"><value>St_op queue</value></data>
+  <data name="Menu_Tasks" xml:space="preserve"><value>_Tasks</value></data>
+  <data name="Menu_Toolbar" xml:space="preserve"><value>_Toolbar</value></data>
+  <data name="Menu_ToolbarTheme" xml:space="preserve"><value>Toolbar _theme</value></data>
+  <data name="Menu_View" xml:space="preserve"><value>_View</value></data>
+  <data name="Msg_LanguageRestart" xml:space="preserve"><value>The new language is used the next time NovaGet starts.</value></data>
+  <data name="Msg_NotAvailable" xml:space="preserve"><value>This feature isn't available yet.</value></data>
+  <data name="Notify_Complete" xml:space="preserve"><value>Download complete</value></data>
+  <data name="Notify_Failed" xml:space="preserve"><value>Download failed</value></data>
+  <data name="Notify_QueueFinished" xml:space="preserve"><value>Queue finished</value></data>
+  <data name="Notify_QueueStarted" xml:space="preserve"><value>Queue started</value></data>
+  <data name="Queue_Main" xml:space="preserve"><value>Main download queue</value></data>
+  <data name="Queue_Sync" xml:space="preserve"><value>Synchronization queue</value></data>
+  <data name="QueueDialog_Name" xml:space="preserve"><value>Queue _name:</value></data>
+  <data name="QueueDialog_Title" xml:space="preserve"><value>Create New Queue</value></data>
+  <data name="Sort_Ascending" xml:space="preserve"><value>_Ascending</value></data>
+  <data name="Sort_Descending" xml:space="preserve"><value>_Descending</value></data>
+  <data name="Status_Assembling" xml:space="preserve"><value>Assembling...</value></data>
+  <data name="Status_Complete" xml:space="preserve"><value>Complete</value></data>
+  <data name="Status_Connecting" xml:space="preserve"><value>Connecting...</value></data>
+  <data name="Status_Error" xml:space="preserve"><value>Error</value></data>
+  <data name="Status_Merging" xml:space="preserve"><value>Merging...</value></data>
+  <data name="Status_Paused" xml:space="preserve"><value>Paused</value></data>
+  <data name="Status_Queued" xml:space="preserve"><value>Queued</value></data>
+  <data name="Status_Receiving" xml:space="preserve"><value>Receiving data...</value></data>
+  <data name="Status_Refreshing" xml:space="preserve"><value>Refreshing address...</value></data>
+  <data name="Status_Retrying" xml:space="preserve"><value>Waiting to retry...</value></data>
+  <data name="Status_Scanning" xml:space="preserve"><value>Scanning...</value></data>
+  <data name="StatusBar_Active" xml:space="preserve"><value>{0} active</value></data>
+  <data name="StatusBar_Downloads" xml:space="preserve"><value>{0} downloads</value></data>
+  <data name="StatusBar_LimiterOff" xml:space="preserve"><value>Speed limiter: Off</value></data>
+  <data name="StatusBar_LimiterOn" xml:space="preserve"><value>Speed limiter: {0} KB/s</value></data>
+  <data name="StatusBar_LimiterTip" xml:space="preserve"><value>Click to turn the speed limiter on or off</value></data>
+  <data name="Tb_AddUrl" xml:space="preserve"><value>Add URL</value></data>
+  <data name="Tb_Delete" xml:space="preserve"><value>Delete</value></data>
+  <data name="Tb_DeleteCompleted" xml:space="preserve"><value>Delete Completed</value></data>
+  <data name="Tb_DeleteWithFile" xml:space="preserve"><value>Delete with file</value></data>
+  <data name="Tb_Grabber" xml:space="preserve"><value>Grabber</value></data>
+  <data name="Tb_Options" xml:space="preserve"><value>Options</value></data>
+  <data name="Tb_Resume" xml:space="preserve"><value>Resume</value></data>
+  <data name="Tb_Scheduler" xml:space="preserve"><value>Scheduler</value></data>
+  <data name="Tb_StartQueue" xml:space="preserve"><value>Start Queue</value></data>
+  <data name="Tb_Stop" xml:space="preserve"><value>Stop</value></data>
+  <data name="Tb_StopAll" xml:space="preserve"><value>Stop All</value></data>
+  <data name="Tb_StopQueue" xml:space="preserve"><value>Stop Queue</value></data>
+  <data name="Tb_TellFriend" xml:space="preserve"><value>Tell a Friend</value></data>
+  <data name="TellFriend_Copied" xml:space="preserve"><value>Copied to the clipboard.</value></data>
+  <data name="TellFriend_Copy" xml:space="preserve"><value>_Copy to clipboard</value></data>
+  <data name="TellFriend_Intro" xml:space="preserve"><value>Copy this message and share it with your friends:</value></data>
+  <data name="TellFriend_Message" xml:space="preserve"><value>I use NovaGet, a free download manager for Windows. It speeds up downloads, resumes broken ones, schedules them and grabs videos from web pages. No ads, no tracking.</value></data>
+  <data name="TellFriend_Title" xml:space="preserve"><value>Tell a Friend</value></data>
+  <data name="Theme_Dark" xml:space="preserve"><value>Dark</value></data>
+  <data name="Theme_Default" xml:space="preserve"><value>Default</value></data>
+  <data name="Theme_Light" xml:space="preserve"><value>Light</value></data>
+  <data name="ToolbarCustomize_Intro" xml:space="preserve"><value>Choose the toolbar buttons and their order (drag or use the buttons):</value></data>
+  <data name="ToolbarCustomize_Title" xml:space="preserve"><value>Customize Toolbar</value></data>
+  <data name="Tray_AddDownload" xml:space="preserve"><value>_Add new download...</value></data>
+  <data name="Tray_Idle" xml:space="preserve"><value>NovaGet – no active downloads</value></data>
+  <data name="Tray_MonitorClipboard" xml:space="preserve"><value>Monitor _clipboard</value></data>
+  <data name="Tray_Open" xml:space="preserve"><value>_Open NovaGet</value></data>
+  <data name="Tray_Preset" xml:space="preserve"><value>{0} KB/s</value></data>
+  <data name="Tray_ResumeAll" xml:space="preserve"><value>_Resume all</value></data>
+  <data name="Tray_Tooltip" xml:space="preserve"><value>{0} – {1} active – {2}</value></data>
+  <data name="Tree_AllDownloads" xml:space="preserve"><value>All Downloads</value></data>
+  <data name="Tree_Categories" xml:space="preserve"><value>Categories</value></data>
+  <data name="Tree_Close" xml:space="preserve"><value>Close the categories pane</value></data>
+  <data name="Tree_Finished" xml:space="preserve"><value>Finished</value></data>
+  <data name="Tree_GrabberProjects" xml:space="preserve"><value>Grabber projects</value></data>
+  <data name="Tree_Queues" xml:space="preserve"><value>Queues</value></data>
+  <data name="Tree_Unfinished" xml:space="preserve"><value>Unfinished</value></data>
+</root>

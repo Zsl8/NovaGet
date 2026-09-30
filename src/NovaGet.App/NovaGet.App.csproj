@@ -27,8 +27,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="..\..\assets\icons\ico\novaget.ico" Link="Assets\novaget.ico" />
-    <Resource Include="..\..\assets\icons\png\novaget-*.png" Link="Assets\%(Filename)%(Extension)" />
+    <Resource Include="..\..\assets\icons\ico\*.ico" Link="Assets\%(Filename)%(Extension)" />
+    <Resource Include="..\..\assets\icons\png\*.png" Link="Assets\Icons\%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>
@@ -38,6 +38,10 @@
     <PackageReference Include="Serilog" />
     <PackageReference Include="Serilog.Extensions.Hosting" />
     <PackageReference Include="Serilog.Sinks.File" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="NovaGet.App.Tests" />
   </ItemGroup>
 
   <ItemGroup>

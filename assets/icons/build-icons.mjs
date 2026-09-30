@@ -13,9 +13,9 @@ mkdirSync(pngDir, { recursive: true });
 mkdirSync(icoDir, { recursive: true });
 
 // App/tray icons get every size Windows asks for; UI glyphs get the sizes the toolbar and menus use.
-const appIcons = new Set(['novaget']);
+const appIcons = new Set(['novaget', 'tray-active']);
 const appSizes = [16, 20, 24, 32, 40, 48, 64, 256];
-const uiSizes = [16, 20, 24, 32, 48, 64];
+const uiSizes = [16, 24, 32, 48, 64, 96];
 
 function render(svg, size) {
   const resvg = new Resvg(svg, { fitTo: { mode: 'width', value: size }, background: 'rgba(0,0,0,0)' });
@@ -52,6 +52,8 @@ for (const file of readdirSync(svgDir).filter((f) => f.endsWith('.svg')).sort())
   for (const { size, png } of images) {
     writeFileSync(join(pngDir, `${name}-${size}.png`), png);
   }
-  writeFileSync(join(icoDir, `${name}.ico`), packIco(images));
+  if (appIcons.has(name)) {
+    writeFileSync(join(icoDir, `${name}.ico`), packIco(images));
+  }
   console.log(`${name}: ${sizes.join(', ')}`);
 }

@@ -1,10 +1,15 @@
+using System.IO;
 using System.Windows;
+using System.Windows.Markup;
 using System.Windows.Threading;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using NovaGet.App.Localization;
 using NovaGet.App.Services;
 using NovaGet.Core;
 using NovaGet.Core.CommandLine;
+using NovaGet.Core.Paths;
+using NovaGet.Core.Settings;
 using Serilog;
 
 namespace NovaGet.App;
@@ -29,6 +34,7 @@ public partial class App : Application
     {
         base.OnStartup(e);
         RegisterGlobalExceptionHandlers();
+        InitializeLanguage();
 
         _host.StartAsync().GetAwaiter().GetResult();
 
@@ -52,6 +58,17 @@ public partial class App : Application
         }
 
         base.OnExit(e);
+    }
+
+    /// <summary>UI language (and number/date formatting in bindings) from settings; applies to every window.</summary>
+    private void InitializeLanguage()
+    {
+        var settings = _host.Services.GetRequiredService<ISettingsService>();
+        var paths = _host.Services.GetRequiredService<AppPaths>();
+        Localizer.Initialize(settings.Current.General.Language, Path.Combine(paths.ExecutableDir, "lang"));
+        FrameworkElement.LanguageProperty.OverrideMetadata(
+            typeof(FrameworkElement),
+            new FrameworkPropertyMetadata(XmlLanguage.GetLanguage(Localizer.Culture.IetfLanguageTag)));
     }
 
     private void RegisterGlobalExceptionHandlers()

@@ -72,6 +72,9 @@ public sealed class Download
 
     public string? ChecksumExpected { get; set; }
 
+    /// <summary>A shallow copy (all members are immutable values).</summary>
+    public Download Clone() => (Download)MemberwiseClone();
+
     /// <summary>Full destination path of the finished file.</summary>
     public string FullPath => Path.Combine(SavePath, FileName);
 

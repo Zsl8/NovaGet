@@ -1,14 +1,19 @@
+using System.IO;
 using System.Windows;
 using System.Windows.Threading;
 using Microsoft.Extensions.Logging;
+using NovaGet.App.Localization;
 using NovaGet.App.Views;
 using NovaGet.Core.CommandLine;
+using NovaGet.Core.Paths;
 
 namespace NovaGet.App.Services;
 
 internal sealed class AppController(
     Lazy<MainWindow> mainWindow,
     TrayIconService tray,
+    IDialogService dialogs,
+    AppPaths paths,
     ILogger<AppController> logger) : IAppController
 {
     public bool IsExiting { get; private set; }
@@ -37,7 +42,7 @@ internal sealed class AppController(
             window.WindowState = WindowState.Normal;
         }
 
-        // Toggling Topmost is the reliable way to come to the front without stealing focus rules.
+        // Toggling Topmost is the reliable way to come to the front.
         window.Activate();
         window.Topmost = true;
         window.Topmost = false;
@@ -54,7 +59,7 @@ internal sealed class AppController(
 
         if (options.Url is not null || options.StartMainQueue || options.StartQueues.Count > 0 || options.StopQueues.Count > 0)
         {
-            // Download and queue switches are executed once the engine and queues exist (milestones 2–11).
+            // Download and queue switches are executed once the dialogs and queues exist (milestones 5–11).
             logger.LogInformation("Command line actions received: url={Url} startQueues={Start} stopQueues={Stop}",
                 options.Url, options.StartQueues, options.StopQueues);
         }
@@ -82,6 +87,54 @@ internal sealed class AppController(
         tray.Dispose();
         Application.Current.Shutdown();
     });
+
+    public void ShowAddUrl(string? url = null) => NotAvailable();
+
+    public void ShowAddBatch(bool fromClipboard) => NotAvailable();
+
+    public void ShowOptions(string? page = null) => NotAvailable();
+
+    public void ShowScheduler(long? queueId = null) => NotAvailable();
+
+    public void ShowGrabber(long? projectId = null) => NotAvailable();
+
+    public void ShowImport(bool ef2) => NotAvailable();
+
+    public void ShowExport(bool ef2, IReadOnlyCollection<long>? ids) => NotAvailable();
+
+    public void ShowProgress(long downloadId) => NotAvailable();
+
+    public void ShowProperties(long downloadId) => NotAvailable();
+
+    public void ShowMoveRename(long downloadId) => NotAvailable();
+
+    public void RefreshAddress(long downloadId) => NotAvailable();
+
+    public void StartQueue(long queueId) => NotAvailable();
+
+    public void StopQueue(long queueId)
+    {
+        // Nothing to stop until queues run (milestone 7).
+    }
+
+    public void ToggleDropTarget() => NotAvailable();
+
+    public void CheckForUpdates() => NotAvailable();
+
+    public void ShowHelp(string? topic = null)
+    {
+        var page = Path.Combine(paths.ExecutableDir, "docs", (topic ?? "index") + ".html");
+        if (File.Exists(page))
+        {
+            ShellService.OpenUrl(page);
+        }
+        else
+        {
+            NotAvailable();
+        }
+    }
+
+    private void NotAvailable() => OnUiThread(() => dialogs.Info(Localizer.Get("Msg_NotAvailable")));
 
     private static void OnUiThread(Action action)
     {

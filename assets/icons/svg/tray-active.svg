@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <!-- NovaGet application icon (original artwork, MIT licensed with the project). -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#27AE60"/>
+      <stop offset="1" stop-color="#1E7B46"/>
+    </linearGradient>
+    <linearGradient id="shine" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect x="8" y="8" width="240" height="240" rx="56" fill="url(#bg)"/>
+  <rect x="8" y="8" width="240" height="120" rx="56" fill="url(#shine)"/>
+  <path d="M104 44 H152 V118 H190 L128 184 L66 118 H104 Z" fill="#FFFFFF"/>
+  <rect x="56" y="198" width="144" height="20" rx="10" fill="#FFFFFF"/>
+  <path d="M202 34 L209 57 L232 64 L209 71 L202 94 L195 71 L172 64 L195 57 Z" fill="#FFD54A"/>
+</svg>

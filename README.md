@@ -30,7 +30,7 @@ Requirements: .NET 8 SDK, PowerShell 7, and [Inno Setup 6](https://jrsoftware.or
 ```powershell
 ./build.ps1                 # test, publish, package -> dist\NovaGet-Setup-<version>.exe
 ./build.ps1 -SkipInstaller  # everything except the Inno Setup step
-dotnet test                 # tests only
+dotnet test                 # tests only (UI smoke tests run on Windows only)
 ```
 
 The version lives in one place, `Directory.Build.props`, and flows into every assembly, the About box and the installer.
@@ -73,7 +73,7 @@ flowchart LR
 | `src/NovaGet.NativeHost` | Native messaging host: relays browser messages to the running app, starting it if needed. |
 | `browser-extension/` | Chromium and Firefox MV3 extensions. |
 | `installer/` | Inno Setup script and native-host manifest templates. |
-| `tests/` | xUnit tests and a local HTTP/FTP test server. |
+| `tests/` | xUnit tests (engine, data, settings, IPC), Windows-only WPF smoke tests, and a local HTTP test server. |
 
 Files on disk: settings and the database live in `%APPDATA%\NovaGet`, temp files and logs in
 `%LOCALAPPDATA%\NovaGet`. With a `portable.flag` file next to `NovaGet.exe`, everything goes to `.\Data`.
@@ -85,7 +85,7 @@ Files on disk: settings and the database live in `%APPDATA%\NovaGet`, temp files
 | 1 | Skeleton: solution, DI, logging, settings, SQLite + migrations, single instance + pipe, CI installer | Done |
 | 2 | Engine v1: probe, single connection, pause/resume, temp → final move | Done |
 | 3 | Engine v2: dynamic segmentation, reuse, retries, crash-safe resume, speed limiter | Done |
-| 4 | Main window, toolbar, categories, virtualized list, tray | Planned |
+| 4 | Main window, toolbar, categories, virtualized list, tray | Done |
 | 5 | Download dialogs | Planned |
 | 6 | Options dialog | Planned |
 | 7 | Queues and scheduler | Planned |

@@ -61,3 +61,18 @@ Choices the specification left open, or where it had to be interpreted. Newest e
 | D43 | Speed limiting: debt-based token buckets (per download and global), burst allowance of 0.1 s. While a limit is active, each read is capped at about 0.1 s worth of the rate. | Accurate long-run rate across any number of connections, without an initial burst of one buffer per connection. |
 | D44 | "Apply to scheduler queues only" is decided per download by how it was started (`Start(id, startedByQueue)`). Changing the global limit applies immediately to running downloads. | Matches §11 and the tray presets. |
 | D45 | Per-download connection count: download override → Options → Connection exception (exact host, then `*.domain` wildcard) → default; then capped by the session's learned host limit; always 1 without resume support or known size. | §4.3 ordering. |
+
+## Milestone 4 — Main window and tray
+
+| # | Decision | Why |
+|---|---|---|
+| D46 | UI strings: `{l:Loc Key}` markup extension + `Localizer` over `Strings.resx` (English; Arabic next to it), with optional JSON packs in `lang\` layered on top. A unit test checks that every key used in XAML/C# exists. Changing the language applies after a restart. | Build-time strongly typed resx classes don't compile in WPF's temporary markup assembly; string keys plus a test give the same safety and allow the JSON packs §17 asks for. |
+| D47 | The list is a read-only virtualized `DataGrid` over a `ListCollectionView` with a typed `CustomSort` comparer and live *filtering* only. Rows don't jump while their values change; the list re-sorts when the user sorts (or a row is added). | Keeps 10,000 rows smooth; live sorting would reorder constantly during downloads. |
+| D48 | One 250 ms `DispatcherTimer` updates only running rows from the engine; the status bar refreshes every second. Rows raise PropertyChanged only for values that changed. | §19: at most 4 updates per second per row, batched on one timer, no I/O on the UI thread. |
+| D49 | The toolbar is data-driven (order and visibility saved in settings) and wraps onto a second row when the window is narrow. Customize uses a checklist with drag-and-drop and Move up/down. | §6.2 customization; the spec's layout shows two rows at 900 px. |
+| D50 | Menu and toolbar entries for features from later milestones exist now and report "not available yet" until their milestone wires them through `IAppController`. | The main window is complete and stable; later milestones only add implementations. |
+| D51 | Dropping links, URL text or `.url` files onto the list opens Add URL with the address filled in. | §12.3 "drag and drop links onto the main window list". |
+| D52 | Tray notifications for finished/failed downloads use notification-area balloons (Windows shows them as notifications); clicking one opens the folder. Toasts with Open / Open folder buttons come with the polish milestone. | Works without an AUMID-registered shortcut, which only the installer creates. |
+| D53 | "Remove with file" deletes the finished file; partial data of unfinished downloads is always removed with the entry. | A partial `.ngpart` is useless without its list entry. |
+| D54 | `tests/NovaGet.App.Tests` opens the real windows and dialogs through the real composition root on an STA thread. It is a test project only on Windows, so `dotnet test` still works on Linux/macOS. | Catches XAML, resource and binding failures that compilation can't. |
+| D55 | Toolbar and tree icons are rendered from SVG at 96/48/32 px and shown at 48/24/16 px with high-quality scaling. | Crisp up to 200% DPI from one source set. |

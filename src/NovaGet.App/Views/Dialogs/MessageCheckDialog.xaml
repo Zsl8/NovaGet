@@ -1,0 +1,25 @@
+<v:DialogWindow x:Class="NovaGet.App.Views.Dialogs.MessageCheckDialog"
+                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:v="clr-namespace:NovaGet.App.Views"
+                xmlns:l="clr-namespace:NovaGet.App.Localization"
+                MinWidth="360" MaxWidth="520">
+  <Grid Margin="16">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="Auto" />
+      <ColumnDefinition Width="*" />
+    </Grid.ColumnDefinitions>
+    <Image x:Name="IconImage" Width="32" Height="32" VerticalAlignment="Top" Margin="0,0,12,0" />
+    <TextBlock x:Name="Message" Grid.Column="1" TextWrapping="Wrap" VerticalAlignment="Center" />
+    <CheckBox x:Name="Check" Grid.Row="1" Grid.Column="1" Margin="0,14,0,0" />
+    <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,18,0,0">
+      <Button x:Name="YesButton" Content="{l:Loc Common_Yes}" MinWidth="80" IsDefault="True" Click="OnYes" />
+      <Button Content="{l:Loc Common_No}" MinWidth="80" Margin="8,0,0,0" IsCancel="True" />
+    </StackPanel>
+  </Grid>
+</v:DialogWindow>

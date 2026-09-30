@@ -1,0 +1,20 @@
+<v:DialogWindow x:Class="NovaGet.App.Views.Dialogs.SpeedLimiterDialog"
+                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:v="clr-namespace:NovaGet.App.Views"
+                xmlns:l="clr-namespace:NovaGet.App.Localization"
+                Title="{l:Loc LimiterDialog_Title}" FocusManager.FocusedElement="{Binding ElementName=RateBox}">
+  <StackPanel Margin="16" MinWidth="340">
+    <Label Content="{l:Loc LimiterDialog_Max}" Target="{Binding ElementName=RateBox}" Padding="0" />
+    <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+      <TextBox x:Name="RateBox" Width="90" Height="23" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" />
+      <TextBlock Text="{l:Loc LimiterDialog_Unit}" Margin="8,0,0,0" VerticalAlignment="Center" />
+    </StackPanel>
+    <CheckBox x:Name="QueueOnlyBox" Content="{l:Loc LimiterDialog_QueueOnly}" Margin="0,12,0,0" />
+    <TextBlock x:Name="ErrorText" Foreground="Firebrick" Margin="0,8,0,0" Visibility="Collapsed" />
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
+      <Button Content="{l:Loc Common_OK}" MinWidth="80" IsDefault="True" Click="OnOk" />
+      <Button Content="{l:Loc Common_Cancel}" MinWidth="80" Margin="8,0,0,0" IsCancel="True" />
+    </StackPanel>
+  </StackPanel>
+</v:DialogWindow>

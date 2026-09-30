@@ -1,0 +1,24 @@
+<v:DialogWindow x:Class="NovaGet.App.Views.Dialogs.AboutDialog"
+                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:v="clr-namespace:NovaGet.App.Views"
+                xmlns:l="clr-namespace:NovaGet.App.Localization"
+                Title="{l:Loc About_Title}">
+  <Grid Margin="20" MinWidth="360">
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="Auto" />
+      <ColumnDefinition Width="*" />
+    </Grid.ColumnDefinitions>
+    <Image Source="pack://application:,,,/Assets/Icons/novaget-64.png" Width="64" Height="64" VerticalAlignment="Top" Margin="0,0,16,0" />
+    <StackPanel Grid.Column="1">
+      <TextBlock x:Name="ProductText" FontSize="18" FontWeight="SemiBold" />
+      <TextBlock Text="{l:Loc About_Text}" Margin="0,6,0,0" />
+      <TextBlock Text="{l:Loc About_License}" Margin="0,4,0,0" TextWrapping="Wrap" Foreground="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
+      <TextBlock x:Name="CopyrightText" Margin="0,4,0,0" Foreground="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
+      <TextBlock Margin="0,10,0,0">
+        <Hyperlink Click="OnNotices"><Run Text="{l:Loc About_Notices}" /></Hyperlink>
+      </TextBlock>
+      <Button Content="{l:Loc Common_OK}" MinWidth="80" HorizontalAlignment="Right" Margin="0,16,0,0" IsDefault="True" IsCancel="True" />
+    </StackPanel>
+  </Grid>
+</v:DialogWindow>

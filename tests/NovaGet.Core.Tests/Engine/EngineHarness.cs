@@ -42,6 +42,8 @@ internal sealed class EngineHarness : IAsyncDisposable
 
     public DownloadRepository Repository { get; }
 
+    public NovaGet.Data.SqliteDatabase Database => _db.Database;
+
     public EngineOptions Options { get; set; }
 
     public DownloadEngine Engine { get; private set; }

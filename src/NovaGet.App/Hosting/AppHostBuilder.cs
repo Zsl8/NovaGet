@@ -63,7 +63,11 @@ internal static class AppHostBuilder
         builder.Services.AddSingleton<IDownloadEngine>(sp => sp.GetRequiredService<DownloadEngine>());
         builder.Services.AddHostedService<EngineLifetimeService>();
 
+        // Download list
+        builder.Services.AddSingleton<NovaGet.Core.Services.IDownloadService, NovaGet.Core.Services.DownloadService>();
+
         // App shell
+        builder.Services.AddSingleton<IDialogService, DialogService>();
         builder.Services.AddSingleton<IAppController, AppController>();
         builder.Services.AddSingleton<TrayIconService>();
         builder.Services.AddSingleton<IIpcRequestHandler, IpcRequestRouter>();
