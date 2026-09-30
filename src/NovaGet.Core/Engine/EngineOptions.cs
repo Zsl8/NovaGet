@@ -39,6 +39,12 @@ public sealed record EngineOptions
 
     public bool KeepServerFileDate { get; init; }
 
+    /// <summary>Options → Connection exceptions: host pattern → max connections.</summary>
+    public IReadOnlyDictionary<string, int> ServerConnectionLimits { get; init; } = new Dictionary<string, int>();
+
+    /// <summary>"Remember speed limit for this server": host pattern → KB/s.</summary>
+    public IReadOnlyDictionary<string, int> HostSpeedLimitsKBps { get; init; } = new Dictionary<string, int>();
+
     /// <summary>Extra free space required beyond the bytes still to download.</summary>
     public long FreeSpaceMargin { get; init; } = 16L * 1024 * 1024;
 
@@ -70,6 +76,7 @@ public sealed record EngineOptions
             PreallocateDiskSpace = settings.Advanced.PreallocateDiskSpace,
             KeepTempFilesAfterCancel = settings.Advanced.KeepTempFilesAfterCancel,
             KeepServerFileDate = settings.Downloads.KeepServerFileDate,
+            HostSpeedLimitsKBps = new Dictionary<string, int>(settings.Connection.HostSpeedLimits, StringComparer.OrdinalIgnoreCase),
         };
     }
 }

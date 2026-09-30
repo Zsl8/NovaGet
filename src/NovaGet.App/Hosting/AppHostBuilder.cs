@@ -48,10 +48,16 @@ internal static class AppHostBuilder
         builder.Services.AddSingleton(sp =>
         {
             var settings = sp.GetRequiredService<ISettingsService>();
+            var serverExceptions = sp.GetRequiredService<NovaGet.Core.Abstractions.IServerExceptionRepository>();
             return new DownloadEngine(
                 sp.GetRequiredService<NovaGet.Core.Abstractions.IDownloadRepository>(),
                 sp.GetServices<ITransferProtocol>(),
-                () => EngineOptions.FromSettings(settings.Current, paths),
+                () => EngineOptions.FromSettings(settings.Current, paths) with
+                {
+                    ServerConnectionLimits = serverExceptions.GetAll()
+                        .GroupBy(e => e.Host, StringComparer.OrdinalIgnoreCase)
+                        .ToDictionary(g => g.Key, g => g.First().MaxConnections, StringComparer.OrdinalIgnoreCase),
+                },
                 sp.GetRequiredService<Microsoft.Extensions.Logging.ILoggerFactory>());
         });
         builder.Services.AddSingleton<IDownloadEngine>(sp => sp.GetRequiredService<DownloadEngine>());

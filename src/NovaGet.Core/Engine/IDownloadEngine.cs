@@ -4,7 +4,8 @@ namespace NovaGet.Core.Engine;
 public interface IDownloadEngine
 {
     /// <summary>Starts or resumes a saved download. Returns false if it is already running or complete.</summary>
-    bool Start(long downloadId);
+    /// <param name="startedByQueue">True when a queue/scheduler starts it (matters for "Apply to scheduler queues only").</param>
+    bool Start(long downloadId, bool startedByQueue = false);
 
     /// <summary>Stops a running download, saving its progress (status Paused).</summary>
     Task PauseAsync(long downloadId);
@@ -17,6 +18,15 @@ public interface IDownloadEngine
 
     /// <summary>Stops a download that is being removed from the list and deletes its temp files.</summary>
     Task RemoveAsync(long downloadId);
+
+    /// <summary>Changes a running download's own speed limit (null/0 = unlimited). Persisting it is up to the caller.</summary>
+    void SetSpeedLimit(long downloadId, int? kilobytesPerSecond);
+
+    /// <summary>The global limiter shared by all downloads.</summary>
+    SpeedLimits SpeedLimits { get; }
+
+    /// <summary>Connection caps learned this session from servers that refuse extra connections.</summary>
+    HostConnectionLimits HostLimits { get; }
 
     bool IsRunning(long downloadId);
 

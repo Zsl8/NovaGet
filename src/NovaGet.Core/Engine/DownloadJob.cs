@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Runtime.ExceptionServices;
 using Microsoft.Extensions.Logging;
 using NovaGet.Core.Abstractions;
 using NovaGet.Core.Engine.Naming;
@@ -40,6 +41,13 @@ internal sealed class DownloadJob
     private readonly SpeedMeter _speed = new();
     private readonly object _checkpointGate = new();
     private readonly List<ConnectionWorker> _workers = [];
+    private readonly List<Task> _running = [];
+    private readonly TokenBucket _limiter;
+    private readonly SpeedLimits _speedLimits;
+    private readonly bool _startedByQueue;
+    private readonly HostConnectionLimits _hostLimits;
+    private CancellationToken _workersToken;
+    private int _maxConnections = 1;
     private StopReason _stopReason;
     private int _consecutiveFailures;
     private volatile DownloadStatus _status;
@@ -52,6 +60,8 @@ internal sealed class DownloadJob
         EngineOptions options,
         IDownloadRepository repository,
         ITransferProtocol protocol,
+        JobServices services,
+        bool startedByQueue,
         ILogger logger,
         Action<DownloadJob> onFinished)
     {
@@ -59,9 +69,24 @@ internal sealed class DownloadJob
         Options = options;
         _repository = repository;
         _protocol = protocol;
+        _speedLimits = services.SpeedLimits;
+        _hostLimits = services.HostLimits;
+        _startedByQueue = startedByQueue;
         _logger = logger;
         _onFinished = onFinished;
         _status = download.Status;
+        var limitKBps = download.SpeedLimitKBps ?? HostPattern.Lookup(options.HostSpeedLimitsKBps, Host) ?? 0;
+        _limiter = new TokenBucket(Math.Max(0, limitKBps) * 1024L);
+    }
+
+    /// <summary>Host of the current address (used for per-server limits).</summary>
+    public string Host => Uri.TryCreate(_download.Url, UriKind.Absolute, out var uri) ? uri.Host : string.Empty;
+
+    /// <summary>Changes this download's own speed limit while it runs (null/0 = unlimited).</summary>
+    public void SetSpeedLimit(int? kilobytesPerSecond)
+    {
+        _download.SpeedLimitKBps = kilobytesPerSecond;
+        _limiter.BytesPerSecond = kilobytesPerSecond is > 0 ? kilobytesPerSecond.Value * 1024L : 0;
     }
 
     public long Id => _download.Id;
@@ -95,9 +120,11 @@ internal sealed class DownloadJob
         var downloaded = map?.ReceivedBytes ?? _download.Downloaded;
         var speed = _status == DownloadStatus.Receiving ? _speed.BytesPerSecond : 0;
         ConnectionProgress[] connections;
+        int active;
         lock (_workers)
         {
             connections = [.. _workers.Select(w => w.Snapshot())];
+            active = _running.Count(t => !t.IsCompleted);
         }
 
         return new DownloadProgress
@@ -109,6 +136,7 @@ internal sealed class DownloadJob
             BytesPerSecond = speed,
             TimeLeft = SpeedMeter.TimeLeft(size, downloaded, speed),
             ResumeCapable = _download.ResumeCapable,
+            ActiveConnections = active,
             Connections = connections,
             Segments = map?.Snapshot() ?? [],
             Message = _message,
@@ -240,8 +268,18 @@ internal sealed class DownloadJob
         var housekeeping = HousekeepingAsync(background.Token);
         try
         {
-            var worker = AddWorker();
-            await worker.RunAsync(token).ConfigureAwait(false);
+            while (true)
+            {
+                try
+                {
+                    await RunConnectionsAsync(token).ConfigureAwait(false);
+                    break;
+                }
+                catch (DownloadException ex) when (ex.Kind == DownloadErrorKind.RangeNotSupported && _download.ResumeCapable != false)
+                {
+                    FallBackToSingleConnection(ex);
+                }
+            }
         }
         finally
         {
@@ -255,14 +293,132 @@ internal sealed class DownloadJob
         }
     }
 
-    private ConnectionWorker AddWorker()
+    /// <summary>
+    /// Starts with one connection; every connection that receives its first bytes opens the next one, up to the
+    /// limit. Waits until all have finished. The first fatal error stops the others and is rethrown.
+    /// </summary>
+    private async Task RunConnectionsAsync(CancellationToken token)
+    {
+        using var connections = CancellationTokenSource.CreateLinkedTokenSource(token);
+        _workersToken = connections.Token;
+        _maxConnections = ComputeMaxConnections();
+        _logger.LogInformation("Download {Id}: up to {Max} connection(s)", Id, _maxConnections);
+        TrySpawnConnection(force: true);
+
+        Exception? fatal = null;
+        while (true)
+        {
+            Task[] running;
+            lock (_workers)
+            {
+                running = [.. _running];
+            }
+
+            if (running.Length == 0)
+            {
+                break;
+            }
+
+            var finished = await Task.WhenAny(running).ConfigureAwait(false);
+            lock (_workers)
+            {
+                _running.Remove(finished);
+            }
+
+            if (finished.IsFaulted && fatal is null)
+            {
+                var error = finished.Exception!.GetBaseException();
+                if (error is not OperationCanceledException)
+                {
+                    fatal = error;
+                    await connections.CancelAsync().ConfigureAwait(false);
+                }
+            }
+        }
+
+        if (fatal is not null)
+        {
+            ExceptionDispatchInfo.Capture(fatal).Throw();
+        }
+
+        token.ThrowIfCancellationRequested();
+    }
+
+    private int ComputeMaxConnections()
+    {
+        if (_download.ResumeCapable != true || Map.Size <= 0)
+        {
+            return 1;
+        }
+
+        var configured = _download.MaxConnections
+            ?? HostPattern.Lookup(Options.ServerConnectionLimits, Host)
+            ?? Options.MaxConnections;
+        var learned = _hostLimits.Get(Host) ?? int.MaxValue;
+        return Math.Clamp(Math.Min(configured, learned), 1, 32);
+    }
+
+    /// <summary>Opens another connection if the limit allows and there is work to hand it.</summary>
+    private void TrySpawnConnection(bool force = false)
     {
         lock (_workers)
         {
+            if (_workersToken.IsCancellationRequested)
+            {
+                return;
+            }
+
+            var active = _running.Count(t => !t.IsCompleted);
+            if (!force && (active >= _maxConnections || !Map.HasWorkFor(Options.MinSegmentSize)))
+            {
+                return;
+            }
+
             var worker = new ConnectionWorker(_workers.Count + 1, this, _protocol);
             _workers.Add(worker);
-            return worker;
+            worker.FirstBytesReceived += _ => TrySpawnConnection();
+            var token = _workersToken;
+            _running.Add(Task.Run(() => worker.RunAsync(token), CancellationToken.None));
         }
+    }
+
+    /// <summary>
+    /// A connection hit 429/503 or was refused while others are running: the server limits connections.
+    /// Lower the cap for this download and (for the session) for the host; the caller closes its connection.
+    /// </summary>
+    public bool TryYieldConnection(ConnectionWorker worker, DownloadException error)
+    {
+        lock (_workers)
+        {
+            var active = _running.Count(t => !t.IsCompleted);
+            if (active <= 1)
+            {
+                return false;
+            }
+
+            _maxConnections = Math.Max(1, Math.Min(_maxConnections, active - 1));
+            var cap = _hostLimits.Lower(Host, _maxConnections);
+            _logger.LogInformation("Download {Id}: {Host} limits connections ({Error}); connection {Connection} closed, cap now {Cap}",
+                Id, Host, error.Message, worker.Number, cap);
+            return true;
+        }
+    }
+
+    /// <summary>The server answered a range request with the whole file: continue with one connection from byte 0.</summary>
+    private void FallBackToSingleConnection(DownloadException reason)
+    {
+        _logger.LogWarning("Download {Id}: {Reason} Switching to a single connection from the beginning.", Id, reason.Message);
+        _download.ResumeCapable = false;
+        _repository.Update(_download);
+        Map.Reset(Map.Size);
+        lock (_workers)
+        {
+            _workers.Clear();
+            _running.Clear();
+        }
+
+        Volatile.Write(ref _consecutiveFailures, 0);
+        Checkpoint();
     }
 
     /// <summary>Samples speed every 500 ms and checkpoints every 2 s until cancelled.</summary>
@@ -314,7 +470,20 @@ internal sealed class DownloadJob
         }
     }
 
-    public LiveSegment? NextSegment(ConnectionWorker worker) => Map.AcquirePending(worker);
+    /// <summary>
+    /// Work for a free connection: an unowned segment first, otherwise (dynamic segmentation) the second half
+    /// of the segment with the most bytes left. Its keep-alive socket is reused for the new range.
+    /// </summary>
+    public LiveSegment? NextSegment(ConnectionWorker worker)
+    {
+        var pending = Map.AcquirePending(worker);
+        if (pending is not null || _download.ResumeCapable != true || Map.Size <= 0)
+        {
+            return pending;
+        }
+
+        return Map.SplitLargest(worker, Options.MinSegmentSize);
+    }
 
     /// <summary>Positions a segment for a new request: at its last written byte, or at its start when the server can't resume.</summary>
     public TransferRequest CreateRequest(LiveSegment segment)
@@ -338,13 +507,14 @@ internal sealed class DownloadJob
         var resuming = segment.Received > 0;
         if (resuming && !response.IsPartial)
         {
-            // The server ignored the range and is sending the file from byte 0.
-            if (!Validator().IsEmpty)
+            // The server ignored the range and is sending the file from byte 0: either If-Range failed
+            // because the file changed, or the server doesn't really do ranges.
+            if (!Validator().IsEmpty && ValidatorsDiffer(response))
             {
                 throw new DownloadException(DownloadErrorKind.ServerFileChanged, "The file on the server has changed.");
             }
 
-            throw new DownloadException(DownloadErrorKind.RangeNotSupported, "The server no longer supports resuming this download.");
+            throw new DownloadException(DownloadErrorKind.RangeNotSupported, "The server ignored a range request.");
         }
 
         if (response.IsPartial && response.Start != segment.Received)
@@ -376,6 +546,22 @@ internal sealed class DownloadJob
         }
     }
 
+    private bool ValidatorsDiffer(TransferResponse response)
+    {
+        if (!string.IsNullOrEmpty(_download.ETag) && !string.IsNullOrEmpty(response.ETag))
+        {
+            return !string.Equals(_download.ETag, response.ETag, StringComparison.Ordinal);
+        }
+
+        if (_download.LastModified is { } ours && response.LastModified is { } theirs)
+        {
+            return Math.Abs((theirs.UtcDateTime - DateTime.SpecifyKind(ours, DateTimeKind.Utc)).TotalSeconds) > 1;
+        }
+
+        // A 200 without validators after an If-Range: assume the file changed (the safe reading).
+        return string.IsNullOrEmpty(response.ETag) && response.LastModified is null;
+    }
+
     private ResourceValidator Validator()
     {
         // Weak ETags can't be used with If-Range; the protocol then falls back to Last-Modified.
@@ -394,13 +580,13 @@ internal sealed class DownloadJob
         _repository.Update(_download);
     }
 
-    public ValueTask WriteAsync(ReadOnlyMemory<byte> data, long offset)
+    public async ValueTask WriteAsync(ReadOnlyMemory<byte> data, long offset)
     {
         var file = _file ?? throw new InvalidOperationException("The temp file is not open.");
         try
         {
             // Never cancel a write half-way: the bytes are valid and the checkpoint must match the file.
-            return file.WriteAsync(data, offset, CancellationToken.None);
+            await file.WriteAsync(data, offset, CancellationToken.None).ConfigureAwait(false);
         }
         catch (IOException ex) when (DiskSpace.IsDiskFull(ex))
         {
@@ -414,12 +600,41 @@ internal sealed class DownloadJob
         Volatile.Write(ref _consecutiveFailures, 0);
     }
 
-    /// <summary>Speed limiting hook (added with the speed limiter).</summary>
-    public ValueTask ThrottleAsync(int count, CancellationToken token)
+    /// <summary>
+    /// Largest read a connection should make: unlimited normally, about 100 ms worth of the tightest active
+    /// limit otherwise, so a limited download doesn't burst a whole buffer per connection before waiting.
+    /// </summary>
+    public int MaxReadSize
     {
-        _ = count;
-        _ = token;
-        return ValueTask.CompletedTask;
+        get
+        {
+            var rate = long.MaxValue;
+            if (_limiter.IsLimited)
+            {
+                rate = _limiter.BytesPerSecond;
+            }
+
+            if (_speedLimits.For(_startedByQueue) is { } global)
+            {
+                rate = Math.Min(rate, global.BytesPerSecond);
+            }
+
+            return rate == long.MaxValue ? int.MaxValue : (int)Math.Clamp(rate / 10, 4096, 64 * 1024);
+        }
+    }
+
+    /// <summary>Waits as needed to respect this download's limit and the global limiter.</summary>
+    public async ValueTask ThrottleAsync(int count, CancellationToken token)
+    {
+        if (_limiter.IsLimited)
+        {
+            await _limiter.ConsumeAsync(count, token).ConfigureAwait(false);
+        }
+
+        if (_speedLimits.For(_startedByQueue) is { } global)
+        {
+            await global.ConsumeAsync(count, token).ConfigureAwait(false);
+        }
     }
 
     /// <summary>Counts a transient failure; returns false once the retry budget is used up.</summary>

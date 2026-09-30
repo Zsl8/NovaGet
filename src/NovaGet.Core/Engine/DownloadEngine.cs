@@ -38,11 +38,15 @@ public sealed class DownloadEngine : IDownloadEngine, IAsyncDisposable
 
     public event EventHandler<DownloadStateChangedEventArgs>? StateChanged;
 
+    public SpeedLimits SpeedLimits { get; } = new();
+
+    public HostConnectionLimits HostLimits { get; } = new();
+
     public IReadOnlyCollection<long> RunningIds => [.. _jobs.Keys];
 
     public bool IsRunning(long downloadId) => _jobs.ContainsKey(downloadId);
 
-    public bool Start(long downloadId)
+    public bool Start(long downloadId, bool startedByQueue = false)
     {
         if (_jobs.ContainsKey(downloadId))
         {
@@ -67,6 +71,8 @@ public sealed class DownloadEngine : IDownloadEngine, IAsyncDisposable
             _options(),
             _repository,
             protocol,
+            new JobServices(SpeedLimits, HostLimits),
+            startedByQueue,
             _loggerFactory.CreateLogger($"NovaGet.Download.{downloadId.ToString(CultureInfo.InvariantCulture)}"),
             finished => _jobs.TryRemove(KeyValuePair.Create(finished.Id, finished)));
         if (!_jobs.TryAdd(downloadId, job))
@@ -111,6 +117,14 @@ public sealed class DownloadEngine : IDownloadEngine, IAsyncDisposable
         if (!_options().KeepTempFilesAfterCancel)
         {
             DeleteTempFiles(downloadId);
+        }
+    }
+
+    public void SetSpeedLimit(long downloadId, int? kilobytesPerSecond)
+    {
+        if (_jobs.TryGetValue(downloadId, out var job))
+        {
+            job.SetSpeedLimit(kilobytesPerSecond);
         }
     }
 

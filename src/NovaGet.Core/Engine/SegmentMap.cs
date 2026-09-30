@@ -123,6 +123,47 @@ internal sealed class SegmentMap
         }
     }
 
+    /// <summary>
+    /// Dynamic segmentation: finds the active segment with the most bytes left, splits it at the midpoint of
+    /// what remains and gives the second half to <paramref name="owner"/>. Returns null when every candidate is
+    /// too small (each half must be at least <paramref name="minSegmentSize"/>).
+    /// </summary>
+    public LiveSegment? SplitLargest(object owner, long minSegmentSize)
+    {
+        lock (_gate)
+        {
+            LiveSegment? victim = null;
+            foreach (var segment in _segments)
+            {
+                if (segment.End >= 0 && !segment.IsReceived && (victim is null || segment.Remaining > victim.Remaining))
+                {
+                    victim = segment;
+                }
+            }
+
+            if (victim is null || victim.Remaining < 2 * Math.Max(1, minSegmentSize))
+            {
+                return null;
+            }
+
+            var middle = victim.Received + (victim.Remaining / 2);
+            var split = new LiveSegment(middle, victim.End, middle) { Owner = owner };
+            victim.End = middle - 1;
+            _segments.Insert(_segments.IndexOf(victim) + 1, split);
+            return split;
+        }
+    }
+
+    /// <summary>True if a new connection would get something: an unowned segment or a splittable one.</summary>
+    public bool HasWorkFor(long minSegmentSize)
+    {
+        lock (_gate)
+        {
+            return _segments.Exists(s => (s.Owner is null && !s.IsReceived)
+                || (s.End >= 0 && !s.IsReceived && s.Remaining >= 2 * Math.Max(1, minSegmentSize)));
+        }
+    }
+
     public void Release(LiveSegment segment)
     {
         lock (_gate)

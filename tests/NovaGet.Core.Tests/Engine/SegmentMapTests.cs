@@ -87,4 +87,62 @@ public sealed class SegmentMapTests
         Assert.Equal(700, pending.Received);
         Assert.Equal(700, map.WrittenBytes);
     }
+
+    [Fact]
+    public void Split_gives_the_second_half_of_the_largest_remaining_segment()
+    {
+        var map = SegmentMap.Create(1000);
+        var a = new object();
+        var b = new object();
+        var c = new object();
+        var first = map.AcquirePending(a)!;
+        map.Accept(first, 100);
+
+        var second = map.SplitLargest(b, minSegmentSize: 10)!;   // first has 900 left: [100..549] + [550..999]
+        Assert.Equal(550, second.Start);
+        Assert.Equal(999, second.End);
+        Assert.Equal(549, first.End);
+
+        map.Accept(first, 400);                                  // first: 50 left; second: 450 left
+        var third = map.SplitLargest(c, minSegmentSize: 10)!;    // splits second, the largest
+        Assert.Equal(775, third.Start);
+        Assert.Equal(774, second.End);
+        Assert.Same(c, third.Owner);
+
+        // Received bytes can never be handed to another connection.
+        Assert.Equal(50, map.Accept(first, 1000));
+        Assert.True(first.IsReceived);
+    }
+
+    [Fact]
+    public void Connection_that_finishes_early_takes_over_the_largest_remaining_segment()
+    {
+        var map = SegmentMap.Create(10_000);
+        var slow = new object();
+        var fast = new object();
+        var slowSegment = map.AcquirePending(slow)!;
+        var fastSegment = map.SplitLargest(fast, 100)!;          // [0..4999] and [5000..9999]
+        map.Accept(slowSegment, 1000);                           // slow: 4000 left
+        map.Accept(fastSegment, 5000);                           // fast is done
+        map.MarkWritten(fastSegment, 10_000);
+        map.Release(fastSegment);
+
+        var takeover = map.AcquirePending(fast) ?? map.SplitLargest(fast, 100);
+
+        Assert.NotNull(takeover);
+        Assert.Equal(3000, takeover.Start);                      // midpoint of slow's remaining [1000..4999]
+        Assert.Equal(4999, takeover.End);
+        Assert.Equal(2999, slowSegment.End);
+    }
+
+    [Fact]
+    public void Segments_are_not_split_below_the_minimum_size()
+    {
+        var map = SegmentMap.Create(200 * 1024);
+        map.AcquirePending(this);
+
+        Assert.NotNull(map.SplitLargest(new object(), 64 * 1024));   // 200 KB → two 100 KB halves
+        Assert.Null(map.SplitLargest(new object(), 64 * 1024));      // 100 KB pieces can't make two 64 KB halves
+        Assert.False(map.HasWorkFor(64 * 1024));
+    }
 }

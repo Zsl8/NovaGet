@@ -47,6 +47,9 @@ public sealed class TestFile
     /// <summary>Per-request throttle in bytes per second (0 = unlimited).</summary>
     public int BytesPerSecond { get; set; }
 
+    /// <summary>Per-request throttle chosen by the requested start offset (overrides <see cref="BytesPerSecond"/>).</summary>
+    public Func<long, int>? BytesPerSecondByStart { get; set; }
+
     /// <summary>If set, each response is aborted after a random number of bytes in this range.</summary>
     public (int Min, int Max)? DropAfterBytes { get; set; }
 
@@ -61,7 +64,22 @@ public sealed class TestFile
     /// <summary>Forces a status code for GET/HEAD (e.g. 403, 404, 500).</summary>
     public int? ForceStatus { get; set; }
 
+    /// <summary>Honor only <c>bytes=0-0</c> (so probes see 206) and answer every other range with 200.</summary>
+    public bool RangesOnlyForProbe { get; set; }
+
+    /// <summary>Highest number of GET/HEAD requests served at the same time.</summary>
+    public int PeakConcurrentRequests => Volatile.Read(ref _peak);
+
     internal int ActiveRequests;
+    private int _peak;
+
+    internal void TrackPeak(int active)
+    {
+        int current;
+        while (active > (current = Volatile.Read(ref _peak)) && Interlocked.CompareExchange(ref _peak, active, current) != current)
+        {
+        }
+    }
 
     /// <summary>Replaces the content (new seed/size) and its validators, as if the file changed on the server.</summary>
     public void ChangeContent(int newSeed, long? newSize = null)

@@ -79,6 +79,18 @@ public sealed class TestHttpServer : IAsyncDisposable
     private async Task HandleAsync(HttpContext context)
     {
         var path = context.Request.Path.Value ?? "/";
+        var recorded = 0;
+
+        // Record before any byte reaches the client, so a test that just saw its download finish sees every request.
+        context.Response.OnStarting(() =>
+        {
+            if (Interlocked.Exchange(ref recorded, 1) == 0)
+            {
+                Record(context, path);
+            }
+
+            return Task.CompletedTask;
+        });
         try
         {
             if (path.StartsWith("/redirect/", StringComparison.Ordinal))
@@ -97,7 +109,10 @@ public sealed class TestHttpServer : IAsyncDisposable
         }
         finally
         {
-            Record(context, path);
+            if (Interlocked.Exchange(ref recorded, 1) == 0)
+            {
+                Record(context, path);
+            }
         }
     }
 
@@ -150,7 +165,8 @@ public sealed class TestHttpServer : IAsyncDisposable
             return;
         }
 
-        if (Interlocked.Increment(ref file.ActiveRequests) > file.MaxConcurrentRequests && file.MaxConcurrentRequests > 0)
+        var active = Interlocked.Increment(ref file.ActiveRequests);
+        if (active > file.MaxConcurrentRequests && file.MaxConcurrentRequests > 0)
         {
             Interlocked.Decrement(ref file.ActiveRequests);
             response.StatusCode = StatusCodes.Status503ServiceUnavailable;
@@ -158,6 +174,7 @@ public sealed class TestHttpServer : IAsyncDisposable
             return;
         }
 
+        file.TrackPeak(active);
         try
         {
             // Snapshot so a concurrent ChangeContent() can't tear a response.
@@ -186,7 +203,9 @@ public sealed class TestHttpServer : IAsyncDisposable
             long start = 0;
             var end = size - 1;
             var partial = false;
-            if (file.SupportsRanges && TryParseRange(request.Headers.Range.ToString(), size, out var rangeStart, out var rangeEnd, out var unsatisfiable)
+            var rangeHeader = request.Headers.Range.ToString();
+            var honorRange = file.SupportsRanges && (!file.RangesOnlyForProbe || rangeHeader == "bytes=0-0");
+            if (honorRange && TryParseRange(rangeHeader, size, out var rangeStart, out var rangeEnd, out var unsatisfiable)
                 && IfRangeMatches(request.Headers.IfRange.ToString(), etag, lastModified))
             {
                 if (unsatisfiable)
@@ -233,7 +252,7 @@ public sealed class TestHttpServer : IAsyncDisposable
         var dropAfter = file.DropAfterBytes is { } drop && Interlocked.Increment(ref file.DropCandidates) <= file.DropLimit
             ? Random.Shared.NextInt64(drop.Min, drop.Max + 1L)
             : long.MaxValue;
-        var bytesPerSecond = file.BytesPerSecond;
+        var bytesPerSecond = file.BytesPerSecondByStart?.Invoke(start) ?? file.BytesPerSecond;
         var started = DateTime.UtcNow;
         long sent = 0;
         var ct = context.RequestAborted;

@@ -83,6 +83,25 @@ internal sealed class EngineHarness : IAsyncDisposable
         return await finished;
     }
 
+    /// <summary>Like <see cref="RunAsync"/>, also returning the most connections the engine had open at once.</summary>
+    public async Task<(DownloadStateChangedEventArgs Result, int PeakConnections)> RunTrackingConnectionsAsync(long id, TimeSpan? timeout = null)
+    {
+        var finished = WaitForEndAsync(id, timeout);
+        var peak = 0;
+        Assert.True(Engine.Start(id), "Engine.Start returned false");
+        while (!finished.IsCompleted)
+        {
+            if (Engine.GetProgress(id) is { } progress)
+            {
+                peak = Math.Max(peak, progress.ActiveConnections);
+            }
+
+            await Task.WhenAny(finished, Task.Delay(5));
+        }
+
+        return (await finished, peak);
+    }
+
     public Task<DownloadStateChangedEventArgs> WaitForEndAsync(long id, TimeSpan? timeout = null)
     {
         var tcs = new TaskCompletionSource<DownloadStateChangedEventArgs>(TaskCreationOptions.RunContinuationsAsynchronously);

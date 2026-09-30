@@ -20,6 +20,9 @@ public sealed record DownloadProgress
 
     public bool? ResumeCapable { get; init; }
 
+    /// <summary>Connections currently open (the Connections list also keeps finished ones).</summary>
+    public int ActiveConnections { get; init; }
+
     public IReadOnlyList<ConnectionProgress> Connections { get; init; } = [];
 
     public IReadOnlyList<SegmentProgress> Segments { get; init; } = [];

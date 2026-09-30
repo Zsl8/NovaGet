@@ -48,3 +48,16 @@ Choices the specification left open, or where it had to be interpreted. Newest e
 | D35 | A resumed range request answered with 200: "file changed" if validators were sent, otherwise "resume not supported". Downloads from servers without range support restart from byte 0 on every retry. | Matches §4.5 and never appends a full body to a partial file. |
 | D36 | "Restart" clears progress and validators and starts again from the *original* address. | A changed file may have a new name, size and redirect target. |
 | D37 | Temp files are named `<TempDir>\<id>\<name>.ngpart`, with the name part capped at 120 characters. | Keeps temp paths well under legacy path limits for long server names. |
+
+## Milestone 3 — Engine v2
+
+| # | Decision | Why |
+|---|---|---|
+| D38 | A segment is split only if both halves would be at least `MinSegmentSize` (64 KB), i.e. at least 128 KB remain. | One reading of "do not split below 64 KB remaining" that never creates tiny segments. |
+| D39 | A new connection is opened when the previous newest one receives its first bytes, only if the download has resume support, a known size and splittable work. | "Open more connections one at a time" (§4.3), and no idle connections. |
+| D40 | A free connection takes an unowned segment first (e.g. one left by a closed connection or restored from a checkpoint), and only then splits the largest active one. | Nothing is left behind, and resumed downloads with many saved segments continue all of them. |
+| D41 | On 429/503/connection refused while other connections are running, that connection closes, its segment returns to the pool, and the cap for this download and the host (for the session) becomes the number still open. With only one connection, the error is retried normally. | §4.3. The pool guarantees the unfinished range is picked up by a surviving connection. |
+| D42 | A range request answered with 200: if the response's ETag/Last-Modified differ from ours (or are missing after an If-Range), the file changed → "restart?" prompt. If they match, the server ignores ranges → resume capability becomes "No" and the download restarts automatically with one connection from byte 0. | Both paths produce a correct file; the prompt only appears when the content really changed. |
+| D43 | Speed limiting: debt-based token buckets (per download and global), burst allowance of 0.1 s. While a limit is active, each read is capped at about 0.1 s worth of the rate. | Accurate long-run rate across any number of connections, without an initial burst of one buffer per connection. |
+| D44 | "Apply to scheduler queues only" is decided per download by how it was started (`Start(id, startedByQueue)`). Changing the global limit applies immediately to running downloads. | Matches §11 and the tray presets. |
+| D45 | Per-download connection count: download override → Options → Connection exception (exact host, then `*.domain` wildcard) → default; then capped by the session's learned host limit; always 1 without resume support or known size. | §4.3 ordering. |

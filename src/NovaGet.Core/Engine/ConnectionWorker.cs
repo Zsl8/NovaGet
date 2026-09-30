@@ -37,13 +37,21 @@ internal sealed class ConnectionWorker
             var segment = _job.NextSegment(this);
             while (segment is not null)
             {
+                bool keepGoing;
                 try
                 {
-                    await DownloadSegmentAsync(segment, cancellationToken).ConfigureAwait(false);
+                    keepGoing = await DownloadSegmentAsync(segment, cancellationToken).ConfigureAwait(false);
                 }
                 finally
                 {
                     _job.Map.Release(segment);
+                }
+
+                if (!keepGoing)
+                {
+                    // Closed because the server limits connections; the segment goes back to the pool.
+                    _info = "Closed (server limits connections)";
+                    return;
                 }
 
                 segment = _job.NextSegment(this);
@@ -63,7 +71,8 @@ internal sealed class ConnectionWorker
         }
     }
 
-    private async Task DownloadSegmentAsync(LiveSegment segment, CancellationToken cancellationToken)
+    /// <summary>Downloads a segment. Returns false if this connection should close to respect a server limit.</summary>
+    private async Task<bool> DownloadSegmentAsync(LiveSegment segment, CancellationToken cancellationToken)
     {
         var attempt = 0;
         while (!segment.IsReceived)
@@ -80,7 +89,7 @@ internal sealed class ConnectionWorker
                     if (endOfStream && segment.End < 0)
                     {
                         _job.Map.CompleteUnknownSize(segment);
-                        return;
+                        return true;
                     }
 
                     if (endOfStream && !segment.IsReceived)
@@ -93,6 +102,11 @@ internal sealed class ConnectionWorker
             }
             catch (DownloadException ex) when (ex.IsTransient && !cancellationToken.IsCancellationRequested)
             {
+                if (ex.SuggestsConnectionLimit && _job.TryYieldConnection(this, ex))
+                {
+                    return false;
+                }
+
                 attempt++;
                 if (!_job.RegisterFailure(this, ex))
                 {
@@ -104,6 +118,8 @@ internal sealed class ConnectionWorker
                 await Task.Delay(delay, cancellationToken).ConfigureAwait(false);
             }
         }
+
+        return true;
     }
 
     /// <summary>Streams the body into the file. Returns true at end of stream, false when the segment's end was reached.</summary>
@@ -123,10 +139,11 @@ internal sealed class ConnectionWorker
                 }
 
                 readTimeout.CancelAfter(_job.Options.Timeout);
+                var want = Math.Min(buffer.Length - filled, _job.MaxReadSize);
                 int read;
                 try
                 {
-                    read = await body.ReadAsync(buffer.AsMemory(filled), readTimeout.Token).ConfigureAwait(false);
+                    read = await body.ReadAsync(buffer.AsMemory(filled, want), readTimeout.Token).ConfigureAwait(false);
                 }
                 catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
                 {

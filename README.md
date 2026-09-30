@@ -84,7 +84,7 @@ Files on disk: settings and the database live in `%APPDATA%\NovaGet`, temp files
 |---|---|---|
 | 1 | Skeleton: solution, DI, logging, settings, SQLite + migrations, single instance + pipe, CI installer | Done |
 | 2 | Engine v1: probe, single connection, pause/resume, temp → final move | Done |
-| 3 | Engine v2: dynamic segmentation, reuse, retries, crash-safe resume, speed limiter | Planned |
+| 3 | Engine v2: dynamic segmentation, reuse, retries, crash-safe resume, speed limiter | Done |
 | 4 | Main window, toolbar, categories, virtualized list, tray | Planned |
 | 5 | Download dialogs | Planned |
 | 6 | Options dialog | Planned |
