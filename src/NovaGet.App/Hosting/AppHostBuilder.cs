@@ -5,6 +5,8 @@ using NovaGet.App.ViewModels;
 using NovaGet.App.Views;
 using NovaGet.Core;
 using NovaGet.Core.CommandLine;
+using NovaGet.Core.Engine;
+using NovaGet.Core.Engine.Http;
 using NovaGet.Core.Ipc;
 using NovaGet.Core.Paths;
 using NovaGet.Core.Security;
@@ -38,6 +40,22 @@ internal static class AppHostBuilder
 
         // Data
         builder.Services.AddNovaGetData(paths.DatabaseFile);
+
+        // Download engine (options are re-read from settings whenever a download starts)
+        builder.Services.AddSingleton<HttpClientProvider>();
+        builder.Services.AddSingleton<IHttpClientProvider>(sp => sp.GetRequiredService<HttpClientProvider>());
+        builder.Services.AddSingleton<ITransferProtocol, HttpTransferProtocol>();
+        builder.Services.AddSingleton(sp =>
+        {
+            var settings = sp.GetRequiredService<ISettingsService>();
+            return new DownloadEngine(
+                sp.GetRequiredService<NovaGet.Core.Abstractions.IDownloadRepository>(),
+                sp.GetServices<ITransferProtocol>(),
+                () => EngineOptions.FromSettings(settings.Current, paths),
+                sp.GetRequiredService<Microsoft.Extensions.Logging.ILoggerFactory>());
+        });
+        builder.Services.AddSingleton<IDownloadEngine>(sp => sp.GetRequiredService<DownloadEngine>());
+        builder.Services.AddHostedService<EngineLifetimeService>();
 
         // App shell
         builder.Services.AddSingleton<IAppController, AppController>();

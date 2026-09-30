@@ -21,6 +21,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\NovaGet.Core\NovaGet.Core.csproj" />
     <ProjectReference Include="..\..\src\NovaGet.Data\NovaGet.Data.csproj" />
+    <ProjectReference Include="..\NovaGet.TestServer\NovaGet.TestServer.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -30,3 +30,21 @@ Choices the specification left open, or where it had to be interpreted. Newest e
 | D22 | The Chromium extension ID is fixed by a public `key` (`browser-extension/extension-ids.json`); the private key was not kept. A test checks the ID derivation and that the installer uses the same IDs. | Unpacked installs get a stable ID, so `allowed_origins` in the native host manifest always matches. Store publishing is out of scope. |
 | D23 | Embedded PDBs for all assemblies. | Line numbers in logged stack traces without loose `.pdb` files in the install folder. |
 | D24 | Closing the main window hides it to the tray (configurable); `Alt+F4` and Tasks → Exit quit. | Spec §6.1. |
+
+## Milestone 2 — Engine v1
+
+| # | Decision | Why |
+|---|---|---|
+| D25 | Probe: if HEAD succeeds with a length but no `Accept-Ranges: bytes`, a `GET Range: bytes=0-0` still runs to confirm resume support. | Many servers honor ranges without advertising them; a 206 is the reliable signal. The spec's HEAD-then-GET order is otherwise kept. |
+| D26 | Requests are forced to HTTP/1.1. | Each segment must be its own TCP connection; HTTP/2 would multiplex every "connection" onto one socket. |
+| D27 | One temp file handle with positional writes (`RandomAccess.WriteAsync`) instead of one `FileStream` per segment. The file is marked sparse on NTFS and sized up front. | Same result as per-segment streams at offsets (no merge step) with one handle. Sparse allocation avoids Windows zero-filling the gap when a far segment writes first. |
+| D28 | Checkpoints snapshot the *written* offsets, flush the file to disk, then save the snapshot. | Anything written after the snapshot is simply fetched again after a crash or power loss, so a resumed file can't contain holes. |
+| D29 | The retry limit counts consecutive failures without progress; any received data resets it. Backoff is 3 s, 6 s, 12 s … capped at 30 s, and the Options "Retry delay" default is 3 s. | A long download over a flaky link may see many drops and should still finish. §4.5's 3 s base wins over the "5" shown in §9.5. |
+| D30 | Cookie and Authorization headers are not sent when a redirect goes to a different host. | They belong to the original site; forwarding them to a CDN or third party leaks credentials. |
+| D31 | Requests send `Accept-Encoding: identity` and never decompress. | Byte ranges must refer to the stored file, not a compressed transfer encoding. |
+| D32 | If the destination file exists at completion, the download is saved as `name (2).ext`, `name (3).ext` … | Never overwrite silently; the "Duplicate download" option governs adding duplicate links, not this. |
+| D33 | "Not enough disk space" leaves the download **Paused** (with the message), not in Error. | §4.4 says "show the message and pause"; Resume works once space is freed. |
+| D34 | The engine only probes on the first start of a download that was never probed. On resume, `If-Range` (strong ETag, else Last-Modified) plus a size check detect a changed file. A different size before any data was kept simply updates the size. | Avoids a redundant request on every resume while still never mixing two versions of a file. |
+| D35 | A resumed range request answered with 200: "file changed" if validators were sent, otherwise "resume not supported". Downloads from servers without range support restart from byte 0 on every retry. | Matches §4.5 and never appends a full body to a partial file. |
+| D36 | "Restart" clears progress and validators and starts again from the *original* address. | A changed file may have a new name, size and redirect target. |
+| D37 | Temp files are named `<TempDir>\<id>\<name>.ngpart`, with the name part capped at 120 characters. | Keeps temp paths well under legacy path limits for long server names. |

@@ -21,6 +21,8 @@
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <!-- Lets the WPF app compile on non-Windows dev boxes; the product itself targets Windows only. -->
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <!-- LibraryImport (source-generated P/Invoke) needs unsafe code. -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <SatelliteResourceLanguages>en;ar</SatelliteResourceLanguages>
     <!-- CA1848/CA1727: LoggerMessage delegates are overkill for this codebase.

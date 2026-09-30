@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- In-process HTTP server for engine tests. Also runnable on its own for manual testing:
+       dotnet run (in this folder) with an optional port argument, e.g. 8080. -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>NovaGet.TestServer</RootNamespace>
+    <NoWarn>$(NoWarn);CA1001;CA2000;CA5394;CA1063;CA1816;CA2234</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+</Project>

@@ -227,7 +227,8 @@ public sealed class ConnectionSettings
 
     public int MaxRetries { get; set; } = 20;
 
-    public int RetryDelaySeconds { get; set; } = 5;
+    /// <summary>Retry backoff base: 3 s, 6 s, 12 s … capped at 30 s (engine spec §4.5).</summary>
+    public int RetryDelaySeconds { get; set; } = 3;
 
     /// <summary>"Remember speed limit for this server" values from the progress dialog, host → KB/s.</summary>
     public Dictionary<string, int> HostSpeedLimits { get; set; } = new(StringComparer.OrdinalIgnoreCase);

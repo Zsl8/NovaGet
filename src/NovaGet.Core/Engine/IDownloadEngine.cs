@@ -1,0 +1,32 @@
+namespace NovaGet.Core.Engine;
+
+/// <summary>Runs downloads. Thread-safe; events are raised on background threads.</summary>
+public interface IDownloadEngine
+{
+    /// <summary>Starts or resumes a saved download. Returns false if it is already running or complete.</summary>
+    bool Start(long downloadId);
+
+    /// <summary>Stops a running download, saving its progress (status Paused).</summary>
+    Task PauseAsync(long downloadId);
+
+    /// <summary>Stops every running download, saving progress.</summary>
+    Task PauseAllAsync();
+
+    /// <summary>Discards progress and downloads the file again from the beginning.</summary>
+    Task RestartAsync(long downloadId);
+
+    /// <summary>Stops a download that is being removed from the list and deletes its temp files.</summary>
+    Task RemoveAsync(long downloadId);
+
+    bool IsRunning(long downloadId);
+
+    IReadOnlyCollection<long> RunningIds { get; }
+
+    /// <summary>Live progress, or null when the download isn't running.</summary>
+    DownloadProgress? GetProgress(long downloadId);
+
+    /// <summary>After a crash or kill, marks downloads left in an active state as Paused. Returns how many.</summary>
+    int RecoverInterrupted();
+
+    event EventHandler<DownloadStateChangedEventArgs>? StateChanged;
+}
