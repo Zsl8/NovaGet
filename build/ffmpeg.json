@@ -1,0 +1,6 @@
+{
+  "_comment": "Pinned ffmpeg LGPL *shared* build for Windows (called as an external process for HLS/DASH merging). build.ps1 downloads 'url', verifies 'sha256' and copies bin\\* to out\\app\\ffmpeg. Empty url = ffmpeg not bundled.",
+  "version": "",
+  "url": "",
+  "sha256": ""
+}

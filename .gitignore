@@ -1,0 +1,24 @@
+# Build output
+bin/
+obj/
+out/
+dist/
+artifacts/
+TestResults/
+*.binlog
+
+# IDE
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.DotSettings.user
+
+# Tooling
+node_modules/
+build/cache/
+
+# OS
+Thumbs.db
+.DS_Store

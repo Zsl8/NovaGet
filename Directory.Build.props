@@ -1,0 +1,34 @@
+<Project>
+  <!-- Single source of truth for the product version. It flows into every assembly,
+       the About box, file properties and the installer (build.ps1 reads it). -->
+  <PropertyGroup>
+    <Version>1.0.0</Version>
+    <Product>NovaGet</Product>
+    <Company>NovaGet contributors</Company>
+    <Authors>NovaGet contributors</Authors>
+    <Copyright>Copyright © 2026 NovaGet contributors</Copyright>
+    <NeutralLanguage>en</NeutralLanguage>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <LangVersion>12.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Deterministic>true</Deterministic>
+    <!-- Embedded PDBs: line numbers in logged stack traces, no loose .pdb files in the install folder. -->
+    <DebugType>embedded</DebugType>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+    <!-- Lets the WPF app compile on non-Windows dev boxes; the product itself targets Windows only. -->
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <SatelliteResourceLanguages>en;ar</SatelliteResourceLanguages>
+    <!-- CA1848/CA1727: LoggerMessage delegates are overkill for this codebase.
+         CA2007: ConfigureAwait noise; library code that needs it uses it explicitly.
+         CA1031: catch-all handlers are deliberate at component boundaries (logged).
+         CA1305/CA1307/CA1309/CA1310/CA1311: culture handled explicitly where it matters.
+         CA1716: 'Queue'/'Error' member names mirror the product vocabulary.
+         CA1062/CA1303/CA1805/CA1819/CA1822/CA1852/CA2227/CA1002/CA1056/CA1054/CA1055: style. -->
+    <NoWarn>$(NoWarn);CA1848;CA1727;CA2007;CA1031;CA1305;CA1307;CA1309;CA1310;CA1311;CA1716;CA1062;CA1303;CA1805;CA1819;CA1822;CA1852;CA2227;CA1002;CA1054;CA1055;CA1056;CA1724;CA1711;CA1720;CA1034;CA1515;CA1812</NoWarn>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,9 @@
+{
+  "name": "novaget-icons",
+  "private": true,
+  "description": "Renders assets/icons/svg/*.svg to PNG and multi-size ICO. Run: npm install && node build-icons.mjs",
+  "type": "module",
+  "devDependencies": {
+    "@resvg/resvg-js": "2.6.2"
+  }
+}

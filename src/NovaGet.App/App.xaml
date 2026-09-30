@@ -1,0 +1,11 @@
+<Application x:Class="NovaGet.App.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Application.Resources>
+    <ResourceDictionary>
+      <!-- Classic Windows look: keep system fonts and control templates; only a few shared brushes. -->
+      <SolidColorBrush x:Key="ErrorRowBrush" Color="#8B0000" />
+      <SolidColorBrush x:Key="CompletedRowBrush" Color="#707070" />
+    </ResourceDictionary>
+  </Application.Resources>
+</Application>

@@ -1,0 +1,12 @@
+# Normalize line endings in the repository; each platform checks out its native endings.
+* text=auto
+*.cs      text diff=csharp
+*.bat     text eol=crlf
+*.cmd     text eol=crlf
+*.sh      text eol=lf
+
+*.ico     binary
+*.png     binary
+*.wav     binary
+*.db      binary
+*.der     binary

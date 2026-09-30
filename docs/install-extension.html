@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Install the NovaGet browser extension</title>
+<style>
+  :root { --bg: #ffffff; --fg: #1f2328; --muted: #57606a; --accent: #1f7a8c; --card: #f6f8fa; --border: #d0d7de; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #0d1117; --fg: #e6edf3; --muted: #9da7b3; --accent: #4cc2d4; --card: #161b22; --border: #30363d; }
+  }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.55 "Segoe UI", system-ui, sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 32px 16px 48px; }
+  h1 { font-size: 26px; margin: 0 0 4px; }
+  h2 { font-size: 19px; margin: 32px 0 8px; }
+  p.lead { color: var(--muted); margin-top: 0; }
+  ol { padding-left: 22px; }
+  li { margin: 6px 0; }
+  code { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; font-size: 13px; word-break: break-all; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; margin: 12px 0; }
+  .note { color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Install the NovaGet browser extension</h1>
+  <p class="lead">The extension hands downloads, links and videos from your browser to NovaGet.
+    The installer has already registered the connection between the browser and NovaGet; you only need to add the extension.</p>
+
+  <div class="card">
+    The extension files are in the NovaGet install folder:
+    <ul>
+      <li>Chrome, Edge, Brave, Opera, Vivaldi: <code>extension\chromium</code></li>
+      <li>Firefox: <code>extension\firefox</code></li>
+    </ul>
+    <span class="note">The default install folder is <code>%LOCALAPPDATA%\Programs\NovaGet</code> (per-user) or <code>C:\Program Files\NovaGet</code> (all users).</span>
+  </div>
+
+  <h2>Chrome, Edge, Brave, Opera and Vivaldi</h2>
+  <ol>
+    <li>Open the extensions page:
+      Chrome <code>chrome://extensions</code>, Edge <code>edge://extensions</code>, Brave <code>brave://extensions</code>,
+      Opera <code>opera://extensions</code>, Vivaldi <code>vivaldi://extensions</code>.</li>
+    <li>Turn on <b>Developer mode</b> (a switch at the top right, or bottom left in Edge).</li>
+    <li>Click <b>Load unpacked</b> and choose the <code>extension\chromium</code> folder.</li>
+    <li>Pin <b>NovaGet Integration</b> to the toolbar if you want quick access to its switch.</li>
+  </ol>
+  <p class="note">Store listing: not published yet. When it is, a link will appear here and in Options → General.</p>
+
+  <h2>Firefox</h2>
+  <ol>
+    <li>If the folder contains a signed <code>.xpi</code> file, drag it onto a Firefox window and confirm.</li>
+    <li>Otherwise open <code>about:debugging#/runtime/this-firefox</code>, click <b>Load Temporary Add-on…</b> and pick
+      <code>extension\firefox\manifest.json</code>. (Temporary add-ons are removed when Firefox restarts.)</li>
+  </ol>
+  <p class="note">Add-ons store listing: not published yet.</p>
+
+  <h2>Check that it works</h2>
+  <ol>
+    <li>Start NovaGet (it runs in the notification area).</li>
+    <li>Click the extension's toolbar button: the status should read <b>Connected</b>.</li>
+    <li>Click a link to a <code>.zip</code> or <code>.exe</code> file: NovaGet shows its <b>Download File Info</b> dialog.</li>
+  </ol>
+  <p class="note">Hold <b>Alt</b> while clicking a link to let the browser download it instead.</p>
+</main>
+</body>
+</html>

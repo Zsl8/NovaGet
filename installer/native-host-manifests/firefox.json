@@ -1,0 +1,7 @@
+{
+  "name": "com.novaget.nativehost",
+  "description": "NovaGet browser integration",
+  "path": "{app}\\NovaGet.NativeHost.exe",
+  "type": "stdio",
+  "allowed_extensions": [ "{FirefoxExtensionId}" ]
+}
