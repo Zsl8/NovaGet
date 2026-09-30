@@ -6,9 +6,14 @@ public static class SchemaMigrations
     public static IReadOnlyList<Migration> All { get; } =
     [
         new(1, "Initial schema", V1InitialSchema),
+        new(2, "Overwrite flag", V2OverwriteFlag),
     ];
 
     public static int LatestVersion => All[^1].Version;
+
+    private const string V2OverwriteFlag = """
+        ALTER TABLE Download ADD COLUMN overwriteExisting INTEGER NOT NULL DEFAULT 0;
+        """;
 
     private const string V1InitialSchema = """
         CREATE TABLE Category (

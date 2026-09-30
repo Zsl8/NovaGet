@@ -87,9 +87,8 @@ public sealed class MainWindowSmokeTests(WpfFixture wpf)
             vm.SelectedNode = vm.Tree[2]; // Finished
             Assert.Empty(vm.ItemsView.Cast<object>());
 
-            var download = service.Find(added.Id)!;
-            download.Status = DownloadStatus.Completed;
-            service.Save(download);
+            host.Get<NovaGet.Core.Abstractions.IDownloadRepository>().MarkCompleted(added.Id, "b.zip", 1, DateTime.UtcNow);
+            service.Reload(added.Id);
             window.UpdateLayout();
 
             Assert.Single(vm.ItemsView.Cast<object>());

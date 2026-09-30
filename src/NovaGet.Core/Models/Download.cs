@@ -72,6 +72,9 @@ public sealed class Download
 
     public string? ChecksumExpected { get; set; }
 
+    /// <summary>Replace an existing file with the same name when the download completes (duplicate handling).</summary>
+    public bool OverwriteExisting { get; set; }
+
     /// <summary>A shallow copy (all members are immutable values).</summary>
     public Download Clone() => (Download)MemberwiseClone();
 

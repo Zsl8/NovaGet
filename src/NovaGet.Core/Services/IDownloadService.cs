@@ -61,6 +61,9 @@ public interface IDownloadService
     /// <summary>Persists edits (properties dialog, rename, address refresh).</summary>
     void Save(Download download);
 
+    /// <summary>Re-reads one entry from the database (after changes made outside this service).</summary>
+    void Reload(long id);
+
     DownloadStatistics GetStatistics();
 
     event EventHandler<DownloadListChangedEventArgs>? Changed;

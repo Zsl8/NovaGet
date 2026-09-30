@@ -9,7 +9,7 @@
         d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
         Title="{Binding Title, Mode=OneTime}"
         Width="900" Height="560" MinWidth="640" MinHeight="400"
-        Icon="pack://application:,,,/Assets/novaget.ico"
+        Icon="pack://application:,,,/NovaGet;component/Assets/novaget.ico"
         UseLayoutRounding="True"
         AutomationProperties.Name="{Binding Title, Mode=OneTime}">
 

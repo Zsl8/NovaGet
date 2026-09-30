@@ -5,7 +5,8 @@ namespace NovaGet.App.Tests;
 
 /// <summary>
 /// One WPF Application on a dedicated STA thread for all UI tests (WPF allows one per process).
-/// Pack URIs resolve against the NovaGet assembly, and the app's theme is merged like App.xaml does.
+/// The app's theme is merged like App.xaml does; the app uses assembly-qualified pack URIs, so its
+/// resources resolve even though the test host is the entry assembly.
 /// </summary>
 public sealed class WpfFixture : IDisposable
 {
@@ -16,7 +17,6 @@ public sealed class WpfFixture : IDisposable
     {
         _thread = new Thread(() =>
         {
-            Application.ResourceAssembly = typeof(NovaGet.App.App).Assembly;
             var app = new Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
             app.Resources.MergedDictionaries.Add(new ResourceDictionary
             {

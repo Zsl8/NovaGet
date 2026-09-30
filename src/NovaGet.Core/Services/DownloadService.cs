@@ -204,7 +204,7 @@ public sealed class DownloadService : IDownloadService
                 // Clear the completed state so the engine accepts it; RestartAsync resets the rest.
                 download.Status = DownloadStatus.Paused;
                 download.CompletedAt = null;
-                _repository.Update(download);
+                _repository.Update(download);  // not running: a full write is safe
             }
         }
 
@@ -232,8 +232,12 @@ public sealed class DownloadService : IDownloadService
                 {
                     download.Status = DownloadStatus.Paused;
                 }
+                else if (queueId is not null && download.Status == DownloadStatus.Paused)
+                {
+                    download.Status = DownloadStatus.Queued;
+                }
 
-                _repository.Update(download);
+                _repository.UpdateDetails(download);
                 changed.Add(id);
                 if (oldQueue is { } previous)
                 {
@@ -288,7 +292,7 @@ public sealed class DownloadService : IDownloadService
                 if (_downloads.TryGetValue(id, out var download) && download.CategoryId != categoryId)
                 {
                     download.CategoryId = categoryId;
-                    _repository.Update(download);
+                    _repository.UpdateDetails(download);
                     changed.Add(id);
                 }
             }
@@ -305,11 +309,10 @@ public sealed class DownloadService : IDownloadService
         ArgumentNullException.ThrowIfNull(download);
         lock (_gate)
         {
-            _repository.Update(download);
-            _downloads[download.Id] = download.Clone();
+            _repository.UpdateDetails(download);
         }
 
-        Raise(DownloadListChange.Updated, [download.Id]);
+        Refresh(download.Id);
     }
 
     public DownloadStatistics GetStatistics()
@@ -330,6 +333,8 @@ public sealed class DownloadService : IDownloadService
         Refresh(e.Id);
         StateChanged?.Invoke(this, e);
     }
+
+    public void Reload(long id) => Refresh(id);
 
     private void Refresh(long id)
     {
@@ -361,7 +366,7 @@ public sealed class DownloadService : IDownloadService
             if (ordered[i].QueuePosition != i + 1)
             {
                 ordered[i].QueuePosition = i + 1;
-                _repository.Update(ordered[i]);
+                _repository.UpdateDetails(ordered[i]);
                 changed.Add(ordered[i].Id);
             }
         }

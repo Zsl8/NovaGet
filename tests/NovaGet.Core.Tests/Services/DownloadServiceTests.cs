@@ -112,6 +112,7 @@ public sealed class DownloadServiceTests : IAsyncLifetime
         _service.SetQueue([a.Id], null);
         Assert.Null(_service.Find(a.Id)!.QueueId);
         Assert.Equal(DownloadStatus.Paused, _service.Find(a.Id)!.Status);
+        Assert.Equal(DownloadStatus.Queued, _service.Find(c.Id)!.Status);
         Assert.Equal(["c.zip", "b.zip"], Ordered());
         Assert.Equal([1, 2], Ordered().Select(n => _service.GetAll().Single(d => d.FileName == n).QueuePosition));
 
@@ -152,9 +153,8 @@ public sealed class DownloadServiceTests : IAsyncLifetime
     {
         var done = AddUrl("done.zip");
         var todo = AddUrl("todo.zip");
-        var d = _service.Find(done.Id)!;
-        d.Status = DownloadStatus.Completed;
-        _service.Save(d);
+        _h.Repository.MarkCompleted(done.Id, "done.zip", 10, DateTime.UtcNow);
+        _service.Reload(done.Id);
 
         Assert.Equal(1, _service.RemoveCompleted());
         Assert.Null(_service.Find(done.Id));
@@ -204,5 +204,53 @@ public sealed class DownloadServiceTests : IAsyncLifetime
         var download = _service.Find(added.Id)!;
         Assert.Equal(DownloadStatus.Completed, download.Status);
         Assert.Equal(file.Sha256(), EngineHarness.Sha256OfFile(download.FullPath));
+    }
+
+    [Fact]
+    public void Save_never_overwrites_engine_state()
+    {
+        var added = AddUrl("state.zip");
+        var stale = _service.Find(added.Id)!;
+        _h.Repository.UpdateProgress(added.Id, 5000, DownloadStatus.Receiving, DateTime.UtcNow);
+
+        stale.Description = "edited";
+        stale.Status = DownloadStatus.Paused;
+        stale.Downloaded = 0;
+        _service.Save(stale);
+
+        var stored = _h.Repository.Get(added.Id)!;
+        Assert.Equal("edited", stored.Description);
+        Assert.Equal(DownloadStatus.Receiving, stored.Status);
+        Assert.Equal(5000, stored.Downloaded);
+        Assert.Equal("edited", _service.Find(added.Id)!.Description);
+    }
+
+    [Fact]
+    public async Task Destination_changes_while_downloading_are_used_at_completion()
+    {
+        var file = _h.Server.AddFile("moving.bin", 2 * 1024 * 1024);
+        file.BytesPerSecond = 1024 * 1024;
+        var added = AddUrl("moving.bin");
+        var completed = new TaskCompletionSource();
+        _service.StateChanged += (_, e) =>
+        {
+            if (e.Status == DownloadStatus.Completed)
+            {
+                completed.TrySetResult();
+            }
+        };
+        _service.Start(added.Id);
+        await EngineHarness.WaitUntilAsync(() => _h.Engine.GetProgress(added.Id)?.Downloaded > 100 * 1024);
+
+        var edit = _service.Find(added.Id)!;
+        edit.SavePath = Path.Combine(_h.SaveDirectory, "elsewhere");
+        edit.FileName = "renamed.bin";
+        _service.Save(edit);
+        file.BytesPerSecond = 0;
+        await completed.Task.WaitAsync(TimeSpan.FromSeconds(30));
+
+        var done = _service.Find(added.Id)!;
+        Assert.Equal(Path.Combine(_h.SaveDirectory, "elsewhere", "renamed.bin"), done.FullPath);
+        Assert.Equal(file.Sha256(), EngineHarness.Sha256OfFile(done.FullPath));
     }
 }

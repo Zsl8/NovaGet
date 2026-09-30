@@ -11,7 +11,7 @@ public sealed class DownloadRepository(SqliteDatabase database, ISecretProtector
         SELECT id, url, originalUrl, referrer, fileName, savePath, categoryId, size, downloaded, status,
                resumeCapable, description, userAgent, cookies, authUser, authPass AS AuthPassword,
                maxConnections, speedLimitKBps, queueId, queuePosition, addedAt, lastTryAt, completedAt,
-               lastError, etag, lastModified, isStream, streamManifestJson, checksumAlgo, checksumExpected
+               lastError, etag, lastModified, isStream, streamManifestJson, checksumAlgo, checksumExpected, overwriteExisting
         FROM Download
         """;
 
@@ -24,11 +24,11 @@ public sealed class DownloadRepository(SqliteDatabase database, ISecretProtector
             INSERT INTO Download (url, originalUrl, referrer, fileName, savePath, categoryId, size, downloaded, status,
                 resumeCapable, description, userAgent, cookies, authUser, authPass, maxConnections, speedLimitKBps,
                 queueId, queuePosition, addedAt, lastTryAt, completedAt, lastError, etag, lastModified, isStream,
-                streamManifestJson, checksumAlgo, checksumExpected)
+                streamManifestJson, checksumAlgo, checksumExpected, overwriteExisting)
             VALUES (@Url, @OriginalUrl, @Referrer, @FileName, @SavePath, @CategoryId, @Size, @Downloaded, @Status,
                 @ResumeCapable, @Description, @UserAgent, @Cookies, @AuthUser, @AuthPass, @MaxConnections, @SpeedLimitKBps,
                 @QueueId, @QueuePosition, @AddedAt, @LastTryAt, @CompletedAt, @LastError, @ETag, @LastModified, @IsStream,
-                @StreamManifestJson, @ChecksumAlgo, @ChecksumExpected);
+                @StreamManifestJson, @ChecksumAlgo, @ChecksumExpected, @OverwriteExisting);
             SELECT last_insert_rowid();
             """,
             ToParameters(download));
@@ -48,10 +48,87 @@ public sealed class DownloadRepository(SqliteDatabase database, ISecretProtector
                 queueId = @QueueId, queuePosition = @QueuePosition, addedAt = @AddedAt, lastTryAt = @LastTryAt,
                 completedAt = @CompletedAt, lastError = @LastError, etag = @ETag, lastModified = @LastModified,
                 isStream = @IsStream, streamManifestJson = @StreamManifestJson, checksumAlgo = @ChecksumAlgo,
-                checksumExpected = @ChecksumExpected
+                checksumExpected = @ChecksumExpected, overwriteExisting = @OverwriteExisting
             WHERE id = @Id;
             """,
             ToParameters(download));
+    }
+
+    public void UpdateDetails(Download download)
+    {
+        ArgumentNullException.ThrowIfNull(download);
+        using var connection = database.Open();
+        connection.Execute(
+            """
+            UPDATE Download SET url = @Url, originalUrl = @OriginalUrl, referrer = @Referrer, fileName = @FileName,
+                savePath = @SavePath, categoryId = @CategoryId, description = @Description, userAgent = @UserAgent,
+                cookies = @Cookies, authUser = @AuthUser, authPass = @AuthPass, maxConnections = @MaxConnections,
+                speedLimitKBps = @SpeedLimitKBps, queueId = @QueueId, queuePosition = @QueuePosition,
+                checksumAlgo = @ChecksumAlgo, checksumExpected = @ChecksumExpected, overwriteExisting = @OverwriteExisting,
+                status = CASE WHEN @Status IN (@Paused, @Queued) AND status IN (@Paused, @Queued) THEN @Status ELSE status END
+            WHERE id = @Id;
+            """,
+            new
+            {
+                download.Id,
+                download.Url,
+                download.OriginalUrl,
+                download.Referrer,
+                download.FileName,
+                download.SavePath,
+                download.CategoryId,
+                download.Description,
+                download.UserAgent,
+                Cookies = string.IsNullOrEmpty(download.Cookies) ? null : protector.Protect(download.Cookies),
+                download.AuthUser,
+                AuthPass = string.IsNullOrEmpty(download.AuthPassword) ? null : protector.Protect(download.AuthPassword),
+                download.MaxConnections,
+                download.SpeedLimitKBps,
+                download.QueueId,
+                download.QueuePosition,
+                download.ChecksumAlgo,
+                download.ChecksumExpected,
+                download.OverwriteExisting,
+                download.Status,
+                Paused = DownloadStatus.Paused,
+                Queued = DownloadStatus.Queued,
+            });
+    }
+
+    public void UpdateProbe(long id, string url, string fileName, long size, bool? resumeCapable, string? etag, DateTime? lastModified)
+    {
+        using var connection = database.Open();
+        connection.Execute(
+            """
+            UPDATE Download SET url = @url, fileName = CASE WHEN fileName = '' THEN @fileName ELSE fileName END,
+                size = @size, resumeCapable = @resumeCapable, etag = @etag, lastModified = @lastModified
+            WHERE id = @id;
+            """,
+            new { id, url, fileName, size, resumeCapable, etag, lastModified });
+    }
+
+    public void UpdateSize(long id, long size)
+    {
+        using var connection = database.Open();
+        connection.Execute("UPDATE Download SET size = @size WHERE id = @id;", new { id, size });
+    }
+
+    public void UpdateResumeCapable(long id, bool? resumeCapable)
+    {
+        using var connection = database.Open();
+        connection.Execute("UPDATE Download SET resumeCapable = @resumeCapable WHERE id = @id;", new { id, resumeCapable });
+    }
+
+    public void MarkCompleted(long id, string fileName, long size, DateTime completedAt)
+    {
+        using var connection = database.Open();
+        connection.Execute(
+            """
+            UPDATE Download SET fileName = @fileName, size = @size, downloaded = @size, status = @status,
+                completedAt = @completedAt, lastError = NULL
+            WHERE id = @id;
+            """,
+            new { id, fileName, size, completedAt, status = DownloadStatus.Completed });
     }
 
     public void UpdateProgress(long id, long downloaded, DownloadStatus status, DateTime? lastTryAt)
@@ -148,6 +225,7 @@ public sealed class DownloadRepository(SqliteDatabase database, ISecretProtector
         d.StreamManifestJson,
         d.ChecksumAlgo,
         d.ChecksumExpected,
+        d.OverwriteExisting,
     };
 
     private Download Decrypt(Download d)

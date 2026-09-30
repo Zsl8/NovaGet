@@ -100,22 +100,26 @@ public sealed class PipeServer : IAsyncDisposable
                 continue;
             }
 
+            // Create the next listening instance before serving this one. On Unix all instances share one
+            // listening socket that closes when the last instance is disposed; if the served connection finished
+            // first, clients waiting in the backlog would be reset.
             var connected = pipe;
-            var task = Task.Run(() => ServeAsync(connected, cancellationToken), CancellationToken.None);
-            lock (_gate)
-            {
-                _connections.RemoveAll(t => t.IsCompleted);
-                _connections.Add(task);
-            }
-
             try
             {
                 pipe = CreatePipe();
             }
             catch (IOException ex)
             {
-                _logger.LogError(ex, "Could not create another pipe instance; IPC stopped");
+                _logger.LogError(ex, "Could not create another pipe instance; IPC stopped after this client");
+                await ServeAsync(connected, cancellationToken).ConfigureAwait(false);
                 return;
+            }
+
+            var task = Task.Run(() => ServeAsync(connected, cancellationToken), CancellationToken.None);
+            lock (_gate)
+            {
+                _connections.RemoveAll(t => t.IsCompleted);
+                _connections.Add(task);
             }
         }
 

@@ -15,7 +15,7 @@ public static class AppImages
         {
             var image = new BitmapImage();
             image.BeginInit();
-            image.UriSource = new Uri($"pack://application:,,,/Assets/Icons/{key}.png", UriKind.Absolute);
+            image.UriSource = new Uri($"pack://application:,,,/NovaGet;component/Assets/Icons/{key}.png", UriKind.Absolute);
             image.CacheOption = BitmapCacheOption.OnLoad;
             image.EndInit();
             image.Freeze();

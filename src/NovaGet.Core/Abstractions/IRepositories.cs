@@ -6,7 +6,26 @@ public interface IDownloadRepository
 {
     long Insert(Download download);
 
+    /// <summary>Writes every column (used when nothing else can be changing the row).</summary>
     void Update(Download download);
+
+    /// <summary>
+    /// Writes only what the user can edit (address, names, folder, category, queue, description, credentials,
+    /// limits, checksum). Never touches engine-owned state, so it is safe while the download runs.
+    /// </summary>
+    void UpdateDetails(Download download);
+
+    /// <summary>Engine: what the probe learned.</summary>
+    void UpdateProbe(long id, string url, string fileName, long size, bool? resumeCapable, string? etag, DateTime? lastModified);
+
+    /// <summary>Engine: the size became known or changed before any data was kept.</summary>
+    void UpdateSize(long id, long size);
+
+    /// <summary>Engine: resume support turned out to be missing.</summary>
+    void UpdateResumeCapable(long id, bool? resumeCapable);
+
+    /// <summary>Engine: the file is in place.</summary>
+    void MarkCompleted(long id, string fileName, long size, DateTime completedAt);
 
     /// <summary>Hot path: persists progress fields only.</summary>
     void UpdateProgress(long id, long downloaded, DownloadStatus status, DateTime? lastTryAt);

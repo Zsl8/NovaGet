@@ -244,7 +244,7 @@ internal sealed class DownloadJob
         _download.ResumeCapable = probe.ResumeSupported;
         _download.ETag = probe.ETag;
         _download.LastModified = probe.LastModified?.UtcDateTime;
-        _repository.Update(_download);
+        _repository.UpdateProbe(Id, _download.Url, _download.FileName, _download.Size, _download.ResumeCapable, _download.ETag, _download.LastModified);
     }
 
     private void EnsureFreeSpace()
@@ -409,7 +409,7 @@ internal sealed class DownloadJob
     {
         _logger.LogWarning("Download {Id}: {Reason} Switching to a single connection from the beginning.", Id, reason.Message);
         _download.ResumeCapable = false;
-        _repository.Update(_download);
+        _repository.UpdateResumeCapable(Id, false);
         Map.Reset(Map.Size);
         lock (_workers)
         {
@@ -577,7 +577,7 @@ internal sealed class DownloadJob
         Map.SetSize(size);
         _file?.SetLength(size);
         _download.Size = size;
-        _repository.Update(_download);
+        _repository.UpdateSize(Id, size);
     }
 
     public async ValueTask WriteAsync(ReadOnlyMemory<byte> data, long offset)
@@ -662,11 +662,18 @@ internal sealed class DownloadJob
         file.Dispose();
         _file = null;
 
-        var directory = _download.SavePath;
+        // The user may have changed the name or folder while the download ran: use the saved values.
+        var current = _repository.Get(Id) ?? _download;
+        var directory = current.SavePath;
         Directory.CreateDirectory(directory);
-        var name = FileNameSanitizer.MakeUnique(directory, FileNameSanitizer.Sanitize(_download.FileName));
+        var name = FileNameSanitizer.Sanitize(string.IsNullOrWhiteSpace(current.FileName) ? _download.FileName : current.FileName);
+        if (!current.OverwriteExisting)
+        {
+            name = FileNameSanitizer.MakeUnique(directory, name);
+        }
+
         var target = Path.Combine(directory, name);
-        await Task.Run(() => File.Move(tempPath, target)).ConfigureAwait(false);
+        await Task.Run(() => File.Move(tempPath, target, overwrite: current.OverwriteExisting)).ConfigureAwait(false);
 
         if (Options.KeepServerFileDate && _download.LastModified is { } modified)
         {
@@ -675,13 +682,14 @@ internal sealed class DownloadJob
 
         DeleteTempDirectory();
         _download.FileName = name;
+        _download.SavePath = directory;
         _download.Size = size;
         _download.Downloaded = size;
         _download.Status = DownloadStatus.Completed;
         _download.CompletedAt = DateTime.UtcNow;
         _download.LastError = null;
         _repository.SaveSegments(Id, []);
-        _repository.Update(_download);
+        _repository.MarkCompleted(Id, name, size, _download.CompletedAt.Value);
         _logger.LogInformation("Download {Id} complete: {Path}", Id, target);
         Finish(DownloadStatus.Completed, null, DownloadErrorKind.None);
     }

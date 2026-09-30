@@ -279,7 +279,7 @@ internal sealed partial class TrayIconService(
 
     private static Icon LoadIcon(string name, int size)
     {
-        var resource = Application.GetResourceStream(new Uri($"pack://application:,,,/Assets/{name}", UriKind.Absolute))
+        var resource = Application.GetResourceStream(new Uri($"pack://application:,,,/NovaGet;component/Assets/{name}", UriKind.Absolute))
             ?? throw new InvalidOperationException($"Missing icon resource {name}.");
         using var stream = resource.Stream;
         return new Icon(stream, size, size);
