@@ -55,9 +55,26 @@ internal sealed partial class WinHttpPacResolver(ILogger<WinHttpPacResolver> log
         }
 
         string? fallback = null;
-        foreach (var raw in list.Split([';', ' '], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+        foreach (var raw in list.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
         {
-            var entry = raw;
+            // "PROXY host:port" (PAC style) or "host:port"; WinHTTP may also separate entries with spaces.
+            var words = raw.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            string entry;
+            switch (words[0].ToUpperInvariant())
+            {
+                case "DIRECT":
+                    entry = "DIRECT";
+                    break;
+                case "PROXY" or "HTTP" or "HTTPS" when words.Length > 1:
+                    entry = words[1];
+                    break;
+                case var keyword when keyword.StartsWith("SOCKS", StringComparison.Ordinal):
+                    continue; // a SOCKS answer from a PAC script isn't used for HTTP downloads
+                default:
+                    entry = words[0];
+                    break;
+            }
+
             var equals = entry.IndexOf('=', StringComparison.Ordinal);
             if (equals > 0)
             {
@@ -79,11 +96,6 @@ internal sealed partial class WinHttpPacResolver(ILogger<WinHttpPacResolver> log
             if (entry.Equals("DIRECT", StringComparison.OrdinalIgnoreCase))
             {
                 return null;
-            }
-
-            if (entry.StartsWith("PROXY ", StringComparison.OrdinalIgnoreCase))
-            {
-                entry = entry[6..];
             }
 
             return Uri.TryCreate(entry.Contains("://", StringComparison.Ordinal) ? entry : "http://" + entry, UriKind.Absolute, out var uri) ? uri : null;
