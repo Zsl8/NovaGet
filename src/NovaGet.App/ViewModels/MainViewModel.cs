@@ -384,6 +384,7 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
         OnPropertyChanged(nameof(IsLimiterOn));
         OnPropertyChanged(nameof(ShowDropTarget));
         UpdateStatusBar();
+        ApplyToolbarSkin();
     }
 
     private void NotifySelectionCommands()
@@ -514,6 +515,7 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
 
     private void BuildToolbar()
     {
+        DeleteMenu.Clear();
         DeleteMenu.Add(new MenuEntryViewModel(Localizer.Get("Tb_Delete"), DeleteCommand));
         DeleteMenu.Add(new MenuEntryViewModel(Localizer.Get("Tb_DeleteWithFile"), DeleteWithFileCommand));
 
@@ -542,6 +544,43 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
             var item = all[id];
             item.IsVisible = saved.Find(b => b.Id == id)?.Visible ?? true;
             Toolbar.Add(item);
+        }
+
+        ApplyToolbarSkin();
+    }
+
+    /// <summary>View → Toolbar → Toolbar theme: the skins, the current one checked.</summary>
+    public ObservableCollection<MenuEntryViewModel> ToolbarSkinMenu { get; } = [];
+
+    [RelayCommand]
+    private void SetToolbarSkin(string? skin)
+    {
+        var chosen = ToolbarSkins.Normalize(skin);
+        if (chosen != ToolbarSkins.Normalize(_settings.Current.General.ToolbarSkin))
+        {
+            _settings.Update(s => s.General.ToolbarSkin = chosen);
+        }
+    }
+
+    private void ApplyToolbarSkin()
+    {
+        var skin = ToolbarSkins.Normalize(_settings.Current.General.ToolbarSkin);
+        foreach (var item in Toolbar)
+        {
+            item.Skin = skin;
+        }
+
+        if (ToolbarSkinMenu.Count == 0)
+        {
+            foreach (var name in ToolbarSkins.All)
+            {
+                ToolbarSkinMenu.Add(new MenuEntryViewModel(ToolbarSkins.Title(name), SetToolbarSkinCommand, name));
+            }
+        }
+
+        foreach (var entry in ToolbarSkinMenu)
+        {
+            entry.IsChecked = Equals(entry.Parameter, skin);
         }
     }
 

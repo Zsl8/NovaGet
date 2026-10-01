@@ -6,7 +6,7 @@
                 Title="{l:Loc ServerExceptionDialog_Title}" FocusManager.FocusedElement="{Binding ElementName=HostBox}">
   <StackPanel Margin="16" Width="360">
     <Label Content="{l:Loc ServerExceptionDialog_Host}" Target="{Binding ElementName=HostBox}" Padding="0,0,0,4" />
-    <TextBox x:Name="HostBox" Height="23" VerticalContentAlignment="Center" />
+    <TextBox FlowDirection="LeftToRight" x:Name="HostBox" Height="23" VerticalContentAlignment="Center" />
     <TextBlock Text="{l:Loc ServerExceptionDialog_HostNote}" TextWrapping="Wrap" Margin="0,4,0,0" Foreground="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
     <DockPanel Margin="0,10,0,0">
       <Label Content="{l:Loc Options_MaxConnectionsColumn}" Target="{Binding ElementName=CountBox}" Padding="0,0,10,0" VerticalAlignment="Center" />

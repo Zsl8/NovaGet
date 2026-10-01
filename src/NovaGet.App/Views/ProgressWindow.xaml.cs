@@ -47,6 +47,7 @@ public partial class ProgressWindow : Window
         _dialogs = dialogs;
         _controller = controller;
         InitializeComponent();
+        SourceInitialized += (_, _) => Services.ThemeService.ApplyTitleBar(this);
         FlowDirection = Localizer.IsRightToLeft ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
         ConnectionList.ItemsSource = _connections;
         CompletionPanel.DataContext = completion;

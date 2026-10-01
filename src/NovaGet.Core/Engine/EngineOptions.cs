@@ -48,6 +48,17 @@ public sealed record EngineOptions
     /// <summary>Extra free space required beyond the bytes still to download.</summary>
     public long FreeSpaceMargin { get; init; } = 16L * 1024 * 1024;
 
+    /// <summary>Write the Zone.Identifier stream (Mark of the Web) on finished files.</summary>
+    public bool MarkOfTheWeb { get; init; }
+
+    /// <summary>Virus scanner run on every finished file (null = none).</summary>
+    public string? VirusScanProgram { get; init; }
+
+    /// <summary>Its arguments; <c>[file]</c> is replaced with the file's path.</summary>
+    public string? VirusScanArguments { get; init; }
+
+    public TimeSpan VirusScanTimeout { get; init; } = TimeSpan.FromMinutes(10);
+
     /// <summary>Backoff delay before retry number <paramref name="attempt"/> (1-based).</summary>
     public TimeSpan RetryDelay(int attempt)
     {
@@ -77,6 +88,11 @@ public sealed record EngineOptions
             KeepTempFilesAfterCancel = settings.Advanced.KeepTempFilesAfterCancel,
             KeepServerFileDate = settings.Downloads.KeepServerFileDate,
             HostSpeedLimitsKBps = new Dictionary<string, int>(settings.Connection.HostSpeedLimits, StringComparer.OrdinalIgnoreCase),
+            MarkOfTheWeb = settings.Downloads.MarkAsDownloadedFromInternet,
+            VirusScanProgram = settings.Downloads.VirusScan.Enabled && !string.IsNullOrWhiteSpace(settings.Downloads.VirusScan.Program)
+                ? settings.Downloads.VirusScan.Program
+                : null,
+            VirusScanArguments = settings.Downloads.VirusScan.Arguments,
         };
     }
 }

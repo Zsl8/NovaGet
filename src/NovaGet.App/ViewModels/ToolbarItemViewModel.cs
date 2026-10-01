@@ -28,9 +28,14 @@ public sealed partial class ToolbarItemViewModel : ObservableObject
 
     public ICommand Command { get; }
 
-    public ImageSource LargeIcon => AppImages.Get(IconName, 96);
+    public ImageSource LargeIcon => AppImages.Get(ToolbarSkins.IconName(IconName, Skin), 96);
 
-    public ImageSource SmallIcon => AppImages.Get(IconName, 48);
+    public ImageSource SmallIcon => AppImages.Get(ToolbarSkins.IconName(IconName, Skin), 48);
+
+    /// <summary>The toolbar skin; changing it swaps the icons.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(LargeIcon), nameof(SmallIcon))]
+    private string _skin = ToolbarSkins.Default;
 
     public ObservableCollection<MenuEntryViewModel>? DropDown { get; init; }
 

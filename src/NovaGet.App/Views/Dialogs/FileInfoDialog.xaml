@@ -22,7 +22,7 @@
     </Grid.RowDefinitions>
 
     <TextBlock Text="{l:Loc FileInfo_Url}" VerticalAlignment="Center" Margin="0,0,10,0" />
-    <TextBox x:Name="UrlBox" Grid.Column="1" Grid.ColumnSpan="2" IsReadOnly="True" Height="23" VerticalContentAlignment="Center" />
+    <TextBox FlowDirection="LeftToRight" x:Name="UrlBox" AutomationProperties.Name="{l:Loc FileInfo_Url}" Grid.Column="1" Grid.ColumnSpan="2" IsReadOnly="True" Height="23" VerticalContentAlignment="Center" />
 
     <Label Grid.Row="1" Content="{l:Loc FileInfo_Category}" Target="{Binding ElementName=CategoryBox}" Padding="0,0,10,0" VerticalAlignment="Center" Margin="0,8,0,0" />
     <ComboBox x:Name="CategoryBox" Grid.Row="1" Grid.Column="1" Margin="0,8,0,0" Height="23" DisplayMemberPath="Title"
@@ -31,7 +31,7 @@
             ToolTip="{l:Loc FileInfo_AddCategory}" AutomationProperties.Name="{l:Loc FileInfo_AddCategory}" />
 
     <Label Grid.Row="2" Content="{l:Loc FileInfo_SaveAs}" Target="{Binding ElementName=SaveAsBox}" Padding="0,0,10,0" VerticalAlignment="Center" Margin="0,8,0,0" />
-    <ComboBox x:Name="SaveAsBox" Grid.Row="2" Grid.Column="1" Margin="0,8,0,0" Height="23" IsEditable="True"
+    <ComboBox FlowDirection="LeftToRight" x:Name="SaveAsBox" Grid.Row="2" Grid.Column="1" Margin="0,8,0,0" Height="23" IsEditable="True"
               SelectionChanged="OnRecentFolderChosen" AutomationProperties.Name="{l:Loc FileInfo_SaveAs}" />
     <Button Grid.Row="2" Grid.Column="2" Content="{l:Loc Common_Browse}" Width="28" Margin="6,8,0,0" Click="OnBrowse" />
 

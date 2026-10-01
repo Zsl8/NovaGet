@@ -19,6 +19,9 @@ public static class AppInfo
     /// <summary>Name of the file that switches the app into portable mode when it sits next to the executable.</summary>
     public const string PortableFlagFileName = "portable.flag";
 
+    /// <summary>The only address the app itself contacts: the latest release, for the optional update check.</summary>
+    public const string UpdateFeed = "https://api.github.com/repos/Zsl8/NovaGet/releases/latest";
+
     private static readonly Lazy<Version> s_version = new(() =>
         typeof(AppInfo).Assembly.GetName().Version ?? new Version(1, 0, 0));
 

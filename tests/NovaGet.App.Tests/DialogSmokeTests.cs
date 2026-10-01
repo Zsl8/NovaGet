@@ -22,43 +22,7 @@ public sealed class DialogSmokeTests(WpfFixture wpf)
     {
         wpf.Run(() =>
         {
-            Window dialog = name switch
-            {
-                "About" => new AboutDialog(),
-                "TellAFriend" => new TellAFriendDialog(),
-                "Find" => new FindDialog("abc", matchCase: true),
-                "SpeedLimiter" => new SpeedLimiterDialog(256, queueOnly: true),
-                "Input" => new InputDialog("Title", "Prompt", "value"),
-                "Category" => new CategoryDialog(null, new AppSettings(), AppPaths.ForRoot(Path.GetTempPath())),
-                "MessageCheck" => new MessageCheckDialog("Title", "Message?", "Check", true),
-                "Toolbar" => ReorderDialogs.ForToolbar([("A", "Alpha", NovaGet.App.Services.AppImages.Get("resume", 48), true)], ["A"]),
-                "Columns" => ReorderDialogs.ForColumns([("FileName", "File Name", true), ("Size", "Size", false)], [("FileName", "File Name", true), ("Size", "Size", true)], "FileName"),
-                "AddUrl" => new AddUrlDialog(["https://example.com/a.zip"], "https://example.com/b.zip", "UA", (_, _) => throw new InvalidOperationException()),
-                "FileInfo" => new FileInfoDialog(new FileInfoRequest
-                {
-                    Url = "https://example.com/a.zip",
-                    FileName = "a.zip",
-                    Size = 1234,
-                    Categories = [new ChoiceItem(1, "General"), new ChoiceItem(2, "Compressed")],
-                    CategoryId = 2,
-                    FolderForCategory = _ => Path.GetTempPath(),
-                    Queues = [new ChoiceItem(1, "Main download queue")],
-                }),
-                "QueuePick" => new QueuePickDialog([new ChoiceItem(1, "Main"), new ChoiceItem(2, "Night")]),
-                "Duplicate" => new DuplicateDialog("a.zip"),
-                "Complete" => new CompleteDialog(SampleDownload(), new NovaGet.Core.Settings.SettingsService(Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N") + ".json"), Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N") + ".bak"))),
-                "Properties" => new PropertiesDialog(SampleDownload(), new NullDownloads()),
-                "MoveRename" => new MoveRenameDialog(SampleDownload(), new NullDownloads()),
-                "PowerCountdown" => new PowerCountdownDialog(NovaGet.Core.Models.PowerAction.Sleep),
-                "ContextMenuItems" => new ContextMenuItemsDialog(new ContextMenuSettings()),
-                "WebPlayerPanel" => new WebPlayerPanelDialog(new WebPlayerPanelSettings { ExcludedSites = ["*.example.com"] }),
-                "ServerException" => new ServerExceptionDialog("files.example.com", 4),
-                "SiteLogin" => new SiteLoginDialog("*.example.com", "alice", "secret"),
-                "Batch" => new BatchDialog("http://example.com/img*.jpg"),
-                "GrabberWizard" => new GrabberWizardDialog(new NovaGet.App.ViewModels.GrabberWizardViewModel(), _ => null),
-                "StreamQuality" => new StreamQualityDialog(new NovaGet.App.ViewModels.StreamQualityViewModel(StreamTests.SampleHls(), "Sample video")),
-                _ => throw new ArgumentOutOfRangeException(nameof(name)),
-            };
+            var dialog = Create(name);
             dialog.WindowStartupLocation = WindowStartupLocation.Manual;
             dialog.Left = -10000;
             dialog.Show();
@@ -67,6 +31,45 @@ public sealed class DialogSmokeTests(WpfFixture wpf)
             dialog.Close();
         });
     }
+
+    /// <summary>A sample of dialog <paramref name="name"/> (call on the UI thread).</summary>
+    internal static Window Create(string name) => name switch
+    {
+        "About" => new AboutDialog(),
+        "TellAFriend" => new TellAFriendDialog(),
+        "Find" => new FindDialog("abc", matchCase: true),
+        "SpeedLimiter" => new SpeedLimiterDialog(256, queueOnly: true),
+        "Input" => new InputDialog("Title", "Prompt", "value"),
+        "Category" => new CategoryDialog(null, new AppSettings(), AppPaths.ForRoot(Path.GetTempPath())),
+        "MessageCheck" => new MessageCheckDialog("Title", "Message?", "Check", true),
+        "Toolbar" => ReorderDialogs.ForToolbar([("A", "Alpha", NovaGet.App.Services.AppImages.Get("resume", 48), true)], ["A"]),
+        "Columns" => ReorderDialogs.ForColumns([("FileName", "File Name", true), ("Size", "Size", false)], [("FileName", "File Name", true), ("Size", "Size", true)], "FileName"),
+        "AddUrl" => new AddUrlDialog(["https://example.com/a.zip"], "https://example.com/b.zip", "UA", (_, _) => throw new InvalidOperationException()),
+        "FileInfo" => new FileInfoDialog(new FileInfoRequest
+        {
+            Url = "https://example.com/a.zip",
+            FileName = "a.zip",
+            Size = 1234,
+            Categories = [new ChoiceItem(1, "General"), new ChoiceItem(2, "Compressed")],
+            CategoryId = 2,
+            FolderForCategory = _ => Path.GetTempPath(),
+            Queues = [new ChoiceItem(1, "Main download queue")],
+        }),
+        "QueuePick" => new QueuePickDialog([new ChoiceItem(1, "Main"), new ChoiceItem(2, "Night")]),
+        "Duplicate" => new DuplicateDialog("a.zip"),
+        "Complete" => new CompleteDialog(SampleDownload(), new NovaGet.Core.Settings.SettingsService(Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N") + ".json"), Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N") + ".bak"))),
+        "Properties" => new PropertiesDialog(SampleDownload(), new NullDownloads()),
+        "MoveRename" => new MoveRenameDialog(SampleDownload(), new NullDownloads()),
+        "PowerCountdown" => new PowerCountdownDialog(NovaGet.Core.Models.PowerAction.Sleep),
+        "ContextMenuItems" => new ContextMenuItemsDialog(new ContextMenuSettings()),
+        "WebPlayerPanel" => new WebPlayerPanelDialog(new WebPlayerPanelSettings { ExcludedSites = ["*.example.com"] }),
+        "ServerException" => new ServerExceptionDialog("files.example.com", 4),
+        "SiteLogin" => new SiteLoginDialog("*.example.com", "alice", "secret"),
+        "Batch" => new BatchDialog("http://example.com/img*.jpg"),
+        "GrabberWizard" => new GrabberWizardDialog(new NovaGet.App.ViewModels.GrabberWizardViewModel(), _ => null),
+        "StreamQuality" => new StreamQualityDialog(new NovaGet.App.ViewModels.StreamQualityViewModel(StreamTests.SampleHls(), "Sample video")),
+        _ => throw new ArgumentOutOfRangeException(nameof(name)),
+    };
 
     private static NovaGet.Core.Models.Download SampleDownload() => new()
     {

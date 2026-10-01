@@ -118,8 +118,8 @@
         <MenuItem Header="{l:Loc Cmd_FindNext}" InputGestureText="F3" Command="{Binding FindNextCommand}" />
         <Separator />
         <MenuItem Header="{l:Loc Cmd_Scheduler}" Command="{Binding SchedulerCommand}" />
-        <MenuItem Header="{l:Loc Menu_StartQueue}" ItemsSource="{Binding StartQueueMenu}" ItemContainerStyle="{StaticResource EntryMenuItemStyle}" />
-        <MenuItem Header="{l:Loc Menu_StopQueue}" ItemsSource="{Binding StopQueueMenu}" ItemContainerStyle="{StaticResource EntryMenuItemStyle}" />
+        <MenuItem Header="{l:Loc Menu_StartQueue}" ItemsSource="{Binding StartQueueMenu}" ItemContainerStyle="{DynamicResource EntryMenuItemStyle}" />
+        <MenuItem Header="{l:Loc Menu_StopQueue}" ItemsSource="{Binding StopQueueMenu}" ItemContainerStyle="{DynamicResource EntryMenuItemStyle}" />
         <Separator />
         <MenuItem Header="{l:Loc Menu_SpeedLimiter}">
           <MenuItem Header="{l:Loc Cmd_TurnOn}" Command="{Binding LimiterOnCommand}" IsChecked="{Binding IsLimiterOn, Mode=OneWay}" />
@@ -139,9 +139,7 @@
           <MenuItem Header="{l:Loc Cmd_HideLabels}" IsCheckable="True" IsChecked="{Binding HideToolbarLabels}" />
           <Separator />
           <MenuItem Header="{l:Loc Cmd_CustomizeToolbar}" Command="{Binding CustomizeToolbarCommand}" />
-          <MenuItem Header="{l:Loc Menu_ToolbarTheme}">
-            <MenuItem Header="{l:Loc Theme_Default}" IsChecked="True" />
-          </MenuItem>
+          <MenuItem Header="{l:Loc Menu_ToolbarTheme}" ItemsSource="{Binding ToolbarSkinMenu}" ItemContainerStyle="{DynamicResource EntryMenuItemStyle}" />
         </MenuItem>
         <MenuItem x:Name="ArrangeMenu" Header="{l:Loc Menu_Arrange}" />
         <MenuItem Header="{l:Loc Cmd_ShowColumns}" Command="{Binding ShowColumnsCommand}" />
@@ -266,7 +264,7 @@
             <MenuItem Header="{l:Loc Cmd_Remove}" Command="{Binding DeleteCommand}" />
             <MenuItem Header="{l:Loc Cmd_RemoveWithFile}" Command="{Binding DeleteWithFileCommand}" />
             <Separator />
-            <MenuItem Header="{l:Loc Menu_AddToQueue}" ItemsSource="{Binding AddToQueueMenu}" ItemContainerStyle="{StaticResource EntryMenuItemStyle}" />
+            <MenuItem Header="{l:Loc Menu_AddToQueue}" ItemsSource="{Binding AddToQueueMenu}" ItemContainerStyle="{DynamicResource EntryMenuItemStyle}" />
             <MenuItem Header="{l:Loc Cmd_DeleteFromQueue}" Command="{Binding DeleteFromQueueCommand}" />
             <Separator />
             <MenuItem Header="{l:Loc Cmd_CopyAddress}" Command="{Binding CopyAddressCommand}" />

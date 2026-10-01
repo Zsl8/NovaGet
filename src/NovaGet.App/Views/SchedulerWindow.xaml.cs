@@ -27,6 +27,7 @@ public partial class SchedulerWindow : Window
         _vm = vm;
         _settings = settings;
         InitializeComponent();
+        SourceInitialized += (_, _) => Services.ThemeService.ApplyTitleBar(this);
         FlowDirection = Localizer.IsRightToLeft ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
         SetResourceReference(BackgroundProperty, SystemColors.ControlBrushKey);
         DataContext = vm;

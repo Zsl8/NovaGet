@@ -17,7 +17,7 @@
       <Label Content="{l:Loc Links_Filter}" Target="{Binding ElementName=FilterBox}" Padding="0,0,8,0" VerticalAlignment="Center" />
       <Button DockPanel.Dock="Right" Content="{l:Loc Links_SelectNone}" Padding="8,1" Margin="6,0,0,0" Command="{Binding SelectNoneCommand}" />
       <Button DockPanel.Dock="Right" Content="{l:Loc Links_SelectAll}" Padding="8,1" Margin="6,0,0,0" Command="{Binding SelectAllCommand}" />
-      <TextBox x:Name="FilterBox" Height="23" VerticalContentAlignment="Center" Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" />
+      <TextBox FlowDirection="LeftToRight" x:Name="FilterBox" Height="23" VerticalContentAlignment="Center" Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" />
     </DockPanel>
     <ScrollViewer DockPanel.Dock="Top" MaxHeight="64" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,0,0,6" Focusable="False">
       <ItemsControl ItemsSource="{Binding Extensions}" Focusable="False" AutomationProperties.Name="{l:Loc Links_Types}">
@@ -53,7 +53,7 @@
       <ComboBox x:Name="CategoryBox" Grid.Column="1" Height="23" ItemsSource="{Binding Categories}" DisplayMemberPath="Title" SelectedValuePath="Id"
                 SelectedValue="{Binding CategoryId}" />
       <Label Grid.Column="2" Content="{l:Loc FileInfo_SaveAs}" Target="{Binding ElementName=FolderBox}" Padding="12,0,8,0" VerticalAlignment="Center" />
-      <TextBox x:Name="FolderBox" Grid.Column="3" Height="23" VerticalContentAlignment="Center" Text="{Binding SaveFolder, UpdateSourceTrigger=PropertyChanged}"
+      <TextBox FlowDirection="LeftToRight" x:Name="FolderBox" Grid.Column="3" Height="23" VerticalContentAlignment="Center" Text="{Binding SaveFolder, UpdateSourceTrigger=PropertyChanged}"
                IsEnabled="{Binding IsAutomaticCategory, Converter={StaticResource Not}}" />
       <Button Grid.Column="4" Content="…" Width="28" Margin="6,0,0,0" Click="OnBrowse" IsEnabled="{Binding IsAutomaticCategory, Converter={StaticResource Not}}"
               AutomationProperties.Name="{l:Loc Common_Browse}" />

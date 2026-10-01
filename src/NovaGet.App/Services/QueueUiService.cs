@@ -160,7 +160,11 @@ internal sealed class QueueUiService(
         }
     }
 
-    private void OnQueueStarted(object? sender, QueueEventArgs e) => OnUi(() => sounds.Play(SoundEvent.QueueStarted));
+    private void OnQueueStarted(object? sender, QueueEventArgs e) => OnUi(() =>
+    {
+        sounds.Play(SoundEvent.QueueStarted);
+        tray.ShowBalloon(Localizer.Get("Notify_QueueStarted"), MainViewModel.QueueTitle(e.Queue));
+    });
 
     private void OnQueueStopped(object? sender, QueueEventArgs e) => OnUi(() =>
     {

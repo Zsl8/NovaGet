@@ -39,7 +39,32 @@ jobs:
         env:
           # Read-only token: lets build.ps1 list the ffmpeg builds without hitting the anonymous API limit.
           GITHUB_TOKEN: ${{ github.token }}
+          # The theme tests save their off-screen renders here (dark theme, Arabic right-to-left).
+          NOVAGET_SCREENSHOTS: ${{ runner.temp }}/screens
         run: ./build.ps1
+
+      - name: Upload UI screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-screenshots
+          path: ${{ runner.temp }}/screens/*.png
+          if-no-files-found: ignore
+
+      - name: Print UI screenshots
+        if: always()
+        shell: pwsh
+        # Base64 in 4 KB lines ("B64 <name> <part>"), so the renders can be reviewed from the log as well.
+        run: |
+          $dir = Join-Path $env:RUNNER_TEMP 'screens'
+          if (Test-Path $dir) {
+            foreach ($file in Get-ChildItem $dir -Filter *.png) {
+              $text = [Convert]::ToBase64String([IO.File]::ReadAllBytes($file.FullName))
+              for ($i = 0; $i -lt $text.Length; $i += 4000) {
+                Write-Output ("B64 {0} {1}" -f $file.BaseName, $text.Substring($i, [Math]::Min(4000, $text.Length - $i)))
+              }
+            }
+          }
 
       - name: Upload installer
         uses: actions/upload-artifact@v4

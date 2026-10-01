@@ -31,6 +31,8 @@ public static class Localizer
             Culture = CultureInfo.GetCultureInfo("en");
         }
 
+        Culture = WithGregorianCalendar(Culture);
+
         CultureInfo.DefaultThreadCurrentUICulture = Culture;
         CultureInfo.CurrentUICulture = Culture;
         s_pack = LoadPack(languageFolder, Culture);
@@ -74,6 +76,23 @@ public static class Localizer
         }
 
         return cultures;
+    }
+
+    /// <summary>
+    /// Dates in the UI use the Gregorian calendar, like the file system and the servers' dates (some Arabic cultures
+    /// default to the Hijri calendar on older Windows versions).
+    /// </summary>
+    internal static CultureInfo WithGregorianCalendar(CultureInfo culture)
+    {
+        if (culture.DateTimeFormat.Calendar is GregorianCalendar
+            || culture.OptionalCalendars.OfType<GregorianCalendar>().FirstOrDefault() is not { } gregorian)
+        {
+            return culture;
+        }
+
+        var copy = (CultureInfo)culture.Clone();
+        copy.DateTimeFormat.Calendar = gregorian;
+        return CultureInfo.ReadOnly(copy);
     }
 
     private static Dictionary<string, string> LoadPack(string? folder, CultureInfo culture)

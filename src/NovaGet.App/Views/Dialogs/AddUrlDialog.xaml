@@ -6,7 +6,7 @@
                 Title="{l:Loc AddUrl_Title}" FocusManager.FocusedElement="{Binding ElementName=AddressBox}">
   <StackPanel Margin="16" Width="500">
     <Label Content="{l:Loc AddUrl_Address}" Target="{Binding ElementName=AddressBox}" Padding="0" />
-    <ComboBox x:Name="AddressBox" IsEditable="True" Margin="0,4,0,0" Height="24" VerticalContentAlignment="Center"
+    <ComboBox FlowDirection="LeftToRight" x:Name="AddressBox" IsEditable="True" Margin="0,4,0,0" Height="24" VerticalContentAlignment="Center"
               AutomationProperties.Name="{l:Loc AddUrl_Address}" />
     <CheckBox x:Name="UseAuthBox" Content="{l:Loc AddUrl_UseAuth}" Margin="0,12,0,0" Checked="OnAuthToggled" Unchecked="OnAuthToggled" />
     <Grid x:Name="AuthGrid" Margin="20,8,0,0" Visibility="Collapsed">

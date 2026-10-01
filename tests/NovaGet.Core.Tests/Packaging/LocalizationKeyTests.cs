@@ -12,6 +12,9 @@ public sealed partial class LocalizationKeyTests
     private static HashSet<string> ResxKeys(string file) =>
         [.. XDocument.Load(file).Root!.Elements("data").Select(d => (string)d.Attribute("name")!)];
 
+    private static Dictionary<string, string> ResxValues(string file) =>
+        XDocument.Load(file).Root!.Elements("data").ToDictionary(d => (string)d.Attribute("name")!, d => (string)d.Element("value")!);
+
     [Fact]
     public void All_used_keys_exist_in_the_english_table()
     {
@@ -66,6 +69,55 @@ public sealed partial class LocalizationKeyTests
             Assert.True(extra.Count == 0, $"{Path.GetFileName(file)} has unknown keys: {string.Join(", ", extra)}");
         }
     }
+
+    [Fact]
+    public void Arabic_translates_every_string_with_the_same_placeholders()
+    {
+        var english = ResxValues(Path.Combine(s_appFolder, "Localization", "Strings.resx"));
+        var arabic = ResxValues(Path.Combine(s_appFolder, "Localization", "Strings.ar.resx"));
+
+        var missing = english.Keys.Where(k => !arabic.ContainsKey(k)).OrderBy(k => k).ToList();
+        Assert.True(missing.Count == 0, "Untranslated keys: " + string.Join(", ", missing));
+
+        var problems = new List<string>();
+        foreach (var (key, text) in english)
+        {
+            var translated = arabic[key];
+            if (string.IsNullOrWhiteSpace(translated))
+            {
+                problems.Add($"{key}: empty");
+                continue;
+            }
+
+            // string.Format would throw (or drop a value) if the placeholders differ.
+            if (!Placeholders(text).SequenceEqual(Placeholders(translated)))
+            {
+                problems.Add($"{key}: placeholders differ");
+            }
+
+            // A label with an access key keeps one, so Alt+letter still works in Arabic.
+            if (AccessKey().IsMatch(text) && !AccessKey().IsMatch(translated))
+            {
+                problems.Add($"{key}: access key missing");
+            }
+
+            if (text.Count(c => c == '|') != translated.Count(c => c == '|'))
+            {
+                problems.Add($"{key}: file filter parts differ");
+            }
+        }
+
+        Assert.True(problems.Count == 0, string.Join(Environment.NewLine, problems));
+    }
+
+    private static IEnumerable<string> Placeholders(string text) =>
+        Placeholder().Matches(text).Select(m => m.Value).Order(StringComparer.Ordinal);
+
+    [GeneratedRegex(@"\{\d+(?::[^}]*)?\}")]
+    private static partial Regex Placeholder();
+
+    [GeneratedRegex("(?<!_)_[A-Za-z0-9]")]
+    private static partial Regex AccessKey();
 
     [GeneratedRegex("""\{l:Loc\s+(?:Key=)?([A-Za-z0-9_]+)""")]
     private static partial Regex XamlKey();

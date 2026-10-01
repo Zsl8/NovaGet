@@ -647,6 +647,8 @@ internal sealed class DownloadJob : IEngineJob
             File.SetLastWriteTimeUtc(target, modified);
         }
 
+        // Checksum, Mark of the Web and virus scan; a stop request doesn't interrupt them (the file is already in place).
+        var warning = await FileFinisher.FinishAsync(current, target, Options, SetStatus, _logger, CancellationToken.None).ConfigureAwait(false);
         DeleteTempDirectory();
         _download.FileName = name;
         _download.SavePath = directory;
@@ -658,7 +660,7 @@ internal sealed class DownloadJob : IEngineJob
         _repository.SaveSegments(Id, []);
         _repository.MarkCompleted(Id, name, size, _download.CompletedAt.Value);
         _logger.LogInformation("Download {Id} complete: {Path}", Id, target);
-        Finish(DownloadStatus.Completed, null, DownloadErrorKind.None);
+        Finish(DownloadStatus.Completed, warning, warning is null ? DownloadErrorKind.None : DownloadErrorKind.ChecksumMismatch);
     }
 
     private Task StoppedAsync()

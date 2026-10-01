@@ -9,13 +9,13 @@
   <Window.Resources>
     <BooleanToVisibilityConverter x:Key="Visible" />
     <c:CollapsedWhenTrueConverter x:Key="Hidden" />
-    <Style TargetType="CheckBox">
+    <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
       <Setter Property="Margin" Value="0,3" />
     </Style>
-    <Style TargetType="RadioButton">
+    <Style TargetType="RadioButton" BasedOn="{StaticResource {x:Type RadioButton}}">
       <Setter Property="Margin" Value="0,3" />
     </Style>
-    <Style TargetType="TextBox">
+    <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
       <Setter Property="Height" Value="23" />
       <Setter Property="VerticalContentAlignment" Value="Center" />
     </Style>
@@ -27,11 +27,11 @@
       <Setter Property="Width" Value="70" />
       <Setter Property="HorizontalContentAlignment" Value="Center" />
     </Style>
-    <Style TargetType="GroupBox">
+    <Style TargetType="GroupBox" BasedOn="{StaticResource {x:Type GroupBox}}">
       <Setter Property="Margin" Value="0,8,0,0" />
       <Setter Property="Padding" Value="6,4" />
     </Style>
-    <Style x:Key="BarButton" TargetType="Button">
+    <Style x:Key="BarButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
       <Setter Property="MinWidth" Value="84" />
       <Setter Property="Padding" Value="8,2" />
     </Style>
@@ -117,7 +117,7 @@
                   <CheckBox x:Name="OpenFileCheck" Content="{l:Loc Scheduler_OpenFile}" IsChecked="{Binding OpenFileWhenDone}" VerticalAlignment="Center" />
                   <Button DockPanel.Dock="Right" Content="…" Width="28" Margin="6,0,0,0" Click="OnBrowseOpenFile" IsEnabled="{Binding IsChecked, ElementName=OpenFileCheck}"
                           AutomationProperties.Name="{l:Loc Common_Browse}" />
-                  <TextBox Text="{Binding OpenFilePath}" Margin="8,0,0,0" IsEnabled="{Binding IsChecked, ElementName=OpenFileCheck}"
+                  <TextBox FlowDirection="LeftToRight" Text="{Binding OpenFilePath}" Margin="8,0,0,0" IsEnabled="{Binding IsChecked, ElementName=OpenFileCheck}"
                            AutomationProperties.Name="{l:Loc Scheduler_OpenFile}" />
                 </DockPanel>
                 <CheckBox Content="{l:Loc Progress_HangUp}" IsChecked="{Binding HangUpWhenDone}" />

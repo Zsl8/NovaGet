@@ -94,7 +94,7 @@ Files on disk: settings and the database live in `%APPDATA%\NovaGet`, temp files
 | 10 | Video and streams | Done |
 | 11 | Batch, import/export, command line | Done |
 | 12 | Site grabber | Done |
-| 13 | Polish: icons, sounds, localization, themes, accessibility | Planned |
+| 13 | Polish: icons, sounds, localization, themes, accessibility | Done |
 | 14 | Installer final | Planned |
 | 15 | QA pass, v1.0.0 | Planned |
 

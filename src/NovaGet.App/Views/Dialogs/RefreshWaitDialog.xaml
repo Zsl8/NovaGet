@@ -1,0 +1,13 @@
+<v:DialogWindow x:Class="NovaGet.App.Views.Dialogs.RefreshWaitDialog"
+                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:v="clr-namespace:NovaGet.App.Views"
+                xmlns:l="clr-namespace:NovaGet.App.Localization"
+                Title="{l:Loc Refresh_Title}" Topmost="True" ShowInTaskbar="True">
+  <StackPanel Margin="14" Width="380">
+    <TextBlock x:Name="FileText" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+    <TextBlock Text="{l:Loc Refresh_Instructions}" TextWrapping="Wrap" Margin="0,8,0,0" />
+    <ProgressBar IsIndeterminate="True" Height="6" Margin="0,12,0,0" AutomationProperties.Name="{l:Loc Refresh_Title}" />
+    <Button Content="{l:Loc Common_Cancel}" MinWidth="80" HorizontalAlignment="Right" Margin="0,12,0,0" IsCancel="True" Click="OnCancel" />
+  </StackPanel>
+</v:DialogWindow>

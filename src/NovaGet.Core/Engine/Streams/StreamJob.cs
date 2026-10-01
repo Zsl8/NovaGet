@@ -626,6 +626,20 @@ internal sealed class StreamJob : IEngineJob
             finalNames.Add(finalName);
         }
 
+        // Checksum (of the main file), Mark of the Web and virus scan for every file delivered.
+        string? warning = null;
+        for (var i = 0; i < finalNames.Count; i++)
+        {
+            var subject = current;
+            if (i > 0)
+            {
+                subject = current.Clone();
+                subject.ChecksumExpected = null;
+            }
+
+            warning ??= await FileFinisher.FinishAsync(subject, Path.Combine(directory, finalNames[i]), Options, SetStatus, _logger, CancellationToken.None).ConfigureAwait(false);
+        }
+
         DeleteTempDirectory();
         var primary = finalNames[0];
         var size = new FileInfo(Path.Combine(directory, primary)).Length;
@@ -639,7 +653,7 @@ internal sealed class StreamJob : IEngineJob
         _repository.SaveSegments(Id, []);
         _repository.MarkCompleted(Id, primary, size, _download.CompletedAt.Value);
         _logger.LogInformation("Stream download {Id} complete: {Path}", Id, Path.Combine(directory, primary));
-        Finish(DownloadStatus.Completed, null, DownloadErrorKind.None);
+        Finish(DownloadStatus.Completed, warning, warning is null ? DownloadErrorKind.None : DownloadErrorKind.ChecksumMismatch);
     }
 
     /// <summary>Without ffmpeg (or when it fails): the joined tracks themselves; TS stays TS, fragmented MP4 is playable as is.</summary>

@@ -10,6 +10,11 @@
   <SolidColorBrush x:Key="ToolbarPressedBrush" Color="#330078D7" />
   <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
 
+  <!-- Right-to-left windows mirror their content; icons keep their artwork the right way round. -->
+  <Style TargetType="Image">
+    <Setter Property="FlowDirection" Value="LeftToRight" />
+  </Style>
+
   <!-- Flat toolbar button: highlight on hover, dimmed when disabled. -->
   <Style x:Key="ToolbarButtonStyle" TargetType="ButtonBase">
     <Setter Property="Background" Value="Transparent" />
@@ -70,14 +75,15 @@
 
   <!-- Download list rows: errors dark red, completed gray (selection keeps system colors). -->
   <Style x:Key="DownloadRowStyle" TargetType="DataGridRow">
+    <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
     <Setter Property="ToolTip" Value="{Binding ToolTip}" />
     <Setter Property="ToolTipService.IsEnabled" Value="{Binding IsError}" />
     <Style.Triggers>
       <DataTrigger Binding="{Binding IsError}" Value="True">
-        <Setter Property="Foreground" Value="{StaticResource ErrorRowBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource ErrorRowBrush}" />
       </DataTrigger>
       <DataTrigger Binding="{Binding IsCompleted}" Value="True">
-        <Setter Property="Foreground" Value="{StaticResource CompletedRowBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource CompletedRowBrush}" />
       </DataTrigger>
       <Trigger Property="IsSelected" Value="True">
         <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}" />

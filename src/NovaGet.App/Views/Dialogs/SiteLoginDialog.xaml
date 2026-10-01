@@ -6,7 +6,7 @@
                 Title="{l:Loc SiteLoginDialog_Title}" FocusManager.FocusedElement="{Binding ElementName=SiteBox}">
   <StackPanel Margin="16" Width="380">
     <Label Content="{l:Loc SiteLoginDialog_Site}" Target="{Binding ElementName=SiteBox}" Padding="0,0,0,4" />
-    <TextBox x:Name="SiteBox" Height="23" VerticalContentAlignment="Center" />
+    <TextBox FlowDirection="LeftToRight" x:Name="SiteBox" Height="23" VerticalContentAlignment="Center" />
     <TextBlock Text="{l:Loc SiteLoginDialog_SiteNote}" TextWrapping="Wrap" Margin="0,4,0,0" Foreground="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
     <Grid Margin="0,10,0,0">
       <Grid.ColumnDefinitions>

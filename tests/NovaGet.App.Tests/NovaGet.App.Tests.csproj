@@ -3,7 +3,8 @@
   <!-- WPF smoke tests: open the real windows against a temp profile. Windows only (CI runs them);
        elsewhere the project still builds but is not treated as a test project. -->
   <PropertyGroup>
-    <TargetFramework>net8.0-windows10.0.17763.0</TargetFramework>
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+    <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
     <UseWPF>true</UseWPF>
     <IsPackable>false</IsPackable>
     <IsTestProject Condition="'$(OS)' == 'Windows_NT'">true</IsTestProject>

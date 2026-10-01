@@ -17,6 +17,7 @@ Microsoft.Data.Sqlite                       MIT            https://github.com/do
 Microsoft Windows SDK .NET projection       MIT            https://github.com/microsoft/CsWinRT
 CommunityToolkit.Mvvm                       MIT            https://github.com/CommunityToolkit/dotnet
 H.NotifyIcon.Wpf                            MIT            https://github.com/HavenDV/H.NotifyIcon
+CommunityToolkit.WinUI.Notifications        MIT            https://github.com/CommunityToolkit/WindowsCommunityToolkit
 FluentFTP                                   MIT            https://github.com/robinrodricks/FluentFTP
 AngleSharp                                  MIT            https://github.com/AngleSharp/AngleSharp
 SQLitePCLRaw                                Apache-2.0     https://github.com/ericsink/SQLitePCL.raw
@@ -50,7 +51,7 @@ Copyright notices
 -----------------
 .NET, WPF, Microsoft.Extensions.*, Microsoft.Data.Sqlite, CsWinRT:
   Copyright (c) .NET Foundation and Contributors
-CommunityToolkit.Mvvm: Copyright (c) .NET Foundation and Contributors
+CommunityToolkit.Mvvm, CommunityToolkit.WinUI.Notifications: Copyright (c) .NET Foundation and Contributors
 H.NotifyIcon: Copyright (c) 2022 Konstantin S. (HavenDV); based on
   WPF NotifyIcon, Copyright (c) 2009-2021 Philipp Sumi
 SQLitePCLRaw: Copyright 2014-2021 SourceGear, LLC

@@ -41,6 +41,7 @@ public partial class MainWindow : Window
         _dialogs = dialogs;
         _paths = paths;
         InitializeComponent();
+        SourceInitialized += (_, _) => Services.ThemeService.ApplyTitleBar(this);
         DataContext = viewModel;
         FlowDirection = Localizer.IsRightToLeft ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
 

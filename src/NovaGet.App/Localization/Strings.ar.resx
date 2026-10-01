@@ -1,0 +1,736 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="About_License" xml:space="preserve"><value>برنامج مجاني بموجب ترخيص MIT. بلا إعلانات ولا تتبع.</value></data>
+  <data name="About_Notices" xml:space="preserve"><value>إشعارات الجهات الخارجية</value></data>
+  <data name="About_Text" xml:space="preserve"><value>مدير تنزيل مجاني لنظام Windows.</value></data>
+  <data name="About_Title" xml:space="preserve"><value>حول NovaGet</value></data>
+  <data name="AddUrl_AddAnyway" xml:space="preserve"><value>اضغط موافق مرة أخرى لإضافته على أي حال.</value></data>
+  <data name="AddUrl_Address" xml:space="preserve"><value>العنوان (_A):</value></data>
+  <data name="AddUrl_Checking" xml:space="preserve"><value>جارٍ التحقق من العنوان...</value></data>
+  <data name="AddUrl_Login" xml:space="preserve"><value>اسم المستخدم (_L):</value></data>
+  <data name="AddUrl_Password" xml:space="preserve"><value>كلمة المرور (_P):</value></data>
+  <data name="AddUrl_Title" xml:space="preserve"><value>أدخل عنوانًا جديدًا للتنزيل</value></data>
+  <data name="AddUrl_UseAuth" xml:space="preserve"><value>استخدام المصادقة (_A)</value></data>
+  <data name="Arrange_Description" xml:space="preserve"><value>حسب الوصف (_D)</value></data>
+  <data name="Arrange_FileName" xml:space="preserve"><value>حسب اسم الملف (_F)</value></data>
+  <data name="Arrange_LastTry" xml:space="preserve"><value>حسب تاريخ آخر محاولة (_T)</value></data>
+  <data name="Arrange_Order" xml:space="preserve"><value>حسب ترتيب الإضافة (_O)</value></data>
+  <data name="Arrange_Referrer" xml:space="preserve"><value>حسب الصفحة المُحيلة (_E)</value></data>
+  <data name="Arrange_SaveTo" xml:space="preserve"><value>حسب مكان الحفظ (_T)</value></data>
+  <data name="Arrange_Size" xml:space="preserve"><value>حسب الحجم (_S)</value></data>
+  <data name="Arrange_Status" xml:space="preserve"><value>حسب الحالة (_T)</value></data>
+  <data name="Arrange_TimeLeft" xml:space="preserve"><value>حسب الوقت المتبقي (_L)</value></data>
+  <data name="Arrange_TransferRate" xml:space="preserve"><value>حسب سرعة النقل (_R)</value></data>
+  <data name="Batch_Address" xml:space="preserve"><value>العنوان (_A):</value></data>
+  <data name="Batch_ClipboardTitle" xml:space="preserve"><value>إضافة تنزيل مجمّع من الحافظة</value></data>
+  <data name="Batch_Count" xml:space="preserve"><value>{0:N0} ملف</value></data>
+  <data name="Batch_Decrease" xml:space="preserve"><value>إنقاص</value></data>
+  <data name="Batch_Error_BadAddress" xml:space="preserve"><value>يجب أن يكون العنوان من نوع http أو https أو ftp أو ftps.</value></data>
+  <data name="Batch_Error_BadLetters" xml:space="preserve"><value>يجب أن تكون قيمتا «من» و«إلى» حرفًا لاتينيًا واحدًا (a–z).</value></data>
+  <data name="Batch_Error_BadNumbers" xml:space="preserve"><value>يجب أن تكون قيمتا «من» و«إلى» أعدادًا صحيحة (0 أو أكثر).</value></data>
+  <data name="Batch_Error_BadWildcardSize" xml:space="preserve"><value>يجب أن يكون عدد الخانات بين 1 و{0}.</value></data>
+  <data name="Batch_Error_MixedCase" xml:space="preserve"><value>يجب أن تكون قيمتا «من» و«إلى» كلتاهما صغيرتين أو كبيرتين.</value></data>
+  <data name="Batch_Error_NoAsterisk" xml:space="preserve"><value>يجب أن يحتوي العنوان على علامة نجمة (*) في موضع الأرقام أو الحروف.</value></data>
+  <data name="Batch_Error_TooMany" xml:space="preserve"><value>سينتج عن ذلك أكثر من {0:N0} عنوان.</value></data>
+  <data name="Batch_FirstFile" xml:space="preserve"><value>الملف الأول:</value></data>
+  <data name="Batch_From" xml:space="preserve"><value>من (_F):</value></data>
+  <data name="Batch_Hint" xml:space="preserve"><value>ضع علامة نجمة (*) في موضع الأرقام أو الحروف، مثل http://www.site.com/images/img*.jpg</value></data>
+  <data name="Batch_Increase" xml:space="preserve"><value>زيادة</value></data>
+  <data name="Batch_LastFile" xml:space="preserve"><value>الملف الأخير:</value></data>
+  <data name="Batch_Letters" xml:space="preserve"><value>حروف (_L)</value></data>
+  <data name="Batch_Login" xml:space="preserve"><value>اسم المستخدم (_G):</value></data>
+  <data name="Batch_NoClipboardLinks" xml:space="preserve"><value>لا تحتوي الحافظة على عناوين http أو https أو ftp.</value></data>
+  <data name="Batch_Numbers" xml:space="preserve"><value>أرقام (_N)</value></data>
+  <data name="Batch_Password" xml:space="preserve"><value>كلمة المرور (_P):</value></data>
+  <data name="Batch_ReplaceWith" xml:space="preserve"><value>استبدال علامة النجمة بـ:</value></data>
+  <data name="Batch_Title" xml:space="preserve"><value>إضافة تنزيل مجمّع</value></data>
+  <data name="Batch_To" xml:space="preserve"><value>إلى (_T):</value></data>
+  <data name="Batch_UseAuth" xml:space="preserve"><value>استخدام المصادقة (_U)</value></data>
+  <data name="Batch_WildcardSize" xml:space="preserve"><value>عدد الخانات (_W):</value></data>
+  <data name="Category_Compressed" xml:space="preserve"><value>ملفات مضغوطة</value></data>
+  <data name="Category_Documents" xml:space="preserve"><value>مستندات</value></data>
+  <data name="Category_General" xml:space="preserve"><value>عام</value></data>
+  <data name="Category_Music" xml:space="preserve"><value>موسيقى</value></data>
+  <data name="Category_Programs" xml:space="preserve"><value>برامج</value></data>
+  <data name="Category_Video" xml:space="preserve"><value>فيديو</value></data>
+  <data name="CategoryDialog_AddTitle" xml:space="preserve"><value>إضافة فئة</value></data>
+  <data name="CategoryDialog_EditTitle" xml:space="preserve"><value>تعديل الفئة</value></data>
+  <data name="CategoryDialog_Extensions" xml:space="preserve"><value>أنواع الملفات (امتدادات مفصولة بمسافات) (_T):</value></data>
+  <data name="CategoryDialog_Folder" xml:space="preserve"><value>حفظ الملفات في (_S):</value></data>
+  <data name="CategoryDialog_Name" xml:space="preserve"><value>اسم الفئة (_N):</value></data>
+  <data name="Cmd_About" xml:space="preserve"><value>حول NovaGet (_A)</value></data>
+  <data name="Cmd_AddBatch" xml:space="preserve"><value>إضافة تنزيل مجمّع (_B)...</value></data>
+  <data name="Cmd_AddBatchClipboard" xml:space="preserve"><value>إضافة تنزيل مجمّع من الحافظة (_C)</value></data>
+  <data name="Cmd_AddCategory" xml:space="preserve"><value>إضافة فئة (_A)...</value></data>
+  <data name="Cmd_AddNewDownload" xml:space="preserve"><value>إضافة تنزيل جديد (_A)...</value></data>
+  <data name="Cmd_CheckUpdates" xml:space="preserve"><value>البحث عن تحديثات (_U)...</value></data>
+  <data name="Cmd_CommandLineHelp" xml:space="preserve"><value>خيارات سطر الأوامر (_M)</value></data>
+  <data name="Cmd_CopyAddress" xml:space="preserve"><value>نسخ العنوان (_C)</value></data>
+  <data name="Cmd_CreateQueue" xml:space="preserve"><value>إنشاء قائمة انتظار جديدة (_C)...</value></data>
+  <data name="Cmd_CustomizeToolbar" xml:space="preserve"><value>تخصيص (_C)...</value></data>
+  <data name="Cmd_DeleteAllCompleted" xml:space="preserve"><value>حذف كل المكتملة (_C)</value></data>
+  <data name="Cmd_DeleteCategory" xml:space="preserve"><value>حذف الفئة (_D)</value></data>
+  <data name="Cmd_DeleteFromQueue" xml:space="preserve"><value>حذف من قائمة الانتظار (_Q)</value></data>
+  <data name="Cmd_DeleteQueue" xml:space="preserve"><value>حذف (_D)</value></data>
+  <data name="Cmd_DownloadNow" xml:space="preserve"><value>تنزيل الآن (_D)</value></data>
+  <data name="Cmd_EditCategory" xml:space="preserve"><value>تعديل الفئة (_E)...</value></data>
+  <data name="Cmd_Exit" xml:space="preserve"><value>خروج (_X)</value></data>
+  <data name="Cmd_ExportEf2" xml:space="preserve"><value>إلى ملف EF2 (_E)...</value></data>
+  <data name="Cmd_ExportText" xml:space="preserve"><value>إلى ملف نصي (_T)...</value></data>
+  <data name="Cmd_Faq" xml:space="preserve"><value>الأسئلة الشائعة (_F)</value></data>
+  <data name="Cmd_Find" xml:space="preserve"><value>بحث (_F)...</value></data>
+  <data name="Cmd_FindNext" xml:space="preserve"><value>البحث عن التالي (_N)</value></data>
+  <data name="Cmd_GrabberDelete" xml:space="preserve"><value>حذف المشروع (_D)</value></data>
+  <data name="Cmd_GrabberEdit" xml:space="preserve"><value>تعديل المشروع (_E)…</value></data>
+  <data name="Cmd_GrabberProjects" xml:space="preserve"><value>مشاريع الجامع (_P)...</value></data>
+  <data name="Cmd_GrabberRunAgain" xml:space="preserve"><value>تشغيل مجددًا (الملفات الجديدة والمتغيرة) (_R)</value></data>
+  <data name="Cmd_HelpContents" xml:space="preserve"><value>المحتويات (_C)</value></data>
+  <data name="Cmd_HideCategories" xml:space="preserve"><value>إخفاء الفئات (_C)</value></data>
+  <data name="Cmd_HideLabels" xml:space="preserve"><value>إخفاء تسميات الأزرار (_H)</value></data>
+  <data name="Cmd_ImportEf2" xml:space="preserve"><value>من ملف EF2 (_E)...</value></data>
+  <data name="Cmd_ImportText" xml:space="preserve"><value>من ملف نصي (_T)...</value></data>
+  <data name="Cmd_LargeButtons" xml:space="preserve"><value>أزرار كبيرة (_L)</value></data>
+  <data name="Cmd_LimiterSettings" xml:space="preserve"><value>الإعدادات (_S)...</value></data>
+  <data name="Cmd_MoveDown" xml:space="preserve"><value>نقل لأسفل في قائمة الانتظار (_W)</value></data>
+  <data name="Cmd_MoveRename" xml:space="preserve"><value>نقل/إعادة تسمية (_M)...</value></data>
+  <data name="Cmd_MoveUp" xml:space="preserve"><value>نقل لأعلى في قائمة الانتظار (_U)</value></data>
+  <data name="Cmd_Open" xml:space="preserve"><value>فتح (_O)</value></data>
+  <data name="Cmd_OpenFolder" xml:space="preserve"><value>فتح المجلد (_F)</value></data>
+  <data name="Cmd_OpenWith" xml:space="preserve"><value>فتح باستخدام (_W)...</value></data>
+  <data name="Cmd_Options" xml:space="preserve"><value>الخيارات (_O)...</value></data>
+  <data name="Cmd_PauseAll" xml:space="preserve"><value>إيقاف الكل مؤقتًا (_P)</value></data>
+  <data name="Cmd_Properties" xml:space="preserve"><value>الخصائص (_P)</value></data>
+  <data name="Cmd_QueueEdit" xml:space="preserve"><value>تعديل (_E)...</value></data>
+  <data name="Cmd_QueueStart" xml:space="preserve"><value>بدء (_S)</value></data>
+  <data name="Cmd_QueueStop" xml:space="preserve"><value>إيقاف (_T)</value></data>
+  <data name="Cmd_Redownload" xml:space="preserve"><value>إعادة التنزيل (_D)</value></data>
+  <data name="Cmd_RefreshAddress" xml:space="preserve"><value>تحديث عنوان التنزيل (_A)</value></data>
+  <data name="Cmd_Remove" xml:space="preserve"><value>إزالة (_R)</value></data>
+  <data name="Cmd_RemoveWithFile" xml:space="preserve"><value>إزالة مع الملف (_W)</value></data>
+  <data name="Cmd_ResumeDownload" xml:space="preserve"><value>استئناف التنزيل (_R)</value></data>
+  <data name="Cmd_RunGrabber" xml:space="preserve"><value>تشغيل جامع المواقع (_G)...</value></data>
+  <data name="Cmd_Scheduler" xml:space="preserve"><value>المجدول (_H)...</value></data>
+  <data name="Cmd_ShowColumns" xml:space="preserve"><value>إظهار/إخفاء الأعمدة (_C)...</value></data>
+  <data name="Cmd_ShowDropTarget" xml:space="preserve"><value>إظهار هدف الإفلات (_D)</value></data>
+  <data name="Cmd_ShowTrayGraph" xml:space="preserve"><value>إظهار مخطط السرعة في منطقة الإعلام (_S)</value></data>
+  <data name="Cmd_SmallButtons" xml:space="preserve"><value>أزرار صغيرة (_S)</value></data>
+  <data name="Cmd_StopAll" xml:space="preserve"><value>إيقاف الكل (_S)</value></data>
+  <data name="Cmd_StopDownload" xml:space="preserve"><value>إيقاف التنزيل (_S)</value></data>
+  <data name="Cmd_TurnOff" xml:space="preserve"><value>إيقاف التشغيل (_F)</value></data>
+  <data name="Cmd_TurnOn" xml:space="preserve"><value>تشغيل (_O)</value></data>
+  <data name="Col_Added" xml:space="preserve"><value>تاريخ الإضافة</value></data>
+  <data name="Col_Connections" xml:space="preserve"><value>الاتصالات</value></data>
+  <data name="Col_Description" xml:space="preserve"><value>الوصف</value></data>
+  <data name="Col_FileName" xml:space="preserve"><value>اسم الملف</value></data>
+  <data name="Col_LastTry" xml:space="preserve"><value>تاريخ آخر محاولة</value></data>
+  <data name="Col_Queue" xml:space="preserve"><value>ق</value></data>
+  <data name="Col_Referrer" xml:space="preserve"><value>الصفحة المُحيلة</value></data>
+  <data name="Col_SaveTo" xml:space="preserve"><value>مكان الحفظ</value></data>
+  <data name="Col_Size" xml:space="preserve"><value>الحجم</value></data>
+  <data name="Col_Status" xml:space="preserve"><value>الحالة</value></data>
+  <data name="Col_TimeLeft" xml:space="preserve"><value>الوقت المتبقي</value></data>
+  <data name="Col_TransferRate" xml:space="preserve"><value>سرعة النقل</value></data>
+  <data name="Columns_Intro" xml:space="preserve"><value>اختر الأعمدة المعروضة وترتيبها:</value></data>
+  <data name="Columns_Title" xml:space="preserve"><value>إظهار/إخفاء الأعمدة</value></data>
+  <data name="Common_Add" xml:space="preserve"><value>إضافة (_A)…</value></data>
+  <data name="Common_Browse" xml:space="preserve"><value>...</value></data>
+  <data name="Common_Cancel" xml:space="preserve"><value>إلغاء</value></data>
+  <data name="Common_Close" xml:space="preserve"><value>إغلاق</value></data>
+  <data name="Common_Delete" xml:space="preserve"><value>حذف (_D)</value></data>
+  <data name="Common_Edit" xml:space="preserve"><value>تعديل (_E)…</value></data>
+  <data name="Common_Help" xml:space="preserve"><value>تعليمات (_H)</value></data>
+  <data name="Common_MoveDown" xml:space="preserve"><value>نقل لأسفل (_D)</value></data>
+  <data name="Common_MoveUp" xml:space="preserve"><value>نقل لأعلى (_U)</value></data>
+  <data name="Common_No" xml:space="preserve"><value>لا (_N)</value></data>
+  <data name="Common_OK" xml:space="preserve"><value>موافق</value></data>
+  <data name="Common_Reset" xml:space="preserve"><value>إعادة تعيين (_R)</value></data>
+  <data name="Common_Yes" xml:space="preserve"><value>نعم (_Y)</value></data>
+  <data name="Complete_Address" xml:space="preserve"><value>العنوان:</value></data>
+  <data name="Complete_DontShow" xml:space="preserve"><value>عدم إظهار هذا الحوار مرة أخرى (_D)</value></data>
+  <data name="Complete_Open" xml:space="preserve"><value>فتح (_O)</value></data>
+  <data name="Complete_OpenFolder" xml:space="preserve"><value>فتح المجلد (_F)</value></data>
+  <data name="Complete_OpenWith" xml:space="preserve"><value>فتح باستخدام (_W)...</value></data>
+  <data name="Complete_SavedTo" xml:space="preserve"><value>حُفظ في:</value></data>
+  <data name="Complete_Title" xml:space="preserve"><value>اكتمل التنزيل</value></data>
+  <data name="Confirm_CancelDownload" xml:space="preserve"><value>إلغاء هذا التنزيل؟
+ستُحذف البيانات التي استُلمت حتى الآن.</value></data>
+  <data name="Confirm_Delete" xml:space="preserve"><value>هل تريد بالتأكيد حذف {0} ملف؟</value></data>
+  <data name="Confirm_DeleteAlsoFromDisk" xml:space="preserve"><value>الحذف من القرص أيضًا (_D)</value></data>
+  <data name="Confirm_DeleteCategory" xml:space="preserve"><value>حذف الفئة «{0}»؟
+ستنتقل تنزيلاتها إلى «عام».</value></data>
+  <data name="Confirm_DeleteCompleted" xml:space="preserve"><value>إزالة كل التنزيلات المكتملة من القائمة؟
+تبقى الملفات المنزّلة على القرص.</value></data>
+  <data name="Confirm_DeleteQueue" xml:space="preserve"><value>حذف قائمة الانتظار «{0}»؟
+تبقى تنزيلاتها في القائمة.</value></data>
+  <data name="Confirm_RestartChanged" xml:space="preserve"><value>تغيّر الملف على الخادم. هل تريد إعادة التنزيل من البداية؟</value></data>
+  <data name="ConnType_Custom" xml:space="preserve"><value>مخصص</value></data>
+  <data name="ConnType_HighSpeed" xml:space="preserve"><value>سرعة عالية (ألياف/شبكة محلية، 100 ميجابت/ث فأكثر)</value></data>
+  <data name="ConnType_LowSpeed" xml:space="preserve"><value>سرعة منخفضة (اتصال هاتفي)</value></data>
+  <data name="ConnType_Medium" xml:space="preserve"><value>متوسطة (DSL/كابل)</value></data>
+  <data name="ContextMenu_DownloadAll" xml:space="preserve"><value>تنزيل كل الروابط باستخدام NovaGet</value></data>
+  <data name="ContextMenu_DownloadVideo" xml:space="preserve"><value>تنزيل الفيديو باستخدام NovaGet</value></data>
+  <data name="ContextMenu_DownloadWith" xml:space="preserve"><value>التنزيل باستخدام NovaGet</value></data>
+  <data name="ContextMenuDialog_Intro" xml:space="preserve"><value>اختر الأوامر التي يضيفها NovaGet إلى قائمة النقر بزر الماوس الأيمن في المتصفح.</value></data>
+  <data name="ContextMenuDialog_Title" xml:space="preserve"><value>عناصر قائمة السياق</value></data>
+  <data name="DoubleClick_OpenFile" xml:space="preserve"><value>فتح الملف</value></data>
+  <data name="DoubleClick_OpenFolder" xml:space="preserve"><value>فتح المجلد</value></data>
+  <data name="DoubleClick_Properties" xml:space="preserve"><value>إظهار الخصائص</value></data>
+  <data name="DropTarget_Hide" xml:space="preserve"><value>إخفاء هدف الإفلات (_H)</value></data>
+  <data name="DropTarget_Title" xml:space="preserve"><value>هدف الإفلات في NovaGet</value></data>
+  <data name="DropTarget_Tooltip" xml:space="preserve"><value>أفلت الروابط هنا لتنزيلها باستخدام NovaGet</value></data>
+  <data name="DupAction_AddAndOverwrite" xml:space="preserve"><value>إضافة النسخة المكررة والكتابة فوق الملف الموجود</value></data>
+  <data name="DupAction_AddNumbered" xml:space="preserve"><value>إضافة النسخة المكررة باسم ملف مرقّم</value></data>
+  <data name="DupAction_ShowCompleteOrResume" xml:space="preserve"><value>إن كان الملف مكتملًا فأظهر حوار اكتمال التنزيل، وإلا فاستأنفه</value></data>
+  <data name="DupAction_ShowDialog" xml:space="preserve"><value>إظهار حوار</value></data>
+  <data name="Duplicate_AddNumbered" xml:space="preserve"><value>إضافة باسم مرقّم (_N)</value></data>
+  <data name="Duplicate_Message" xml:space="preserve"><value>هذا العنوان موجود بالفعل في قائمة التنزيلات باسم
+«{0}».
+
+ماذا تريد أن تفعل؟</value></data>
+  <data name="Duplicate_Overwrite" xml:space="preserve"><value>إضافة والكتابة فوق الملف (_O)</value></data>
+  <data name="Duplicate_ShowExisting" xml:space="preserve"><value>إظهار التنزيل الموجود (_S)</value></data>
+  <data name="Duplicate_Title" xml:space="preserve"><value>تنزيل مكرر</value></data>
+  <data name="Error_FileMissing" xml:space="preserve"><value>الملف «{0}» لم يعد موجودًا.</value></data>
+  <data name="Error_InvalidAddress" xml:space="preserve"><value>الرجاء إدخال عنوان صالح (http أو https أو ftp أو ftps).</value></data>
+  <data name="Error_InvalidNumber" xml:space="preserve"><value>الرجاء إدخال رقم بين {0} و{1}.</value></data>
+  <data name="Error_InvalidPath" xml:space="preserve"><value>الرجاء إدخال مسار كامل للملف، مثل C:\Downloads\file.zip.</value></data>
+  <data name="Error_NameRequired" xml:space="preserve"><value>الرجاء إدخال اسم.</value></data>
+  <data name="Error_ProbeFailed" xml:space="preserve"><value>تعذّر على NovaGet الحصول على معلومات عن هذا العنوان:
+{0}</value></data>
+  <data name="Error_QueueExists" xml:space="preserve"><value>توجد قائمة انتظار بهذا الاسم بالفعل.</value></data>
+  <data name="Error_QueueNameChars" xml:space="preserve"><value>لا يمكن أن تحتوي أسماء قوائم الانتظار على علامات اقتباس.</value></data>
+  <data name="Error_QueueNameLength" xml:space="preserve"><value>يمكن أن يتكون اسم قائمة الانتظار من {0} حرفًا على الأكثر.</value></data>
+  <data name="Export_Done" xml:space="preserve"><value>صُدّر {0:N0} تنزيل إلى {1}.</value></data>
+  <data name="Export_Ef2Filter" xml:space="preserve"><value>قوائم تنزيل EF2 (*.ef2)|*.ef2|كل الملفات (*.*)|*.*</value></data>
+  <data name="Export_Failed" xml:space="preserve"><value>تعذّرت كتابة الملف: {0}</value></data>
+  <data name="Export_Nothing" xml:space="preserve"><value>لا توجد تنزيلات لتصديرها.</value></data>
+  <data name="Export_TextFilter" xml:space="preserve"><value>ملفات نصية (*.txt)|*.txt|كل الملفات (*.*)|*.*</value></data>
+  <data name="Export_Title" xml:space="preserve"><value>تصدير التنزيلات</value></data>
+  <data name="FileInfo_AddCategory" xml:space="preserve"><value>إضافة فئة</value></data>
+  <data name="FileInfo_Category" xml:space="preserve"><value>الفئة (_C):</value></data>
+  <data name="FileInfo_ChooseQueue" xml:space="preserve"><value>اختيار قائمة الانتظار</value></data>
+  <data name="FileInfo_CreateQueue" xml:space="preserve"><value>إنشاء قائمة انتظار جديدة...</value></data>
+  <data name="FileInfo_Description" xml:space="preserve"><value>الوصف (_D):</value></data>
+  <data name="FileInfo_DownloadLater" xml:space="preserve"><value>التنزيل لاحقًا (_L)</value></data>
+  <data name="FileInfo_Remember" xml:space="preserve"><value>تذكّر هذا المسار لفئة «{0}» (_R)</value></data>
+  <data name="FileInfo_SaveAs" xml:space="preserve"><value>حفظ باسم (_A):</value></data>
+  <data name="FileInfo_Size" xml:space="preserve"><value>الحجم: {0}</value></data>
+  <data name="FileInfo_SizeUnknown" xml:space="preserve"><value>غير معروف</value></data>
+  <data name="FileInfo_Start" xml:space="preserve"><value>بدء التنزيل (_S)</value></data>
+  <data name="FileInfo_Title" xml:space="preserve"><value>معلومات ملف التنزيل</value></data>
+  <data name="FileInfo_Url" xml:space="preserve"><value>العنوان:</value></data>
+  <data name="Filter_AllFiles" xml:space="preserve"><value>كل الملفات (*.*)|*.*</value></data>
+  <data name="Filter_Programs" xml:space="preserve"><value>البرامج (*.exe;*.com;*.bat;*.cmd)|*.exe;*.com;*.bat;*.cmd|كل الملفات (*.*)|*.*</value></data>
+  <data name="Filter_Settings" xml:space="preserve"><value>إعدادات NovaGet (*.json)|*.json|كل الملفات (*.*)|*.*</value></data>
+  <data name="Filter_Wave" xml:space="preserve"><value>أصوات Wave (*.wav)|*.wav</value></data>
+  <data name="Find_Label" xml:space="preserve"><value>البحث عن (_W):</value></data>
+  <data name="Find_MatchCase" xml:space="preserve"><value>مطابقة حالة الأحرف (_C)</value></data>
+  <data name="Find_Next" xml:space="preserve"><value>البحث عن التالي (_F)</value></data>
+  <data name="Find_NotFound" xml:space="preserve"><value>تعذّر العثور على «{0}».</value></data>
+  <data name="Find_Title" xml:space="preserve"><value>بحث</value></data>
+  <data name="Grabber_AddToQueue" xml:space="preserve"><value>إضافة المحدد إلى قائمة انتظار (_Q)…</value></data>
+  <data name="Grabber_Back" xml:space="preserve"><value>&lt; السابق (_B)</value></data>
+  <data name="Grabber_ColPage" xml:space="preserve"><value>الصفحة التي وُجد فيها</value></data>
+  <data name="Grabber_ColSize" xml:space="preserve"><value>الحجم</value></data>
+  <data name="Grabber_ColStatus" xml:space="preserve"><value>الحالة</value></data>
+  <data name="Grabber_ColType" xml:space="preserve"><value>النوع</value></data>
+  <data name="Grabber_ColUrl" xml:space="preserve"><value>العنوان</value></data>
+  <data name="Grabber_ConfirmDelete" xml:space="preserve"><value>حذف مشروع الجامع «{0}»؟ تبقى الملفات التي نزّلها في مكانها.</value></data>
+  <data name="Grabber_ConvertLinks" xml:space="preserve"><value>تحويل الروابط للتصفح دون اتصال (_C)</value></data>
+  <data name="Grabber_ConvertLinksHint" xml:space="preserve"><value>تُحفظ الصفحات أيضًا مع إعادة كتابة روابطها لتشير إلى النسخ المحلية، ليمكن تصفح الموقع دون اتصال.</value></data>
+  <data name="Grabber_Counters" xml:space="preserve"><value>الصفحات المستكشفة: {0:N0} · الملفات الموجودة: {1:N0} · المنزّلة: {2:N0}</value></data>
+  <data name="Grabber_CustomTypes" xml:space="preserve"><value>امتدادات أخرى (مفصولة بمسافات، يُسمح بأحرف البدل) (_E):</value></data>
+  <data name="Grabber_Delay" xml:space="preserve"><value>التأخير بين الطلبات (مللي ثانية) (_D):</value></data>
+  <data name="Grabber_Depth" xml:space="preserve"><value>عمق الاستكشاف (_D):</value></data>
+  <data name="Grabber_Done" xml:space="preserve"><value>انتهى الاستكشاف.</value></data>
+  <data name="Grabber_DownloadSelected" xml:space="preserve"><value>تنزيل المحدد (_D)</value></data>
+  <data name="Grabber_Error_Exploration" xml:space="preserve"><value>تحقق من إعدادات الاستكشاف: العمق 0–20، الصفحات 0 أو أكثر، التأخير حتى 600000 مللي ثانية، تحميل 1–16 صفحة في الوقت نفسه.</value></data>
+  <data name="Grabber_Error_FileTypes" xml:space="preserve"><value>اختر نوع ملف واحدًا على الأقل.</value></data>
+  <data name="Grabber_Error_Name" xml:space="preserve"><value>أدخل اسم المشروع.</value></data>
+  <data name="Grabber_Error_Size" xml:space="preserve"><value>لا يمكن أن يكون الحجم الأدنى أكبر من الحجم الأقصى.</value></data>
+  <data name="Grabber_Error_StartUrl" xml:space="preserve"><value>أدخل عنوان صفحة البدء (http أو https).</value></data>
+  <data name="Grabber_Exclude" xml:space="preserve"><value>استبعاد العناوين (حرف بدل واحد في كل سطر) (_X):</value></data>
+  <data name="Grabber_Exploring" xml:space="preserve"><value>جارٍ الاستكشاف…</value></data>
+  <data name="Grabber_Failed" xml:space="preserve"><value>فشل الاستكشاف: {0}</value></data>
+  <data name="Grabber_FileTypes" xml:space="preserve"><value>الملفات المراد تنزيلها:</value></data>
+  <data name="Grabber_FilterHint" xml:space="preserve"><value>مثل */gallery/* أو *logout*. النص الذي لا يحتوي على * يطابق أي موضع في العنوان.</value></data>
+  <data name="Grabber_Finish" xml:space="preserve"><value>إنهاء (_F)</value></data>
+  <data name="Grabber_FollowExternal" xml:space="preserve"><value>تتبّع الروابط إلى مواقع أخرى حتى العمق (_F)</value></data>
+  <data name="Grabber_Include" xml:space="preserve"><value>تضمين هذه العناوين فقط (حرف بدل واحد في كل سطر) (_I):</value></data>
+  <data name="Grabber_LoginHint" xml:space="preserve"><value>إن كان الموقع يستخدم نموذج تسجيل دخول، فاستخدم «تسجيل الدخول عبر المتصفح…»: سجّل الدخول في الصفحة التي تُفتح، ثم انقر زر NovaGet في شريط أدوات المتصفح واختر «إرسال بيانات دخول هذا الموقع إلى NovaGet».</value></data>
+  <data name="Grabber_LoginReceived" xml:space="preserve"><value>استُلمت بيانات الدخول من المتصفح.</value></data>
+  <data name="Grabber_LoginViaBrowser" xml:space="preserve"><value>تسجيل الدخول عبر المتصفح (_B)…</value></data>
+  <data name="Grabber_LoginWaiting" xml:space="preserve"><value>في انتظار بيانات الدخول من المتصفح…</value></data>
+  <data name="Grabber_MaxPages" xml:space="preserve"><value>الحد الأقصى للصفحات (_M):</value></data>
+  <data name="Grabber_MaxSize" xml:space="preserve"><value>الحجم الأقصى (كيلوبايت) (_X):</value></data>
+  <data name="Grabber_MinSize" xml:space="preserve"><value>الحجم الأدنى (كيلوبايت) (_N):</value></data>
+  <data name="Grabber_Next" xml:space="preserve"><value>التالي (_N) &gt;</value></data>
+  <data name="Grabber_ObeyRobots" xml:space="preserve"><value>الالتزام بملف robots.txt (_R)</value></data>
+  <data name="Grabber_OnlyMatching" xml:space="preserve"><value>تنزيل الملفات المطابقة لهذه الأنواع فقط (_O)</value></data>
+  <data name="Grabber_Parallel" xml:space="preserve"><value>الحد الأقصى لتحميل الصفحات المتزامن (_S):</value></data>
+  <data name="Grabber_Pause" xml:space="preserve"><value>إيقاف مؤقت (_P)</value></data>
+  <data name="Grabber_Paused" xml:space="preserve"><value>متوقف مؤقتًا.</value></data>
+  <data name="Grabber_ProjectName" xml:space="preserve"><value>اسم المشروع (_N):</value></data>
+  <data name="Grabber_ResultsTitle" xml:space="preserve"><value>الملفات الموجودة</value></data>
+  <data name="Grabber_ResultsWindowTitle" xml:space="preserve"><value>جامع المواقع – {0}</value></data>
+  <data name="Grabber_Resume" xml:space="preserve"><value>استئناف (_R)</value></data>
+  <data name="Grabber_SaveByCategory" xml:space="preserve"><value>حفظ كل نوع ملف في مجلد فئته (_T)</value></data>
+  <data name="Grabber_SaveFolder" xml:space="preserve"><value>حفظ الملفات في (_S):</value></data>
+  <data name="Grabber_SizeHint" xml:space="preserve"><value>(0 = بلا حد)</value></data>
+  <data name="Grabber_StartUrl" xml:space="preserve"><value>صفحة البدء (_S):</value></data>
+  <data name="Grabber_State_Changed" xml:space="preserve"><value>متغيّر</value></data>
+  <data name="Grabber_State_Downloaded" xml:space="preserve"><value>منزّل</value></data>
+  <data name="Grabber_State_New" xml:space="preserve"><value>جديد</value></data>
+  <data name="Grabber_State_Queued" xml:space="preserve"><value>في قائمة الانتظار</value></data>
+  <data name="Grabber_State_Unchanged" xml:space="preserve"><value>غير متغيّر</value></data>
+  <data name="Grabber_StayOnSite" xml:space="preserve"><value>البقاء في موقع صفحة البدء (_I)</value></data>
+  <data name="Grabber_Step1" xml:space="preserve"><value>قالب المشروع وصفحة البدء</value></data>
+  <data name="Grabber_Step2" xml:space="preserve"><value>مكان الحفظ والفئات</value></data>
+  <data name="Grabber_Step3" xml:space="preserve"><value>الاستكشاف</value></data>
+  <data name="Grabber_Step4" xml:space="preserve"><value>الملفات المراد تنزيلها</value></data>
+  <data name="Grabber_StepTitle" xml:space="preserve"><value>الخطوة {0} من {1}: {2}</value></data>
+  <data name="Grabber_StopExploring" xml:space="preserve"><value>إيقاف الاستكشاف (_S)</value></data>
+  <data name="Grabber_Stopped" xml:space="preserve"><value>توقف الاستكشاف.</value></data>
+  <data name="Grabber_Subdomains" xml:space="preserve"><value>استكشاف النطاقات الفرعية (_B)</value></data>
+  <data name="Grabber_Template" xml:space="preserve"><value>قالب المشروع (_T):</value></data>
+  <data name="Grabber_Template_Audio" xml:space="preserve"><value>كل الملفات الصوتية من موقع ويب</value></data>
+  <data name="Grabber_Template_Custom" xml:space="preserve"><value>إعدادات مخصصة</value></data>
+  <data name="Grabber_Template_FileTypes" xml:space="preserve"><value>كل الملفات من أنواع محددة</value></data>
+  <data name="Grabber_Template_Images" xml:space="preserve"><value>تنزيل كل الصور من موقع ويب</value></data>
+  <data name="Grabber_Template_OfflineSite" xml:space="preserve"><value>موقع ويب كامل للتصفح دون اتصال</value></data>
+  <data name="Grabber_Template_Video" xml:space="preserve"><value>كل مقاطع الفيديو من موقع ويب</value></data>
+  <data name="Grabber_Type_All" xml:space="preserve"><value>كل الملفات</value></data>
+  <data name="Grabber_Type_Audio" xml:space="preserve"><value>صوت</value></data>
+  <data name="Grabber_Type_Compressed" xml:space="preserve"><value>ملفات مضغوطة</value></data>
+  <data name="Grabber_Type_Documents" xml:space="preserve"><value>مستندات</value></data>
+  <data name="Grabber_Type_Images" xml:space="preserve"><value>صور</value></data>
+  <data name="Grabber_Type_Programs" xml:space="preserve"><value>برامج</value></data>
+  <data name="Grabber_Type_Video" xml:space="preserve"><value>فيديو</value></data>
+  <data name="Grabber_Unlimited" xml:space="preserve"><value>(0 = بلا حد)</value></data>
+  <data name="Grabber_UseAuth" xml:space="preserve"><value>استخدام المصادقة (_A)</value></data>
+  <data name="Grabber_WizardTitle" xml:space="preserve"><value>جامع المواقع</value></data>
+  <data name="Import_Failed" xml:space="preserve"><value>تعذّرت قراءة الملف: {0}</value></data>
+  <data name="Import_NothingFound" xml:space="preserve"><value>لم يُعثر على عناوين تنزيل في {0}.</value></data>
+  <data name="Import_Skipped" xml:space="preserve"><value>تعذّرت قراءة {0:N0} إدخال فتم تخطيها.</value></data>
+  <data name="Import_Title" xml:space="preserve"><value>استيراد التنزيلات</value></data>
+  <data name="Key_Alt" xml:space="preserve"><value>Alt</value></data>
+  <data name="Key_AltShift" xml:space="preserve"><value>Alt+Shift</value></data>
+  <data name="Key_Ctrl" xml:space="preserve"><value>Ctrl</value></data>
+  <data name="Key_CtrlAlt" xml:space="preserve"><value>Ctrl+Alt</value></data>
+  <data name="Key_CtrlShift" xml:space="preserve"><value>Ctrl+Shift</value></data>
+  <data name="Key_Insert" xml:space="preserve"><value>Insert</value></data>
+  <data name="Key_None" xml:space="preserve"><value>(بلا)</value></data>
+  <data name="Key_Shift" xml:space="preserve"><value>Shift</value></data>
+  <data name="LimiterDialog_Max" xml:space="preserve"><value>الحد الأقصى لسرعة التنزيل لكل التنزيلات (_M):</value></data>
+  <data name="LimiterDialog_QueueOnly" xml:space="preserve"><value>التطبيق على قوائم انتظار المجدول فقط (_S)</value></data>
+  <data name="LimiterDialog_Title" xml:space="preserve"><value>محدد السرعة</value></data>
+  <data name="LimiterDialog_Unit" xml:space="preserve"><value>كيلوبايت/ث</value></data>
+  <data name="Links_AutomaticCategory" xml:space="preserve"><value>(تلقائي: حسب نوع الملف)</value></data>
+  <data name="Links_Download" xml:space="preserve"><value>تنزيل (_D)</value></data>
+  <data name="Links_DroppedTitle" xml:space="preserve"><value>الروابط المُفلتة</value></data>
+  <data name="Links_Filter" xml:space="preserve"><value>تصفية (_F):</value></data>
+  <data name="Links_NoExtension" xml:space="preserve"><value>بلا امتداد</value></data>
+  <data name="Links_NoneFound" xml:space="preserve"><value>لم يُعثر على روابط قابلة للتنزيل.</value></data>
+  <data name="Links_NothingSelected" xml:space="preserve"><value>حدد الروابط المراد تنزيلها أولًا.</value></data>
+  <data name="Links_SelectAll" xml:space="preserve"><value>تحديد الكل (_A)</value></data>
+  <data name="Links_Selected" xml:space="preserve"><value>{0} من {1} محدد</value></data>
+  <data name="Links_SelectNone" xml:space="preserve"><value>إلغاء التحديد (_N)</value></data>
+  <data name="Links_Title" xml:space="preserve"><value>تنزيل كل الروابط</value></data>
+  <data name="Links_Type" xml:space="preserve"><value>النوع</value></data>
+  <data name="Links_Types" xml:space="preserve"><value>أنواع الملفات</value></data>
+  <data name="Links_Url" xml:space="preserve"><value>العنوان</value></data>
+  <data name="Menu_AddToQueue" xml:space="preserve"><value>إضافة إلى قائمة انتظار (_Q)</value></data>
+  <data name="Menu_Arrange" xml:space="preserve"><value>ترتيب الملفات (_A)</value></data>
+  <data name="Menu_Downloads" xml:space="preserve"><value>التنزيلات (_D)</value></data>
+  <data name="Menu_Export" xml:space="preserve"><value>تصدير (_E)</value></data>
+  <data name="Menu_File" xml:space="preserve"><value>ملف (_F)</value></data>
+  <data name="Menu_Help" xml:space="preserve"><value>تعليمات (_H)</value></data>
+  <data name="Menu_Import" xml:space="preserve"><value>استيراد (_I)</value></data>
+  <data name="Menu_Language" xml:space="preserve"><value>اللغة (_L)</value></data>
+  <data name="Menu_SpeedLimiter" xml:space="preserve"><value>محدد السرعة (_L)</value></data>
+  <data name="Menu_StartQueue" xml:space="preserve"><value>بدء قائمة الانتظار (_T)</value></data>
+  <data name="Menu_StopQueue" xml:space="preserve"><value>إيقاف قائمة الانتظار (_O)</value></data>
+  <data name="Menu_Tasks" xml:space="preserve"><value>المهام (_T)</value></data>
+  <data name="Menu_Toolbar" xml:space="preserve"><value>شريط الأدوات (_T)</value></data>
+  <data name="Menu_ToolbarTheme" xml:space="preserve"><value>سمة شريط الأدوات (_T)</value></data>
+  <data name="Menu_View" xml:space="preserve"><value>عرض (_V)</value></data>
+  <data name="MoveRename_Folder" xml:space="preserve"><value>المجلد الجديد (_F):</value></data>
+  <data name="MoveRename_Name" xml:space="preserve"><value>الاسم الجديد (_N):</value></data>
+  <data name="MoveRename_Title" xml:space="preserve"><value>نقل/إعادة تسمية</value></data>
+  <data name="Msg_LanguageRestart" xml:space="preserve"><value>تُستخدم اللغة الجديدة في المرة التالية التي يبدأ فيها NovaGet.</value></data>
+  <data name="Msg_NotAvailable" xml:space="preserve"><value>هذه الميزة غير متاحة بعد.</value></data>
+  <data name="Notify_ChecksumMismatch" xml:space="preserve"><value>المجموع الاختباري غير مطابق</value></data>
+  <data name="Notify_Complete" xml:space="preserve"><value>اكتمل التنزيل</value></data>
+  <data name="Notify_DialFailed" xml:space="preserve"><value>فشل الاتصال الهاتفي/VPN</value></data>
+  <data name="Notify_Failed" xml:space="preserve"><value>فشل التنزيل</value></data>
+  <data name="Notify_Open" xml:space="preserve"><value>فتح (_O)</value></data>
+  <data name="Notify_OpenFolder" xml:space="preserve"><value>فتح المجلد (_F)</value></data>
+  <data name="Notify_QueueFinished" xml:space="preserve"><value>انتهت قائمة الانتظار</value></data>
+  <data name="Notify_QueueStarted" xml:space="preserve"><value>بدأت قائمة الانتظار</value></data>
+  <data name="Options_AdvancedIntegration" xml:space="preserve"><value>استخدام التكامل المتقدم مع المتصفح (تلتقط الإضافة التنزيلات؛ عند إيقافه تُستخدم قائمة السياق فقط) (_A)</value></data>
+  <data name="Options_AllowIgnoreCert" xml:space="preserve"><value>السماح بخيار «تجاهل أخطاء الشهادات» في خصائص التنزيل (_I)</value></data>
+  <data name="Options_AutoStartTypes" xml:space="preserve"><value>بدء تنزيل أنواع الملفات التالية تلقائيًا (_A):</value></data>
+  <data name="Options_BrowserFound" xml:space="preserve"><value>مثبّت</value></data>
+  <data name="Options_BrowserIntegration" xml:space="preserve"><value>التكامل مع المتصفحات/التطبيقات</value></data>
+  <data name="Options_BrowserNotFound" xml:space="preserve"><value>غير موجود</value></data>
+  <data name="Options_Bypass" xml:space="preserve"><value>تجاوز الوكيل لـ (_B):</value></data>
+  <data name="Options_CaptureFrom" xml:space="preserve"><value>التقاط التنزيلات من هذه المتصفحات:</value></data>
+  <data name="Options_Category" xml:space="preserve"><value>الفئة (_A):</value></data>
+  <data name="Options_CategoryFolder" xml:space="preserve"><value>مجلد التنزيل الافتراضي لهذه الفئة (_D):</value></data>
+  <data name="Options_CategoryFolders" xml:space="preserve"><value>الفئات</value></data>
+  <data name="Options_CheckUpdates" xml:space="preserve"><value>البحث عن تحديثات أسبوعيًا (_C)</value></data>
+  <data name="Options_CloseToTray" xml:space="preserve"><value>يُخفي زر إغلاق النافذة NovaGet في منطقة الإعلام (_H)</value></data>
+  <data name="Options_ColorTheme" xml:space="preserve"><value>سمة الألوان (_R):</value></data>
+  <data name="Options_ConfirmDeleteLogin" xml:space="preserve"><value>حذف بيانات الدخول لـ {0}؟</value></data>
+  <data name="Options_ConfirmImport" xml:space="preserve"><value>استبدال خياراتك الحالية بالخيارات الموجودة في هذا الملف؟</value></data>
+  <data name="Options_ConfirmReset" xml:space="preserve"><value>إعادة تعيين كل الخيارات إلى قيمها الافتراضية؟ تبقى تنزيلاتك وقوائم الانتظار وتخطيط النافذة كما هي.</value></data>
+  <data name="Options_ConnectBeforeQueues" xml:space="preserve"><value>الاتصال قبل بدء قوائم الانتظار المجدولة (_B)</value></data>
+  <data name="Options_ConnectionType" xml:space="preserve"><value>نوع الاتصال/السرعة (_T):</value></data>
+  <data name="Options_CustomUserAgent" xml:space="preserve"><value>استخدام وكيل مستخدم مخصص (_A)</value></data>
+  <data name="Options_Default" xml:space="preserve"><value>افتراضي (_D)</value></data>
+  <data name="Options_DialConnection" xml:space="preserve"><value>الاتصال (_C):</value></data>
+  <data name="Options_DialNone" xml:space="preserve"><value>(بلا)</value></data>
+  <data name="Options_DialUpNote" xml:space="preserve"><value>يُقطع هذا الاتصال أيضًا بخيار «قطع اتصال المودم عند الانتهاء».</value></data>
+  <data name="Options_DoubleClick" xml:space="preserve"><value>النقر المزدوج على تنزيل مكتمل (_F):</value></data>
+  <data name="Options_DownloadLimits" xml:space="preserve"><value>حدود التنزيل</value></data>
+  <data name="Options_Duplicate" xml:space="preserve"><value>عند إضافة رابط تنزيل مكرر (_D):</value></data>
+  <data name="Options_EditContextMenu" xml:space="preserve"><value>تعديل عناصر قائمة السياق (_C)…</value></data>
+  <data name="Options_EditWebPanel" xml:space="preserve"><value>تعديل لوحة مشغلات الويب (_W)…</value></data>
+  <data name="Options_ErrorCategoryDir" xml:space="preserve"><value>أدخل مسارًا كاملًا لمجلد فئة «{0}».</value></data>
+  <data name="Options_ErrorCategoryExists" xml:space="preserve"><value>توجد فئة بهذا الاسم بالفعل.</value></data>
+  <data name="Options_ErrorImport" xml:space="preserve"><value>هذا الملف ليس ملف إعدادات NovaGet.</value></data>
+  <data name="Options_ErrorImportDetails" xml:space="preserve"><value>تعذّر استيراد الإعدادات.
+
+{0}</value></data>
+  <data name="Options_ErrorPacUrl" xml:space="preserve"><value>أدخل عنوان برنامج التكوين التلقائي.</value></data>
+  <data name="Options_ErrorPattern" xml:space="preserve"><value>أدخل نمطًا بلا مسافات.</value></data>
+  <data name="Options_ErrorPort" xml:space="preserve"><value>يجب أن تكون المنافذ بين 1 و65535.</value></data>
+  <data name="Options_ErrorProxyHost" xml:space="preserve"><value>أدخل اسمًا أو عنوانًا صالحًا لخادم الوكيل.</value></data>
+  <data name="Options_ErrorSameDir" xml:space="preserve"><value>أدخل مسارًا كاملًا لمجلد التنزيل.</value></data>
+  <data name="Options_ErrorServer" xml:space="preserve"><value>أدخل اسم خادم مثل example.com أو *.example.com.</value></data>
+  <data name="Options_ErrorSound" xml:space="preserve"><value>تعذّر تشغيل «{0}».</value></data>
+  <data name="Options_ErrorStartup" xml:space="preserve"><value>تعذّر على NovaGet تغيير إعداد بدء التشغيل.</value></data>
+  <data name="Options_ErrorTempBusy" xml:space="preserve"><value>أوقف كل التنزيلات قبل تغيير المجلد المؤقت.</value></data>
+  <data name="Options_ErrorTempDir" xml:space="preserve"><value>أدخل مسارًا كاملًا للمجلد المؤقت.</value></data>
+  <data name="Options_ErrorTempMove" xml:space="preserve"><value>تعذّر نقل بعض التنزيلات غير المكتملة إلى المجلد المؤقت الجديد. ستبدأ من جديد عند استئنافها.</value></data>
+  <data name="Options_ErrorUser" xml:space="preserve"><value>أدخل اسم مستخدم.</value></data>
+  <data name="Options_ErrorUserAgent" xml:space="preserve"><value>أدخل نص وكيل المستخدم، أو أوقف وكيل المستخدم المخصص.</value></data>
+  <data name="Options_ErrorVirusProgram" xml:space="preserve"><value>اختر برنامج فحص الفيروسات، أو أوقف الفحص.</value></data>
+  <data name="Options_Exceptions" xml:space="preserve"><value>الاستثناءات</value></data>
+  <data name="Options_ExcludedAddresses" xml:space="preserve"><value>عدم بدء التنزيل تلقائيًا من العناوين التالية (_D):</value></data>
+  <data name="Options_ExcludedAddressPrompt" xml:space="preserve"><value>العنوان (يُسمح بأحرف البدل، مثل https://example.com/files/*) (_A):</value></data>
+  <data name="Options_ExcludedAddressTitle" xml:space="preserve"><value>عنوان مستثنى</value></data>
+  <data name="Options_ExcludedSitePrompt" xml:space="preserve"><value>الموقع (يُسمح بأحرف البدل، مثل *.update.microsoft.com) (_S):</value></data>
+  <data name="Options_ExcludedSites" xml:space="preserve"><value>عدم بدء التنزيل تلقائيًا من المواقع التالية (_S):</value></data>
+  <data name="Options_ExcludedSiteTitle" xml:space="preserve"><value>موقع مستثنى</value></data>
+  <data name="Options_Exported" xml:space="preserve"><value>صُدّرت الإعدادات. لا تُضمَّن كلمات المرور.</value></data>
+  <data name="Options_ExportSettings" xml:space="preserve"><value>تصدير الإعدادات (_X)…</value></data>
+  <data name="Options_Extensions" xml:space="preserve"><value>الامتدادات (_E):</value></data>
+  <data name="Options_ForceCapture" xml:space="preserve"><value>فرض الالتقاط عند الضغط على (_F):</value></data>
+  <data name="Options_Imported" xml:space="preserve"><value>استُوردت الإعدادات.</value></data>
+  <data name="Options_ImportSettings" xml:space="preserve"><value>استيراد الإعدادات (_I)…</value></data>
+  <data name="Options_InstallExtension" xml:space="preserve"><value>تثبيت الإضافة…</value></data>
+  <data name="Options_KeepServerDate" xml:space="preserve"><value>الاحتفاظ بتاريخ الخادم للملفات المنزّلة (Last-Modified) (_K)</value></data>
+  <data name="Options_KeepTemp" xml:space="preserve"><value>الاحتفاظ بالملفات المؤقتة بعد إلغاء التنزيل (_K)</value></data>
+  <data name="Options_Keys" xml:space="preserve"><value>المفاتيح</value></data>
+  <data name="Options_Language" xml:space="preserve"><value>اللغة (_L):</value></data>
+  <data name="Options_LaunchOnStartup" xml:space="preserve"><value>تشغيل NovaGet عند بدء التشغيل (_L)</value></data>
+  <data name="Options_LoginSite" xml:space="preserve"><value>الموقع</value></data>
+  <data name="Options_LoginsNote" xml:space="preserve"><value>تُرسل بيانات الدخول تلقائيًا عندما يطلبها خادم مطابق (HTTP 401 أو FTP). كلمات المرور مشفرة لحساب Windows الخاص بك.</value></data>
+  <data name="Options_ManualConfig" xml:space="preserve"><value>تكوين الوكيل يدويًا</value></data>
+  <data name="Options_ManualProxy" xml:space="preserve"><value>تكوين الوكيل يدويًا (_M)</value></data>
+  <data name="Options_MarkOfTheWeb" xml:space="preserve"><value>وسم الملفات المنزّلة بأنها منزّلة من الإنترنت (Zone.Identifier) (_I)</value></data>
+  <data name="Options_MaxConnections" xml:space="preserve"><value>العدد الأقصى الافتراضي للاتصالات (_M):</value></data>
+  <data name="Options_MaxConnectionsColumn" xml:space="preserve"><value>أقصى عدد للاتصالات</value></data>
+  <data name="Options_MinSegment" xml:space="preserve"><value>الحجم الأدنى للمقطع (_M):</value></data>
+  <data name="Options_NoProxy" xml:space="preserve"><value>بلا وكيل (_N)</value></data>
+  <data name="Options_OpenSettingsFolder" xml:space="preserve"><value>فتح مجلد الإعدادات (_O)</value></data>
+  <data name="Options_Other" xml:space="preserve"><value>أخرى</value></data>
+  <data name="Options_PacProxy" xml:space="preserve"><value>استخدام برنامج التكوين التلقائي (PAC) (_C):</value></data>
+  <data name="Options_PlaySound" xml:space="preserve"><value>تشغيل</value></data>
+  <data name="Options_PlusClick" xml:space="preserve"><value>+ نقرة</value></data>
+  <data name="Options_Preallocate" xml:space="preserve"><value>حجز مساحة القرص مسبقًا (_P)</value></data>
+  <data name="Options_PreventCapture" xml:space="preserve"><value>منع الالتقاط عند الضغط على (_P):</value></data>
+  <data name="Options_PreventSleep" xml:space="preserve"><value>منع السكون أثناء التنزيل (_S)</value></data>
+  <data name="Options_ProgressMinimized" xml:space="preserve"><value>بدء حوار التقدم مصغرًا (_M)</value></data>
+  <data name="Options_ProxyHost" xml:space="preserve"><value>خادم الوكيل</value></data>
+  <data name="Options_ProxyPassword" xml:space="preserve"><value>كلمة المرور</value></data>
+  <data name="Options_ProxyPort" xml:space="preserve"><value>المنفذ</value></data>
+  <data name="Options_ProxyTestBadUrl" xml:space="preserve"><value>أدخل عنوان http:// أو https:// كاملًا للاختبار.</value></data>
+  <data name="Options_ProxyTestFailed" xml:space="preserve"><value>فشل الاتصال: {0}</value></data>
+  <data name="Options_ProxyTesting" xml:space="preserve"><value>جارٍ الاختبار…</value></data>
+  <data name="Options_ProxyTestOk" xml:space="preserve"><value>الاتصال يعمل: {0} ({1} مللي ثانية).</value></data>
+  <data name="Options_ProxyUser" xml:space="preserve"><value>اسم المستخدم</value></data>
+  <data name="Options_QueuePanel" xml:space="preserve"><value>إظهار لوحة اختيار قائمة الانتظار عند «التنزيل لاحقًا» (_Q)</value></data>
+  <data name="Options_QuotaHours" xml:space="preserve"><value>ساعات</value></data>
+  <data name="Options_QuotaMegabytes" xml:space="preserve"><value>ميجابايت</value></data>
+  <data name="Options_QuotaMiddle" xml:space="preserve"><value>ميجابايت كل</value></data>
+  <data name="Options_QuotaPrefix" xml:space="preserve"><value>عدم تنزيل أكثر من (_N)</value></data>
+  <data name="Options_QuotaSuffix" xml:space="preserve"><value>ساعات</value></data>
+  <data name="Options_QuotaWarn" xml:space="preserve"><value>إظهار تحذير قبل إيقاف التنزيلات (_W)</value></data>
+  <data name="Options_Redial" xml:space="preserve"><value>إعادة الاتصال عند الانقطاع (_D)</value></data>
+  <data name="Options_RedialAttempts" xml:space="preserve"><value>المحاولات (_A):</value></data>
+  <data name="Options_RedialDelay" xml:space="preserve"><value>التأخير (ثانية) (_E):</value></data>
+  <data name="Options_ResetAll" xml:space="preserve"><value>إعادة تعيين الكل إلى الافتراضي (_R)</value></data>
+  <data name="Options_Retries" xml:space="preserve"><value>عدد مرات إعادة المحاولة (_R):</value></data>
+  <data name="Options_RetryDelay" xml:space="preserve"><value>التأخير بين المحاولات (ثانية) (_D):</value></data>
+  <data name="Options_SameDirectory" xml:space="preserve"><value>استخدام المجلد نفسه لكل الفئات (_U)</value></data>
+  <data name="Options_SameProxy" xml:space="preserve"><value>استخدام الوكيل نفسه لكل البروتوكولات (_A)</value></data>
+  <data name="Options_ScanArguments" xml:space="preserve"><value>المعاملات (_M):</value></data>
+  <data name="Options_ScanFiles" xml:space="preserve"><value>فحص الملفات بحثًا عن الفيروسات بعد التنزيل (_S)</value></data>
+  <data name="Options_ScanProgram" xml:space="preserve"><value>البرنامج (_G):</value></data>
+  <data name="Options_Server" xml:space="preserve"><value>الخادم</value></data>
+  <data name="Options_ShowCompleteDialog" xml:space="preserve"><value>إظهار حوار اكتمال التنزيل (_C)</value></data>
+  <data name="Options_ShowProgressDialog" xml:space="preserve"><value>إظهار حوار تقدم التنزيل (_P)</value></data>
+  <data name="Options_ShowStartDialog" xml:space="preserve"><value>إظهار حوار بدء التنزيل (_S)</value></data>
+  <data name="Options_SkinDefault" xml:space="preserve"><value>NovaGet (افتراضي)</value></data>
+  <data name="Options_SocksDns" xml:space="preserve"><value>تحليل DNS عبر SOCKS (_R)</value></data>
+  <data name="Options_SocksHost" xml:space="preserve"><value>خادم SOCKS</value></data>
+  <data name="Options_SocksVersion" xml:space="preserve"><value>إصدار SOCKS</value></data>
+  <data name="Options_SoundsIntro" xml:space="preserve"><value>تشغيل صوت عند:</value></data>
+  <data name="Options_StartImmediately" xml:space="preserve"><value>بدء التنزيل فورًا أثناء عرض حوار «معلومات ملف التنزيل» (_I)</value></data>
+  <data name="Options_SystemProxy" xml:space="preserve"><value>استخدام إعدادات النظام (_S)</value></data>
+  <data name="Options_TabAdvanced" xml:space="preserve"><value>متقدم</value></data>
+  <data name="Options_TabConnection" xml:space="preserve"><value>الاتصال</value></data>
+  <data name="Options_TabDialUp" xml:space="preserve"><value>الاتصال الهاتفي/VPN</value></data>
+  <data name="Options_TabDownloads" xml:space="preserve"><value>التنزيلات</value></data>
+  <data name="Options_TabFileTypes" xml:space="preserve"><value>أنواع الملفات</value></data>
+  <data name="Options_TabGeneral" xml:space="preserve"><value>عام</value></data>
+  <data name="Options_TabProxy" xml:space="preserve"><value>الوكيل/Socks</value></data>
+  <data name="Options_TabSaveTo" xml:space="preserve"><value>الحفظ في</value></data>
+  <data name="Options_TabSiteLogins" xml:space="preserve"><value>بيانات دخول المواقع</value></data>
+  <data name="Options_TabSounds" xml:space="preserve"><value>الأصوات</value></data>
+  <data name="Options_TempDirectory" xml:space="preserve"><value>المجلد المؤقت</value></data>
+  <data name="Options_TempNote" xml:space="preserve"><value>تُحفظ التنزيلات غير المكتملة هنا. عند تغييره، تُنقل التنزيلات المتوقفة مؤقتًا إلى المجلد الجديد.</value></data>
+  <data name="Options_Test" xml:space="preserve"><value>اختبار (_S)</value></data>
+  <data name="Options_TestUrl" xml:space="preserve"><value>عنوان الاختبار (_T):</value></data>
+  <data name="Options_Themes" xml:space="preserve"><value>السمات</value></data>
+  <data name="Options_Timeout" xml:space="preserve"><value>مهلة الانتظار (ثانية) (_O):</value></data>
+  <data name="Options_Title" xml:space="preserve"><value>الخيارات</value></data>
+  <data name="Options_ToolbarSkin" xml:space="preserve"><value>مظهر شريط الأدوات (_S):</value></data>
+  <data name="Options_TrayGraph" xml:space="preserve"><value>إظهار مخطط سرعة التنزيل في منطقة الإعلام (_S)</value></data>
+  <data name="Options_UseSocks" xml:space="preserve"><value>استخدام SOCKS (_S)</value></data>
+  <data name="Options_VirusChecker" xml:space="preserve"><value>فاحص الفيروسات</value></data>
+  <data name="Options_WildcardNote" xml:space="preserve"><value>* تطابق أي نص و? تطابق حرفًا واحدًا.</value></data>
+  <data name="Options_WindowsAuth" xml:space="preserve"><value>استخدام مصادقة Windows (NTLM/Kerberos) للخوادم التي تطلبها (_W)</value></data>
+  <data name="Options_WindowsDefender" xml:space="preserve"><value>Windows Defender (_D)</value></data>
+  <data name="Options_WriteBuffer" xml:space="preserve"><value>حجم مخزن الكتابة المؤقت (_W):</value></data>
+  <data name="Power_CountdownHibernate" xml:space="preserve"><value>سيدخل الكمبيوتر في وضع الإسبات خلال {0} ثانية.</value></data>
+  <data name="Power_CountdownLogOff" xml:space="preserve"><value>سيتم تسجيل خروجك خلال {0} ثانية.</value></data>
+  <data name="Power_CountdownShutDown" xml:space="preserve"><value>سيتم إيقاف تشغيل الكمبيوتر خلال {0} ثانية.</value></data>
+  <data name="Power_CountdownSleep" xml:space="preserve"><value>سيدخل الكمبيوتر في وضع السكون خلال {0} ثانية.</value></data>
+  <data name="Power_Hibernate" xml:space="preserve"><value>إسبات</value></data>
+  <data name="Power_LogOff" xml:space="preserve"><value>تسجيل الخروج</value></data>
+  <data name="Power_Now" xml:space="preserve"><value>التنفيذ الآن (_N)</value></data>
+  <data name="Power_ShutDown" xml:space="preserve"><value>إيقاف التشغيل</value></data>
+  <data name="Power_Sleep" xml:space="preserve"><value>سكون</value></data>
+  <data name="Progress_Cancel" xml:space="preserve"><value>إلغاء (_C)</value></data>
+  <data name="Progress_ColDownloaded" xml:space="preserve"><value>المنزّل</value></data>
+  <data name="Progress_ColInfo" xml:space="preserve"><value>معلومات</value></data>
+  <data name="Progress_ColNumber" xml:space="preserve"><value>رقم</value></data>
+  <data name="Progress_Connections" xml:space="preserve"><value>مواضع البدء وتقدم التنزيل حسب الاتصالات:</value></data>
+  <data name="Progress_Downloaded" xml:space="preserve"><value>المنزّل</value></data>
+  <data name="Progress_DownloadedValue" xml:space="preserve"><value>{0} ( {1} % )</value></data>
+  <data name="Progress_ExitWhenDone" xml:space="preserve"><value>إنهاء NovaGet عند الانتهاء (_E)</value></data>
+  <data name="Progress_FileSize" xml:space="preserve"><value>حجم الملف</value></data>
+  <data name="Progress_Force" xml:space="preserve"><value>فرض إنهاء العمليات (_F)</value></data>
+  <data name="Progress_HangUp" xml:space="preserve"><value>قطع اتصال المودم عند الانتهاء (_H)</value></data>
+  <data name="Progress_HideDetails" xml:space="preserve"><value>&lt;&lt; إخفاء التفاصيل (_H)</value></data>
+  <data name="Progress_MaxSpeed" xml:space="preserve"><value>الحد الأقصى لسرعة التنزيل (_M):</value></data>
+  <data name="Progress_No" xml:space="preserve"><value>لا</value></data>
+  <data name="Progress_Pause" xml:space="preserve"><value>إيقاف مؤقت (_P)</value></data>
+  <data name="Progress_Rate" xml:space="preserve"><value>سرعة النقل</value></data>
+  <data name="Progress_RememberServer" xml:space="preserve"><value>تذكّر حد السرعة لهذا الخادم (_R)</value></data>
+  <data name="Progress_Resume" xml:space="preserve"><value>استئناف (_R)</value></data>
+  <data name="Progress_ResumeCapability" xml:space="preserve"><value>إمكانية الاستئناف</value></data>
+  <data name="Progress_ShowComplete" xml:space="preserve"><value>إظهار حوار اكتمال التنزيل (_S)</value></data>
+  <data name="Progress_ShowDetails" xml:space="preserve"><value>إظهار التفاصيل (_S) &gt;&gt;</value></data>
+  <data name="Progress_Status" xml:space="preserve"><value>الحالة</value></data>
+  <data name="Progress_TabCompletion" xml:space="preserve"><value>خيارات عند الاكتمال</value></data>
+  <data name="Progress_TabLimiter" xml:space="preserve"><value>محدد السرعة</value></data>
+  <data name="Progress_TabStatus" xml:space="preserve"><value>حالة التنزيل</value></data>
+  <data name="Progress_TimeLeft" xml:space="preserve"><value>الوقت المتبقي</value></data>
+  <data name="Progress_TitleKnown" xml:space="preserve"><value>{0}% {1}</value></data>
+  <data name="Progress_TurnOff" xml:space="preserve"><value>إيقاف تشغيل الكمبيوتر عند الانتهاء (_T)</value></data>
+  <data name="Progress_Unknown" xml:space="preserve"><value>غير معروف</value></data>
+  <data name="Progress_UseLimiter" xml:space="preserve"><value>استخدام محدد السرعة (_U)</value></data>
+  <data name="Progress_Yes" xml:space="preserve"><value>نعم</value></data>
+  <data name="Props_Added" xml:space="preserve"><value>تاريخ الإضافة:</value></data>
+  <data name="Props_Address" xml:space="preserve"><value>العنوان (_A):</value></data>
+  <data name="Props_Checksum" xml:space="preserve"><value>المجموع الاختباري:</value></data>
+  <data name="Props_ChecksumBad" xml:space="preserve"><value>المجموع الاختباري غير مطابق. القيمة المحسوبة: {0}</value></data>
+  <data name="Props_ChecksumComputed" xml:space="preserve"><value>القيمة المحسوبة: {0}</value></data>
+  <data name="Props_ChecksumOk" xml:space="preserve"><value>المجموع الاختباري مطابق.</value></data>
+  <data name="Props_Completed" xml:space="preserve"><value>تاريخ الاكتمال:</value></data>
+  <data name="Props_Connections" xml:space="preserve"><value>الاتصالات (_C):</value></data>
+  <data name="Props_ConnectionsDefault" xml:space="preserve"><value>افتراضي</value></data>
+  <data name="Props_Description" xml:space="preserve"><value>الوصف (_D):</value></data>
+  <data name="Props_FileType" xml:space="preserve"><value>نوع الملف:</value></data>
+  <data name="Props_IgnoreCert" xml:space="preserve"><value>تجاهل أخطاء الشهادات لهذا التنزيل (غير آمن) (_I)</value></data>
+  <data name="Props_IgnoreCertWarning" xml:space="preserve"><value>سيقبل NovaGet أي شهادة من هذا الخادم، فلن يعود قادرًا على التمييز بين اتصالك بالخادم الحقيقي واتصالك بطرف وسيط يستطيع قراءة الملف أو تغييره.
+
+لا تفعل ذلك إلا مع خوادم تثق بها، مثل جهاز على شبكتك الخاصة.
+
+هل تريد تجاهل أخطاء الشهادات لهذا التنزيل؟</value></data>
+  <data name="Props_Login" xml:space="preserve"><value>اسم المستخدم (_L):</value></data>
+  <data name="Props_Password" xml:space="preserve"><value>كلمة المرور (_P):</value></data>
+  <data name="Props_Referrer" xml:space="preserve"><value>الصفحة المُحيلة (_R):</value></data>
+  <data name="Props_SaveTo" xml:space="preserve"><value>الحفظ في (_T):</value></data>
+  <data name="Props_Size" xml:space="preserve"><value>الحجم:</value></data>
+  <data name="Props_Status" xml:space="preserve"><value>الحالة:</value></data>
+  <data name="Props_Title" xml:space="preserve"><value>الخصائص</value></data>
+  <data name="Props_TypeFile" xml:space="preserve"><value>ملف {0}</value></data>
+  <data name="Props_Verify" xml:space="preserve"><value>تحقق (_V)</value></data>
+  <data name="Props_Verifying" xml:space="preserve"><value>جارٍ الحساب... {0}</value></data>
+  <data name="Queue_Main" xml:space="preserve"><value>قائمة انتظار التنزيل الرئيسية</value></data>
+  <data name="Queue_Sync" xml:space="preserve"><value>قائمة انتظار المزامنة</value></data>
+  <data name="QueueDialog_Name" xml:space="preserve"><value>اسم قائمة الانتظار (_N):</value></data>
+  <data name="QueueDialog_Title" xml:space="preserve"><value>إنشاء قائمة انتظار جديدة</value></data>
+  <data name="QueuePick_Prompt" xml:space="preserve"><value>إضافة التنزيل إلى قائمة الانتظار هذه (_Q):</value></data>
+  <data name="QueuePick_Title" xml:space="preserve"><value>التنزيل لاحقًا</value></data>
+  <data name="Quota_ReachedTitle" xml:space="preserve"><value>بلغت حد التنزيل</value></data>
+  <data name="Quota_ResumeAt" xml:space="preserve"><value>التنزيلات متوقفة مؤقتًا وستستمر في {0}.</value></data>
+  <data name="Quota_Resumed" xml:space="preserve"><value>بدأت فترة جديدة؛ تستمر التنزيلات.</value></data>
+  <data name="Quota_ResumedTitle" xml:space="preserve"><value>حد التنزيل</value></data>
+  <data name="Quota_Warning" xml:space="preserve"><value>نزّلت {0} في هذه الفترة، وهذا يبلغ حد التنزيل الخاص بك.
+
+هل تريد إيقاف كل التنزيلات حتى {1}؟ اختر «لا» لمواصلة التنزيل في بقية هذه الفترة.</value></data>
+  <data name="Refresh_Instructions" xml:space="preserve"><value>الصفحة التي جاء منها هذا الملف مفتوحة في متصفحك. انقر رابط الملف هناك مرة أخرى: يأخذ NovaGet العنوان الجديد ويتابع التنزيل من حيث توقف.</value></data>
+  <data name="Refresh_Title" xml:space="preserve"><value>تحديث عنوان التنزيل</value></data>
+  <data name="Scheduler_AfterDone" xml:space="preserve"><value>بعد انتهاء قائمة الانتظار</value></data>
+  <data name="Scheduler_Apply" xml:space="preserve"><value>تطبيق (_A)</value></data>
+  <data name="Scheduler_ApplyChanges" xml:space="preserve"><value>حفظ التغييرات على قوائم الانتظار؟</value></data>
+  <data name="Scheduler_Daily" xml:space="preserve"><value>يوميًا (_D)</value></data>
+  <data name="Scheduler_ErrorDate" xml:space="preserve"><value>اختر تاريخ التنزيل لمرة واحدة.</value></data>
+  <data name="Scheduler_ErrorDays" xml:space="preserve"><value>اختر يومًا واحدًا على الأقل.</value></data>
+  <data name="Scheduler_ErrorOpenFile" xml:space="preserve"><value>اختر الملف المراد فتحه عند انتهاء قائمة الانتظار.</value></data>
+  <data name="Scheduler_ErrorRange" xml:space="preserve"><value>يجب أن تكون قيمة {0} بين {1} و{2}.</value></data>
+  <data name="Scheduler_ErrorStartTime" xml:space="preserve"><value>أدخل وقت البدء بصيغة ساعات:دقائق، مثل 02:00.</value></data>
+  <data name="Scheduler_ErrorStopTime" xml:space="preserve"><value>أدخل وقت الإيقاف بصيغة ساعات:دقائق، مثل 07:00.</value></data>
+  <data name="Scheduler_ErrorWake" xml:space="preserve"><value>حُفظت قائمة الانتظار، لكن تعذّر إنشاء مهمة التنبيه:
+
+{0}</value></data>
+  <data name="Scheduler_EveryDay" xml:space="preserve"><value>كل يوم (_E)</value></data>
+  <data name="Scheduler_Minutes" xml:space="preserve"><value>دقيقة</value></data>
+  <data name="Scheduler_NewQueue" xml:space="preserve"><value>قائمة انتظار جديدة (_N)</value></data>
+  <data name="Scheduler_OneTime" xml:space="preserve"><value>التنزيل لمرة واحدة (_O)</value></data>
+  <data name="Scheduler_OpenFile" xml:space="preserve"><value>فتح الملف التالي عند الانتهاء (_F):</value></data>
+  <data name="Scheduler_QueueName" xml:space="preserve"><value>اسم قائمة الانتظار (_N):</value></data>
+  <data name="Scheduler_Retries" xml:space="preserve"><value>عدد مرات إعادة المحاولة لكل ملف عند فشل التنزيل (_R):</value></data>
+  <data name="Scheduler_Running" xml:space="preserve"><value>قيد التشغيل</value></data>
+  <data name="Scheduler_SameTimePrefix" xml:space="preserve"><value>تنزيل</value></data>
+  <data name="Scheduler_SameTimeSuffix" xml:space="preserve"><value>ملفات في الوقت نفسه</value></data>
+  <data name="Scheduler_StartAt" xml:space="preserve"><value>بدء التنزيل في (_D)</value></data>
+  <data name="Scheduler_StartNow" xml:space="preserve"><value>البدء الآن (_S)</value></data>
+  <data name="Scheduler_StartOnStartup" xml:space="preserve"><value>بدء قائمة الانتظار عند تشغيل NovaGet (_U)</value></data>
+  <data name="Scheduler_Stop" xml:space="preserve"><value>إيقاف (_T)</value></data>
+  <data name="Scheduler_StopAt" xml:space="preserve"><value>إيقاف التنزيل في (_P)</value></data>
+  <data name="Scheduler_SyncAtStartup" xml:space="preserve"><value>التحقق عند بدء التشغيل (_A)</value></data>
+  <data name="Scheduler_SyncBackup" xml:space="preserve"><value>الاحتفاظ بالنسخة السابقة بامتداد ‎.bak (_K)</value></data>
+  <data name="Scheduler_SyncEvery" xml:space="preserve"><value>التحقق من الملفات المحدّثة كل (_U)</value></data>
+  <data name="Scheduler_SyncIntro" xml:space="preserve"><value>يُتحقق من ملفات قائمة الانتظار هذه بحثًا عن تغييرات على الخادم (الحجم والتاريخ وETag). تُنزّل الملفات المتغيرة مرة أخرى وتحل محل النسخة القديمة.</value></data>
+  <data name="Scheduler_TabFiles" xml:space="preserve"><value>الملفات في قائمة الانتظار</value></data>
+  <data name="Scheduler_TabSchedule" xml:space="preserve"><value>الجدولة</value></data>
+  <data name="Scheduler_TabSync" xml:space="preserve"><value>المزامنة</value></data>
+  <data name="Scheduler_Title" xml:space="preserve"><value>المجدول</value></data>
+  <data name="Scheduler_Wake" xml:space="preserve"><value>تنبيه الكمبيوتر لبدء قائمة الانتظار (_W)</value></data>
+  <data name="ServerExceptionDialog_Host" xml:space="preserve"><value>الخادم (_S):</value></data>
+  <data name="ServerExceptionDialog_HostNote" xml:space="preserve"><value>مثل files.example.com، أو *.example.com لكل نطاقاته الفرعية.</value></data>
+  <data name="ServerExceptionDialog_Title" xml:space="preserve"><value>استثناء خادم</value></data>
+  <data name="SiteLoginDialog_Site" xml:space="preserve"><value>الموقع (_S):</value></data>
+  <data name="SiteLoginDialog_SiteNote" xml:space="preserve"><value>نمط عنوان، مثل *.example.com أو https://example.com/private/*.</value></data>
+  <data name="SiteLoginDialog_Title" xml:space="preserve"><value>بيانات دخول الموقع</value></data>
+  <data name="Socks_Socks4" xml:space="preserve"><value>SOCKS 4</value></data>
+  <data name="Socks_Socks4a" xml:space="preserve"><value>SOCKS 4a</value></data>
+  <data name="Socks_Socks5" xml:space="preserve"><value>SOCKS 5</value></data>
+  <data name="Sort_Ascending" xml:space="preserve"><value>تصاعدي (_A)</value></data>
+  <data name="Sort_Descending" xml:space="preserve"><value>تنازلي (_D)</value></data>
+  <data name="Sound_DownloadAdded" xml:space="preserve"><value>إضافة تنزيل جديد</value></data>
+  <data name="Sound_DownloadComplete" xml:space="preserve"><value>اكتمال التنزيل</value></data>
+  <data name="Sound_DownloadFailed" xml:space="preserve"><value>فشل التنزيل</value></data>
+  <data name="Sound_QueueStarted" xml:space="preserve"><value>بدء قائمة الانتظار</value></data>
+  <data name="Sound_QueueStopped" xml:space="preserve"><value>إيقاف قائمة الانتظار أو انتهاؤها</value></data>
+  <data name="Status_Assembling" xml:space="preserve"><value>جارٍ التجميع...</value></data>
+  <data name="Status_Complete" xml:space="preserve"><value>مكتمل</value></data>
+  <data name="Status_Connecting" xml:space="preserve"><value>جارٍ الاتصال...</value></data>
+  <data name="Status_Error" xml:space="preserve"><value>خطأ</value></data>
+  <data name="Status_Merging" xml:space="preserve"><value>جارٍ الدمج...</value></data>
+  <data name="Status_Paused" xml:space="preserve"><value>متوقف مؤقتًا</value></data>
+  <data name="Status_Queued" xml:space="preserve"><value>في قائمة الانتظار</value></data>
+  <data name="Status_Receiving" xml:space="preserve"><value>جارٍ استلام البيانات...</value></data>
+  <data name="Status_Refreshing" xml:space="preserve"><value>جارٍ تحديث العنوان...</value></data>
+  <data name="Status_Retrying" xml:space="preserve"><value>في انتظار إعادة المحاولة...</value></data>
+  <data name="Status_Scanning" xml:space="preserve"><value>جارٍ الفحص...</value></data>
+  <data name="StatusBar_Active" xml:space="preserve"><value>{0} نشط</value></data>
+  <data name="StatusBar_Downloads" xml:space="preserve"><value>{0} تنزيل</value></data>
+  <data name="StatusBar_LimiterOff" xml:space="preserve"><value>محدد السرعة: متوقف</value></data>
+  <data name="StatusBar_LimiterOn" xml:space="preserve"><value>محدد السرعة: {0} كيلوبايت/ث</value></data>
+  <data name="StatusBar_LimiterTip" xml:space="preserve"><value>انقر لتشغيل محدد السرعة أو إيقافه</value></data>
+  <data name="Stream_Audio" xml:space="preserve"><value>الصوت (_A):</value></data>
+  <data name="Stream_Duration" xml:space="preserve"><value>المدة: {0}</value></data>
+  <data name="Stream_Live" xml:space="preserve"><value>هذا بث مباشر: سيُنزّل الجزء المتاح الآن فقط.</value></data>
+  <data name="Stream_NotAStream" xml:space="preserve"><value>لا يشير العنوان إلى قائمة تشغيل بث فيديو.</value></data>
+  <data name="Stream_Prompt" xml:space="preserve"><value>الجودة (_Q):</value></data>
+  <data name="Stream_Protected" xml:space="preserve"><value>هذا البث محمي ولا يمكن تنزيله.</value></data>
+  <data name="Stream_ReadFailed" xml:space="preserve"><value>تعذّرت قراءة البث: {0}</value></data>
+  <data name="Stream_Title" xml:space="preserve"><value>اختيار جودة الفيديو</value></data>
+  <data name="Tb_AddUrl" xml:space="preserve"><value>إضافة عنوان</value></data>
+  <data name="Tb_Delete" xml:space="preserve"><value>حذف</value></data>
+  <data name="Tb_DeleteCompleted" xml:space="preserve"><value>حذف المكتملة</value></data>
+  <data name="Tb_DeleteWithFile" xml:space="preserve"><value>حذف مع الملف</value></data>
+  <data name="Tb_Grabber" xml:space="preserve"><value>الجامع</value></data>
+  <data name="Tb_Options" xml:space="preserve"><value>الخيارات</value></data>
+  <data name="Tb_Resume" xml:space="preserve"><value>استئناف</value></data>
+  <data name="Tb_Scheduler" xml:space="preserve"><value>المجدول</value></data>
+  <data name="Tb_StartQueue" xml:space="preserve"><value>بدء قائمة الانتظار</value></data>
+  <data name="Tb_Stop" xml:space="preserve"><value>إيقاف</value></data>
+  <data name="Tb_StopAll" xml:space="preserve"><value>إيقاف الكل</value></data>
+  <data name="Tb_StopQueue" xml:space="preserve"><value>إيقاف قائمة الانتظار</value></data>
+  <data name="Tb_TellFriend" xml:space="preserve"><value>أخبر صديقًا</value></data>
+  <data name="TellFriend_Copied" xml:space="preserve"><value>نُسخ إلى الحافظة.</value></data>
+  <data name="TellFriend_Copy" xml:space="preserve"><value>نسخ إلى الحافظة (_C)</value></data>
+  <data name="TellFriend_Intro" xml:space="preserve"><value>انسخ هذه الرسالة وشاركها مع أصدقائك:</value></data>
+  <data name="TellFriend_Message" xml:space="preserve"><value>أستخدم NovaGet، مدير تنزيل مجانيًا لنظام Windows. يسرّع التنزيلات، ويستأنف المنقطعة منها، ويجدولها، ويلتقط مقاطع الفيديو من صفحات الويب. بلا إعلانات ولا تتبع.</value></data>
+  <data name="TellFriend_Title" xml:space="preserve"><value>أخبر صديقًا</value></data>
+  <data name="Theme_Dark" xml:space="preserve"><value>داكن</value></data>
+  <data name="Theme_Light" xml:space="preserve"><value>فاتح (كلاسيكي)</value></data>
+  <data name="Theme_Monochrome" xml:space="preserve"><value>أحادي اللون</value></data>
+  <data name="Theme_System" xml:space="preserve"><value>حسب إعداد Windows</value></data>
+  <data name="ToolbarCustomize_Intro" xml:space="preserve"><value>اختر أزرار شريط الأدوات وترتيبها (بالسحب أو باستخدام الأزرار):</value></data>
+  <data name="ToolbarCustomize_Title" xml:space="preserve"><value>تخصيص شريط الأدوات</value></data>
+  <data name="Tray_AddDownload" xml:space="preserve"><value>إضافة تنزيل جديد (_A)...</value></data>
+  <data name="Tray_Idle" xml:space="preserve"><value>NovaGet – لا توجد تنزيلات نشطة</value></data>
+  <data name="Tray_MonitorClipboard" xml:space="preserve"><value>مراقبة الحافظة (_C)</value></data>
+  <data name="Tray_Open" xml:space="preserve"><value>فتح NovaGet (_O)</value></data>
+  <data name="Tray_Preset" xml:space="preserve"><value>{0} كيلوبايت/ث</value></data>
+  <data name="Tray_ResumeAll" xml:space="preserve"><value>استئناف الكل (_R)</value></data>
+  <data name="Tray_Tooltip" xml:space="preserve"><value>{0} – {1} نشط – {2}</value></data>
+  <data name="Tree_AllDownloads" xml:space="preserve"><value>كل التنزيلات</value></data>
+  <data name="Tree_Categories" xml:space="preserve"><value>الفئات</value></data>
+  <data name="Tree_Close" xml:space="preserve"><value>إغلاق جزء الفئات</value></data>
+  <data name="Tree_Finished" xml:space="preserve"><value>المكتملة</value></data>
+  <data name="Tree_GrabberProjects" xml:space="preserve"><value>مشاريع الجامع</value></data>
+  <data name="Tree_Queues" xml:space="preserve"><value>قوائم الانتظار</value></data>
+  <data name="Tree_Unfinished" xml:space="preserve"><value>غير المكتملة</value></data>
+  <data name="Update_Available" xml:space="preserve"><value>يتوفر NovaGet {0} (لديك {1}).
+
+فتح صفحة التنزيل؟</value></data>
+  <data name="Update_AvailableHint" xml:space="preserve"><value>اختر تعليمات ← البحث عن تحديثات للحصول عليه.</value></data>
+  <data name="Update_AvailableTitle" xml:space="preserve"><value>يتوفر NovaGet {0}</value></data>
+  <data name="Update_Failed" xml:space="preserve"><value>تعذّر البحث عن تحديثات: {0}</value></data>
+  <data name="Update_UpToDate" xml:space="preserve"><value>لديك أحدث إصدار من NovaGet ({0}).</value></data>
+  <data name="WebPanel_Bottom" xml:space="preserve"><value>أسفل</value></data>
+  <data name="WebPanel_Exceptions" xml:space="preserve"><value>عدم إظهار اللوحة في هذه المواقع (موقع في كل سطر) (_D):</value></data>
+  <data name="WebPanel_ExceptionsNote" xml:space="preserve"><value>يُسمح بأحرف البدل، مثل *.example.com.</value></data>
+  <data name="WebPanel_HoverOnly" xml:space="preserve"><value>الإظهار فقط عند تمرير المؤشر فوق الفيديو (_H)</value></data>
+  <data name="WebPanel_Popups" xml:space="preserve"><value>الإظهار في النوافذ المنبثقة أيضًا (_P)</value></data>
+  <data name="WebPanel_Position" xml:space="preserve"><value>الموضع (_P):</value></data>
+  <data name="WebPanel_Show" xml:space="preserve"><value>إظهار لوحة التنزيل لمشغلات الويب (_S)</value></data>
+  <data name="WebPanel_TopLeft" xml:space="preserve"><value>أعلى اليسار</value></data>
+  <data name="WebPanel_TopRight" xml:space="preserve"><value>أعلى اليمين</value></data>
+  <data name="WebPanelDialog_Title" xml:space="preserve"><value>لوحة مشغل الويب</value></data>
+</root>

@@ -35,6 +35,7 @@ public partial class App : Application
         base.OnStartup(e);
         RegisterGlobalExceptionHandlers();
         InitializeLanguage();
+        _host.Services.GetRequiredService<ThemeService>().Initialize();
 
         _host.StartAsync().GetAwaiter().GetResult();
 

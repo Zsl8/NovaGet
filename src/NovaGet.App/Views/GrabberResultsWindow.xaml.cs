@@ -22,6 +22,7 @@ public partial class GrabberResultsWindow : Window
         _pickQueue = pickQueue;
         DataContext = viewModel;
         InitializeComponent();
+        SourceInitialized += (_, _) => Services.ThemeService.ApplyTitleBar(this);
         FlowDirection = Localizer.IsRightToLeft ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
         Title = Localizer.Format("Grabber_ResultsWindowTitle", viewModel.ProjectName);
         _timer = new DispatcherTimer(TimeSpan.FromMilliseconds(300), DispatcherPriority.Background, (_, _) => Tick(), Dispatcher);

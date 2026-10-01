@@ -13,6 +13,9 @@ internal static class UninstallCleanup
 
         // "Launch on startup" set from Options (the installer removes its own Run value).
         StartupRegistration.Remove();
+
+        // Toast notification registration (AUMID and activator).
+        Toasts.Uninstall();
         return 0;
     }
 }

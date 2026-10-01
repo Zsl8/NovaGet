@@ -152,6 +152,11 @@ internal static class AppHostBuilder
         builder.Services.AddSingleton<TrayIconService>();
         builder.Services.AddSingleton<BrowserIntegrationService>();
         builder.Services.AddSingleton<BrowserLoginService>();
+        builder.Services.AddSingleton<SleepBlocker>();
+        builder.Services.AddSingleton<ThemeService>();
+        builder.Services.AddSingleton<UpdateService>();
+        builder.Services.AddSingleton<AddressRefreshService>();
+        builder.Services.AddSingleton(sp => new Lazy<DownloadUiService>(sp.GetRequiredService<DownloadUiService>));
         builder.Services.AddSingleton<GrabberUiService>();
         builder.Services.AddSingleton(sp => new NovaGet.Core.Grabber.GrabberDownloadTracker(
             sp.GetRequiredService<NovaGet.Core.Services.IDownloadService>(),

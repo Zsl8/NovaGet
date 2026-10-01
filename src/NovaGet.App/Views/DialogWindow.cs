@@ -19,6 +19,13 @@ public class DialogWindow : Window
         InputBindings.Add(new KeyBinding(new CloseCommand(this), Key.Escape, ModifierKeys.None));
     }
 
+    /// <summary>The title bar gets its light/dark color before the window first shows.</summary>
+    protected override void OnSourceInitialized(EventArgs e)
+    {
+        base.OnSourceInitialized(e);
+        Services.ThemeService.ApplyTitleBar(this);
+    }
+
     /// <summary>Closes with <c>DialogResult = true</c> (use from OK buttons).</summary>
     protected void Accept()
     {

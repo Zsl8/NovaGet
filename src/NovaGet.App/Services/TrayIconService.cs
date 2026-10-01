@@ -74,16 +74,25 @@ internal sealed partial class TrayIconService(
         BuildMenu(_icon.ContextMenu);
 
         downloads.StateChanged += OnStateChanged;
+        Toasts.Initialize();
+        Toasts.Activated += OnToastActivated;
         _timer = new DispatcherTimer(TimeSpan.FromSeconds(1), DispatcherPriority.Background, (_, _) => Refresh(), Application.Current.Dispatcher);
         _timer.Start();
     }
 
-    public void ShowBalloon(string title, string message, bool error = false) =>
-        _icon?.ShowNotification(title, message, error ? NotificationIcon.Error : NotificationIcon.Info);
+    /// <summary>A toast (with Open / Open folder for a finished download), or a tray balloon where toasts aren't available.</summary>
+    public void ShowBalloon(string title, string message, bool error = false, long? downloadId = null)
+    {
+        if (!Toasts.TryShow(title, message, downloadId))
+        {
+            _icon?.ShowNotification(title, message, error ? NotificationIcon.Error : NotificationIcon.Info);
+        }
+    }
 
     public void Dispose()
     {
         downloads.StateChanged -= OnStateChanged;
+        Toasts.Activated -= OnToastActivated;
         _timer?.Stop();
         _icon?.Dispose();
         _icon = null;
@@ -107,10 +116,15 @@ internal sealed partial class TrayIconService(
 
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            if (e.Status == DownloadStatus.Completed)
+            if (e.Status == DownloadStatus.Completed && e.ErrorKind == DownloadErrorKind.ChecksumMismatch)
             {
                 _lastCompletedPath = download.FullPath;
-                ShowBalloon(Localizer.Get("Notify_Complete"), download.FileName);
+                ShowBalloon(Localizer.Get("Notify_ChecksumMismatch"), $"{download.FileName}\n{e.Message}", error: true, download.Id);
+            }
+            else if (e.Status == DownloadStatus.Completed)
+            {
+                _lastCompletedPath = download.FullPath;
+                ShowBalloon(Localizer.Get("Notify_Complete"), download.FileName, downloadId: download.Id);
             }
             else
             {
@@ -119,6 +133,24 @@ internal sealed partial class TrayIconService(
             }
         });
     }
+
+    /// <summary>Open / Open folder on a toast: only for a completed download whose file is still there.</summary>
+    private void OnToastActivated(string action, long downloadId) => Application.Current?.Dispatcher.BeginInvoke(() =>
+    {
+        if (downloads.Find(downloadId) is not { Status: DownloadStatus.Completed } download || !System.IO.File.Exists(download.FullPath))
+        {
+            return;
+        }
+
+        if (action == Toasts.OpenAction)
+        {
+            ShellService.OpenFile(download.FullPath);
+        }
+        else
+        {
+            ShellService.OpenFolder(download.FullPath);
+        }
+    });
 
     /// <summary>Tooltip and icon state, once a second.</summary>
     private void Refresh()

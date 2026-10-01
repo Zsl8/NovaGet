@@ -8,7 +8,7 @@
   <v:DialogWindow.Resources>
     <BooleanToVisibilityConverter x:Key="Visible" />
     <c:StepVisibilityConverter x:Key="StepVisible" />
-    <Style TargetType="CheckBox">
+    <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
       <Setter Property="Margin" Value="0,4,0,0" />
     </Style>
     <Style TargetType="TextBlock" x:Key="Note">
@@ -59,7 +59,7 @@
         <Label Content="{l:Loc Grabber_SaveFolder}" Target="{Binding ElementName=FolderBox}" Padding="0" />
         <DockPanel Margin="0,4,0,0">
           <Button DockPanel.Dock="Right" Content="{l:Loc Common_Browse}" MinWidth="32" Margin="6,0,0,0" Click="OnBrowse" />
-          <TextBox x:Name="FolderBox" Text="{Binding SaveFolder, UpdateSourceTrigger=PropertyChanged}" />
+          <TextBox FlowDirection="LeftToRight" x:Name="FolderBox" Text="{Binding SaveFolder, UpdateSourceTrigger=PropertyChanged}" />
         </DockPanel>
         <CheckBox Content="{l:Loc Grabber_SaveByCategory}" IsChecked="{Binding SaveByCategory}" Margin="0,12,0,0" />
         <CheckBox Content="{l:Loc Grabber_ConvertLinks}" IsChecked="{Binding ConvertLinks}" />

@@ -15,7 +15,21 @@ mkdirSync(icoDir, { recursive: true });
 // App/tray icons get every size Windows asks for; UI glyphs get the sizes the toolbar and menus use.
 const appIcons = new Set(['novaget', 'tray-active']);
 const appSizes = [16, 20, 24, 32, 40, 48, 64, 256];
-const uiSizes = [16, 24, 32, 48, 64, 96];
+const uiSizes = [16, 20, 24, 32, 48, 64, 96];
+
+// Toolbar buttons also come in the "Monochrome" toolbar skin: the same artwork, desaturated.
+const toolbarIcons = new Set([
+  'add-url', 'resume', 'stop', 'stop-all', 'delete', 'delete-completed', 'options', 'scheduler',
+  'start-queue', 'stop-queue', 'grabber', 'tell-friend',
+]);
+
+function monochrome(svg) {
+  const text = svg.toString('utf8');
+  const open = text.indexOf('>', text.indexOf('<svg')) + 1;
+  const close = text.lastIndexOf('</svg>');
+  const filter = '<filter id="nv-mono" color-interpolation-filters="sRGB"><feColorMatrix type="saturate" values="0"/></filter>';
+  return Buffer.from(`${text.slice(0, open)}<defs>${filter}</defs><g filter="url(#nv-mono)">${text.slice(open, close)}</g></svg>`);
+}
 
 function render(svg, size) {
   const resvg = new Resvg(svg, { fitTo: { mode: 'width', value: size }, background: 'rgba(0,0,0,0)' });
@@ -55,7 +69,13 @@ for (const file of readdirSync(svgDir).filter((f) => f.endsWith('.svg')).sort())
   if (appIcons.has(name)) {
     writeFileSync(join(icoDir, `${name}.ico`), packIco(images));
   }
-  console.log(`${name}: ${sizes.join(', ')}`);
+  if (toolbarIcons.has(name)) {
+    const mono = monochrome(svg);
+    for (const size of sizes) {
+      writeFileSync(join(pngDir, `${name}-mono-${size}.png`), render(mono, size));
+    }
+  }
+  console.log(`${name}: ${sizes.join(', ')}${toolbarIcons.has(name) ? ' (+ monochrome)' : ''}`);
 }
 
 // Browser extension icons (toolbar and extension pages).

@@ -43,6 +43,9 @@ public enum DownloadErrorKind
     ProtectedContent,
 
     Unknown,
+
+    /// <summary>The download completed but its checksum isn't the expected one (a warning; the file is kept).</summary>
+    ChecksumMismatch,
 }
 
 /// <summary>A classified download failure. <see cref="IsTransient"/> failures are retried.</summary>

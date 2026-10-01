@@ -37,6 +37,9 @@ internal sealed class AppController(
     AppPaths paths,
     GrabberUiService grabber,
     NovaGet.Core.Grabber.GrabberDownloadTracker grabberTracker,
+    SleepBlocker sleepBlocker,
+    UpdateService updates,
+    AddressRefreshService addressRefresh,
     ILogger<AppController> logger) : IAppController
 {
     private SchedulerWindow? _scheduler;
@@ -50,6 +53,8 @@ internal sealed class AppController(
     {
         _ = grabberTracker; // records grabbed files' finished downloads from now on
         tray.Initialize(this);
+        sleepBlocker.Initialize();
+        updates.Initialize();
         downloadUi.Initialize();
         sounds.Initialize();
         queueUi.Initialize();
@@ -251,7 +256,12 @@ internal sealed class AppController(
         }
     });
 
-    public void RefreshAddress(long downloadId) => NotAvailable();
+    public void RefreshAddress(long downloadId) => OnUiThread(async () =>
+    {
+        // The download must not be running while it waits for its new address.
+        await downloads.StopAsync(downloadId);
+        addressRefresh.Start(downloadId);
+    });
 
     public void StartQueue(long queueId) => queueManager.Start(queueId);
 
@@ -290,7 +300,7 @@ internal sealed class AppController(
         }
     }
 
-    public void CheckForUpdates() => NotAvailable();
+    public void CheckForUpdates() => OnUiThread(() => _ = updates.CheckNowAsync());
 
     public void ShowHelp(string? topic = null)
     {

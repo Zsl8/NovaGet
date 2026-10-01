@@ -19,10 +19,10 @@
         <RowDefinition /><RowDefinition /><RowDefinition />
       </Grid.RowDefinitions>
       <TextBlock Text="{l:Loc Complete_Address}" Margin="0,2,12,2" />
-      <TextBox x:Name="AddressText" Grid.Column="1" IsReadOnly="True" BorderThickness="0" Background="Transparent" />
+      <TextBox FlowDirection="LeftToRight" x:Name="AddressText" AutomationProperties.Name="{l:Loc Complete_Address}" Grid.Column="1" IsReadOnly="True" BorderThickness="0" Background="Transparent" />
       <TextBlock x:Name="SizeText" Grid.Row="1" Grid.Column="1" Margin="2,2" />
       <TextBlock Grid.Row="2" Text="{l:Loc Complete_SavedTo}" Margin="0,2,12,2" />
-      <TextBox x:Name="PathText" Grid.Row="2" Grid.Column="1" IsReadOnly="True" BorderThickness="0" Background="Transparent" TextWrapping="Wrap" />
+      <TextBox FlowDirection="LeftToRight" x:Name="PathText" AutomationProperties.Name="{l:Loc Complete_SavedTo}" Grid.Row="2" Grid.Column="1" IsReadOnly="True" BorderThickness="0" Background="Transparent" TextWrapping="Wrap" />
     </Grid>
     <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
       <Button x:Name="OpenButton" Content="{l:Loc Complete_Open}" MinWidth="80" IsDefault="True" Click="OnOpen" />

@@ -9,13 +9,13 @@
   <v:DialogWindow.Resources>
     <c:InverseBoolConverter x:Key="Not" />
     <c:NotNullConverter x:Key="NotNull" />
-    <Style TargetType="CheckBox">
+    <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
       <Setter Property="Margin" Value="0,3" />
     </Style>
-    <Style TargetType="RadioButton">
+    <Style TargetType="RadioButton" BasedOn="{StaticResource {x:Type RadioButton}}">
       <Setter Property="Margin" Value="0,3" />
     </Style>
-    <Style TargetType="TextBox">
+    <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
       <Setter Property="Height" Value="23" />
       <Setter Property="VerticalContentAlignment" Value="Center" />
     </Style>
@@ -23,23 +23,23 @@
       <Setter Property="Width" Value="64" />
       <Setter Property="HorizontalContentAlignment" Value="Right" />
     </Style>
-    <Style TargetType="PasswordBox">
+    <Style TargetType="PasswordBox" BasedOn="{StaticResource {x:Type PasswordBox}}">
       <Setter Property="Height" Value="23" />
       <Setter Property="VerticalContentAlignment" Value="Center" />
     </Style>
-    <Style TargetType="ComboBox">
+    <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
       <Setter Property="Height" Value="23" />
     </Style>
-    <Style TargetType="GroupBox">
+    <Style TargetType="GroupBox" BasedOn="{StaticResource {x:Type GroupBox}}">
       <Setter Property="Margin" Value="0,8,0,0" />
       <Setter Property="Padding" Value="6,4" />
     </Style>
-    <Style x:Key="SideButton" TargetType="Button">
+    <Style x:Key="SideButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
       <Setter Property="MinWidth" Value="80" />
       <Setter Property="Margin" Value="0,0,0,6" />
       <Setter Property="Padding" Value="6,1" />
     </Style>
-    <Style x:Key="BrowseButton" TargetType="Button">
+    <Style x:Key="BrowseButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
       <Setter Property="Width" Value="28" />
       <Setter Property="Margin" Value="6,0,0,0" />
       <Setter Property="Content" Value="…" />
@@ -122,12 +122,16 @@
                 <Grid.RowDefinitions>
                   <RowDefinition Height="Auto" />
                   <RowDefinition Height="Auto" />
+                  <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <Label Content="{l:Loc Options_ToolbarSkin}" Target="{Binding ElementName=SkinBox}" Padding="0,0,10,0" VerticalAlignment="Center" />
-                <ComboBox x:Name="SkinBox" Grid.Column="1" ItemsSource="{Binding Skins}" DisplayMemberPath="Text" SelectedValuePath="Value"
-                          SelectedValue="{Binding Settings.General.ToolbarSkin}" />
-                <Label Grid.Row="1" Content="{l:Loc Options_Language}" Target="{Binding ElementName=LanguageBox}" Padding="0,0,10,0" VerticalAlignment="Center" Margin="0,6,0,0" />
-                <ComboBox x:Name="LanguageBox" Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Languages}" DisplayMemberPath="Text" SelectedValuePath="Value"
+                <Label Content="{l:Loc Options_ColorTheme}" Target="{Binding ElementName=ThemeBox}" Padding="0,0,10,0" VerticalAlignment="Center" />
+                <ComboBox x:Name="ThemeBox" Grid.Column="1" ItemsSource="{Binding Themes}" DisplayMemberPath="Text" SelectedValuePath="Value"
+                          SelectedValue="{Binding Settings.Ui.Theme}" />
+                <Label Grid.Row="1" Content="{l:Loc Options_ToolbarSkin}" Target="{Binding ElementName=SkinBox}" Padding="0,0,10,0" VerticalAlignment="Center" Margin="0,6,0,0" />
+                <ComboBox x:Name="SkinBox" Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Skins}" DisplayMemberPath="Text" SelectedValuePath="Value"
+                          SelectedValue="{Binding Settings.General.ToolbarSkin}" Margin="0,6,0,0" />
+                <Label Grid.Row="2" Content="{l:Loc Options_Language}" Target="{Binding ElementName=LanguageBox}" Padding="0,0,10,0" VerticalAlignment="Center" Margin="0,6,0,0" />
+                <ComboBox x:Name="LanguageBox" Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Languages}" DisplayMemberPath="Text" SelectedValuePath="Value"
                           SelectedValue="{Binding Settings.General.Language}" Margin="0,6,0,0" />
               </Grid>
             </GroupBox>
@@ -143,7 +147,7 @@
             <DockPanel>
               <Button DockPanel.Dock="Right" Content="{l:Loc Options_Default}" VerticalAlignment="Top" Style="{StaticResource SideButton}" Margin="6,0,0,0"
                       Command="{Binding ResetExtensionsCommand}" />
-              <TextBox x:Name="TypesBox" Text="{Binding AutoCaptureExtensions, UpdateSourceTrigger=PropertyChanged}" Height="84" TextWrapping="Wrap"
+              <TextBox FlowDirection="LeftToRight" x:Name="TypesBox" Text="{Binding AutoCaptureExtensions, UpdateSourceTrigger=PropertyChanged}" Height="84" TextWrapping="Wrap"
                        VerticalContentAlignment="Top" VerticalScrollBarVisibility="Auto" />
             </DockPanel>
             <Label Content="{l:Loc Options_ExcludedSites}" Target="{Binding ElementName=SitesList}" Padding="0,10,0,4" />
@@ -203,11 +207,11 @@
                 <DockPanel Grid.Row="2" Grid.ColumnSpan="3" IsEnabled="{Binding UseSameDirectory, Converter={StaticResource Not}}">
                   <Button DockPanel.Dock="Right" Style="{StaticResource BrowseButton}" Click="OnBrowseCategoryFolder"
                           AutomationProperties.Name="{l:Loc Common_Browse}" />
-                  <TextBox x:Name="CategoryFolderBox" Text="{Binding SelectedCategory.Folder, UpdateSourceTrigger=PropertyChanged}" />
+                  <TextBox FlowDirection="LeftToRight" x:Name="CategoryFolderBox" Text="{Binding SelectedCategory.Folder, UpdateSourceTrigger=PropertyChanged}" />
                 </DockPanel>
                 <DockPanel Grid.Row="3" Grid.ColumnSpan="3" Margin="0,8,0,0">
                   <Label Content="{l:Loc Options_Extensions}" Target="{Binding ElementName=CategoryExtBox}" Padding="0,0,10,0" VerticalAlignment="Center" />
-                  <TextBox x:Name="CategoryExtBox" Text="{Binding SelectedCategory.Extensions, UpdateSourceTrigger=PropertyChanged}" />
+                  <TextBox FlowDirection="LeftToRight" x:Name="CategoryExtBox" Text="{Binding SelectedCategory.Extensions, UpdateSourceTrigger=PropertyChanged}" />
                 </DockPanel>
               </Grid>
             </GroupBox>
@@ -270,12 +274,12 @@
                 <CheckBox x:Name="ScanBox" Grid.ColumnSpan="2" Content="{l:Loc Options_ScanFiles}" IsChecked="{Binding Settings.Downloads.VirusScan.Enabled}" />
                 <Button Grid.Column="2" Content="{l:Loc Options_WindowsDefender}" Padding="8,1" Command="{Binding UseWindowsDefenderCommand}" />
                 <Label Grid.Row="1" Content="{l:Loc Options_ScanProgram}" Target="{Binding ElementName=ScanProgramBox}" Padding="0,0,10,0" VerticalAlignment="Center" Margin="0,6,0,0" />
-                <TextBox x:Name="ScanProgramBox" Grid.Row="1" Grid.Column="1" Text="{Binding VirusProgram, UpdateSourceTrigger=PropertyChanged}" Margin="0,6,0,0"
+                <TextBox FlowDirection="LeftToRight" x:Name="ScanProgramBox" Grid.Row="1" Grid.Column="1" Text="{Binding VirusProgram, UpdateSourceTrigger=PropertyChanged}" Margin="0,6,0,0"
                          IsEnabled="{Binding IsChecked, ElementName=ScanBox}" />
                 <Button Grid.Row="1" Grid.Column="2" Style="{StaticResource BrowseButton}" Margin="6,6,0,0" Click="OnBrowseScanner"
                         IsEnabled="{Binding IsChecked, ElementName=ScanBox}" AutomationProperties.Name="{l:Loc Common_Browse}" />
                 <Label Grid.Row="2" Content="{l:Loc Options_ScanArguments}" Target="{Binding ElementName=ScanArgsBox}" Padding="0,0,10,0" VerticalAlignment="Center" Margin="0,6,0,0" />
-                <TextBox x:Name="ScanArgsBox" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding VirusArguments, UpdateSourceTrigger=PropertyChanged}" Margin="0,6,0,0"
+                <TextBox FlowDirection="LeftToRight" x:Name="ScanArgsBox" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding VirusArguments, UpdateSourceTrigger=PropertyChanged}" Margin="0,6,0,0"
                          IsEnabled="{Binding IsChecked, ElementName=ScanBox}" />
               </Grid>
             </GroupBox>
@@ -367,7 +371,7 @@
             <RadioButton Content="{l:Loc Options_ManualProxy}" IsChecked="{Binding IsManualProxy}" GroupName="ProxyMode" />
             <DockPanel>
               <RadioButton Content="{l:Loc Options_PacProxy}" IsChecked="{Binding IsPacProxy}" GroupName="ProxyMode" VerticalAlignment="Center" />
-              <TextBox Text="{Binding Settings.Proxy.PacUrl}" Margin="10,0,0,0" IsEnabled="{Binding IsPacProxy}" AutomationProperties.Name="{l:Loc Options_PacProxy}" />
+              <TextBox FlowDirection="LeftToRight" Text="{Binding Settings.Proxy.PacUrl}" Margin="10,0,0,0" IsEnabled="{Binding IsPacProxy}" AutomationProperties.Name="{l:Loc Options_PacProxy}" />
             </DockPanel>
             <GroupBox Header="{l:Loc Options_ManualConfig}" IsEnabled="{Binding IsManualProxy}">
               <StackPanel>
@@ -391,15 +395,15 @@
                   <TextBlock Grid.Column="4" Text="{l:Loc Options_ProxyPassword}" Margin="4,0,0,2" />
 
                   <TextBlock Grid.Row="1" Text="HTTP" VerticalAlignment="Center" Margin="0,0,8,0" />
-                  <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Settings.Proxy.Http.Host}" AutomationProperties.Name="HTTP" />
-                  <TextBox Grid.Row="1" Grid.Column="2" Margin="4,0,0,0" Text="{Binding Settings.Proxy.Http.Port, ValidatesOnExceptions=True}" AutomationProperties.Name="{l:Loc Options_ProxyPort}" />
+                  <TextBox FlowDirection="LeftToRight" Grid.Row="1" Grid.Column="1" Text="{Binding Settings.Proxy.Http.Host}" AutomationProperties.Name="HTTP" />
+                  <TextBox FlowDirection="LeftToRight" Grid.Row="1" Grid.Column="2" Margin="4,0,0,0" Text="{Binding Settings.Proxy.Http.Port, ValidatesOnExceptions=True}" AutomationProperties.Name="{l:Loc Options_ProxyPort}" />
                   <TextBox Grid.Row="1" Grid.Column="3" Margin="4,0,0,0" Text="{Binding Settings.Proxy.Http.User}" AutomationProperties.Name="{l:Loc Options_ProxyUser}" />
                   <PasswordBox x:Name="HttpPasswordBox" Grid.Row="1" Grid.Column="4" Margin="4,0,0,0" AutomationProperties.Name="{l:Loc Options_ProxyPassword}" />
 
                   <TextBlock Grid.Row="2" Text="HTTPS" VerticalAlignment="Center" Margin="0,4,8,0" />
-                  <TextBox Grid.Row="2" Grid.Column="1" Margin="0,4,0,0" Text="{Binding Settings.Proxy.Https.Host}" AutomationProperties.Name="HTTPS"
+                  <TextBox FlowDirection="LeftToRight" Grid.Row="2" Grid.Column="1" Margin="0,4,0,0" Text="{Binding Settings.Proxy.Https.Host}" AutomationProperties.Name="HTTPS"
                            IsEnabled="{Binding IsChecked, ElementName=SameProxyCheck, Converter={StaticResource Not}}" />
-                  <TextBox Grid.Row="2" Grid.Column="2" Margin="4,4,0,0" Text="{Binding Settings.Proxy.Https.Port, ValidatesOnExceptions=True}" AutomationProperties.Name="{l:Loc Options_ProxyPort}"
+                  <TextBox FlowDirection="LeftToRight" Grid.Row="2" Grid.Column="2" Margin="4,4,0,0" Text="{Binding Settings.Proxy.Https.Port, ValidatesOnExceptions=True}" AutomationProperties.Name="{l:Loc Options_ProxyPort}"
                            IsEnabled="{Binding IsChecked, ElementName=SameProxyCheck, Converter={StaticResource Not}}" />
                   <TextBox Grid.Row="2" Grid.Column="3" Margin="4,4,0,0" Text="{Binding Settings.Proxy.Https.User}" AutomationProperties.Name="{l:Loc Options_ProxyUser}"
                            IsEnabled="{Binding IsChecked, ElementName=SameProxyCheck, Converter={StaticResource Not}}" />
@@ -407,9 +411,9 @@
                                IsEnabled="{Binding IsChecked, ElementName=SameProxyCheck, Converter={StaticResource Not}}" />
 
                   <TextBlock Grid.Row="3" Text="FTP" VerticalAlignment="Center" Margin="0,4,8,0" />
-                  <TextBox Grid.Row="3" Grid.Column="1" Margin="0,4,0,0" Text="{Binding Settings.Proxy.Ftp.Host}" AutomationProperties.Name="FTP"
+                  <TextBox FlowDirection="LeftToRight" Grid.Row="3" Grid.Column="1" Margin="0,4,0,0" Text="{Binding Settings.Proxy.Ftp.Host}" AutomationProperties.Name="FTP"
                            IsEnabled="{Binding IsChecked, ElementName=SameProxyCheck, Converter={StaticResource Not}}" />
-                  <TextBox Grid.Row="3" Grid.Column="2" Margin="4,4,0,0" Text="{Binding Settings.Proxy.Ftp.Port, ValidatesOnExceptions=True}" AutomationProperties.Name="{l:Loc Options_ProxyPort}"
+                  <TextBox FlowDirection="LeftToRight" Grid.Row="3" Grid.Column="2" Margin="4,4,0,0" Text="{Binding Settings.Proxy.Ftp.Port, ValidatesOnExceptions=True}" AutomationProperties.Name="{l:Loc Options_ProxyPort}"
                            IsEnabled="{Binding IsChecked, ElementName=SameProxyCheck, Converter={StaticResource Not}}" />
                   <TextBox Grid.Row="3" Grid.Column="3" Margin="4,4,0,0" Text="{Binding Settings.Proxy.Ftp.User}" AutomationProperties.Name="{l:Loc Options_ProxyUser}"
                            IsEnabled="{Binding IsChecked, ElementName=SameProxyCheck, Converter={StaticResource Not}}" />
@@ -431,8 +435,8 @@
                     <ColumnDefinition Width="90" />
                     <ColumnDefinition Width="90" />
                   </Grid.ColumnDefinitions>
-                  <TextBox Text="{Binding Settings.Proxy.Socks.Host}" AutomationProperties.Name="{l:Loc Options_SocksHost}" />
-                  <TextBox Grid.Column="1" Margin="4,0,0,0" Text="{Binding Settings.Proxy.Socks.Port, ValidatesOnExceptions=True}" AutomationProperties.Name="{l:Loc Options_ProxyPort}" />
+                  <TextBox FlowDirection="LeftToRight" Text="{Binding Settings.Proxy.Socks.Host}" AutomationProperties.Name="{l:Loc Options_SocksHost}" />
+                  <TextBox FlowDirection="LeftToRight" Grid.Column="1" Margin="4,0,0,0" Text="{Binding Settings.Proxy.Socks.Port, ValidatesOnExceptions=True}" AutomationProperties.Name="{l:Loc Options_ProxyPort}" />
                   <TextBox Grid.Column="2" Margin="4,0,0,0" Text="{Binding Settings.Proxy.Socks.User}" AutomationProperties.Name="{l:Loc Options_ProxyUser}" />
                   <PasswordBox x:Name="SocksPasswordBox" Grid.Column="3" Margin="4,0,0,0" AutomationProperties.Name="{l:Loc Options_ProxyPassword}" />
                 </Grid>
@@ -441,11 +445,11 @@
               </StackPanel>
             </GroupBox>
             <Label Content="{l:Loc Options_Bypass}" Target="{Binding ElementName=BypassBox}" Padding="0,8,0,4" />
-            <TextBox x:Name="BypassBox" Text="{Binding Settings.Proxy.BypassList}" IsEnabled="{Binding IsNoProxy, Converter={StaticResource Not}}" />
+            <TextBox FlowDirection="LeftToRight" x:Name="BypassBox" Text="{Binding Settings.Proxy.BypassList}" IsEnabled="{Binding IsNoProxy, Converter={StaticResource Not}}" />
             <DockPanel Margin="0,10,0,0">
               <Label Content="{l:Loc Options_TestUrl}" Target="{Binding ElementName=TestUrlBox}" Padding="0,0,8,0" VerticalAlignment="Center" />
               <Button DockPanel.Dock="Right" Content="{l:Loc Options_Test}" MinWidth="70" Margin="6,0,0,0" Command="{Binding TestProxyCommand}" />
-              <TextBox x:Name="TestUrlBox" Text="{Binding ProxyTestUrl, UpdateSourceTrigger=PropertyChanged}" />
+              <TextBox FlowDirection="LeftToRight" x:Name="TestUrlBox" Text="{Binding ProxyTestUrl, UpdateSourceTrigger=PropertyChanged}" />
             </DockPanel>
             <TextBlock Text="{Binding ProxyTestResult}" TextWrapping="Wrap" Margin="0,6,0,0" />
           </StackPanel>
@@ -528,7 +532,7 @@
                       <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <CheckBox Content="{Binding Name}" IsChecked="{Binding Enabled}" VerticalAlignment="Center" />
-                    <TextBox Grid.Column="1" Text="{Binding Path, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding Name}" />
+                    <TextBox FlowDirection="LeftToRight" Grid.Column="1" Text="{Binding Path, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding Name}" />
                     <Button Grid.Column="2" Style="{StaticResource BrowseButton}" Click="OnBrowseSound" AutomationProperties.Name="{l:Loc Common_Browse}" />
                     <Button Grid.Column="3" Content="▶" Width="28" Margin="4,0,0,0" Click="OnPlaySound" AutomationProperties.Name="{l:Loc Options_PlaySound}"
                             ToolTip="{l:Loc Options_PlaySound}" />

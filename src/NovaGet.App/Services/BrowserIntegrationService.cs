@@ -18,6 +18,7 @@ internal sealed class BrowserIntegrationService(
     Lazy<IAppController> controller,
     DownloadUiService downloadUi,
     BrowserLoginService logins,
+    AddressRefreshService addressRefresh,
     ILogger<BrowserIntegrationService> logger)
 {
     public const string Disabled = "disabled";
@@ -66,6 +67,9 @@ internal sealed class BrowserIntegrationService(
             case BrowserDownload { PostData: not null }:
                 // The engine downloads with GET only; a POST form result stays with the browser.
                 return IpcResponse.Failure("post");
+            case BrowserDownload refreshed when addressRefresh.TryTake(refreshed):
+                // "Refresh download address": the existing download continues with this address.
+                return Accepted();
             case BrowserDownload download:
                 logger.LogInformation("Download from {Browser}: {Url}", browser ?? "browser", download.Url);
                 OnUi(() => _ = downloadUi.AddFromBrowserAsync(download));

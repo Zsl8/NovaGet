@@ -4,6 +4,7 @@ using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NovaGet.App.Localization;
+using NovaGet.App.Services;
 using NovaGet.Core.Integration;
 using NovaGet.Core.Models;
 using NovaGet.Core.Network;
@@ -84,7 +85,9 @@ public sealed partial class OptionsViewModel : ObservableObject
         }
 
         CaptureKeys = [.. Enum.GetValues<CaptureModifier>().Select(k => new Choice<CaptureModifier>(k, Localizer.Get("Key_" + k)))];
-        Skins = [new Choice<string>("Default", Localizer.Get("Options_SkinDefault"))];
+        Skins = [.. ToolbarSkins.All.Select(skin => new Choice<string>(skin, ToolbarSkins.Title(skin)))];
+        s.General.ToolbarSkin = ToolbarSkins.Normalize(s.General.ToolbarSkin);
+        Themes = [.. Enum.GetValues<AppTheme>().Select(t => new Choice<AppTheme>(t, Localizer.Get("Theme_" + t)))];
         Languages = [.. context.Languages.Select(c => new Choice<string>(c.Name, LanguageName(c)))];
         if (!Languages.Any(l => string.Equals(l.Value, s.General.Language, StringComparison.OrdinalIgnoreCase)))
         {
@@ -170,6 +173,8 @@ public sealed partial class OptionsViewModel : ObservableObject
     public IReadOnlyList<Choice<CaptureModifier>> CaptureKeys { get; }
 
     public IReadOnlyList<Choice<string>> Skins { get; }
+
+    public IReadOnlyList<Choice<AppTheme>> Themes { get; }
 
     public IReadOnlyList<Choice<string>> Languages { get; }
 

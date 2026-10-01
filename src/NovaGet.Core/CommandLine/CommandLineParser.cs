@@ -105,13 +105,20 @@ public static class CommandLineParser
                     options.Cleanup = true;
                     break;
                 default:
-                    options.Errors.Add($"Unknown switch: {arg}");
+                    // Windows starts the app with -ToastActivated (or -Embedding) when a toast is clicked after it exited.
+                    if (!s_activationSwitches.Contains(name))
+                    {
+                        options.Errors.Add($"Unknown switch: {arg}");
+                    }
+
                     break;
             }
         }
 
         return options;
     }
+
+    private static readonly HashSet<string> s_activationSwitches = new(StringComparer.OrdinalIgnoreCase) { "toastactivated", "embedding" };
 
     /// <summary>
     /// Accepts http/https/ftp/ftps addresses and unwraps <c>novaget://</c> links
