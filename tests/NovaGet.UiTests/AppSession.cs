@@ -48,11 +48,27 @@ public sealed class AppSession : IDisposable
         }
     }
 
-    /// <summary>A window of the app with this title (dialogs are owned top-level windows), waiting for it to appear.</summary>
+    /// <summary>
+    /// The app's windows: top-level ones, and the dialogs they own (UI Automation lists an owned window under its
+    /// owner, not under the desktop).
+    /// </summary>
+    public IEnumerable<Window> Windows()
+    {
+        foreach (var window in App.GetAllTopLevelWindows(Automation))
+        {
+            yield return window;
+            foreach (var owned in window.FindAllDescendants(cf => cf.ByControlType(ControlType.Window)))
+            {
+                yield return owned.AsWindow();
+            }
+        }
+    }
+
+    /// <summary>A window of the app with this title, waiting for it to appear.</summary>
     public Window WaitForWindow(string title)
     {
         var found = Retry.WhileNull(
-            () => App.GetAllTopLevelWindows(Automation).FirstOrDefault(w => w.Title == title),
+            () => Windows().FirstOrDefault(w => w.Title == title),
             s_wait, TimeSpan.FromMilliseconds(200), throwOnTimeout: false);
         if (found.Result is { } window)
         {
@@ -67,7 +83,7 @@ public sealed class AppSession : IDisposable
     {
         var text = new System.Text.StringBuilder();
         text.Append(CultureInfo.InvariantCulture, $"Process exited: {App.HasExited}. Windows:");
-        foreach (var window in App.GetAllTopLevelWindows(Automation))
+        foreach (var window in Windows())
         {
             var buttons = window.FindAllDescendants(cf => cf.ByControlType(ControlType.Button)).Select(b => $"{b.Name}{(b.IsEnabled ? string.Empty : " (disabled)")}");
             text.Append(CultureInfo.InvariantCulture, $" '{window.Title}' [modal: {window.IsModal}; buttons: {string.Join(", ", buttons)}]");
@@ -92,7 +108,7 @@ public sealed class AppSession : IDisposable
     public void WaitUntilClosed(string title)
     {
         var closed = Retry.WhileTrue(
-            () => App.GetAllTopLevelWindows(Automation).Any(w => w.Title == title),
+            () => Windows().Any(w => w.Title == title),
             s_wait, TimeSpan.FromMilliseconds(200), throwOnTimeout: false);
         Assert.True(closed.Success, $"'{title}' is still open");
     }

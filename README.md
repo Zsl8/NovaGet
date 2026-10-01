@@ -9,7 +9,7 @@ scheduler, and browser integration that catches downloads and videos.
 - C# 12 / .NET 8, WPF (MVVM), SQLite, Serilog
 - No ads, no telemetry. The only network traffic is your downloads and an optional update check you can turn off.
 
-> **Status:** under active development, milestone by milestone (see [Roadmap](#roadmap)).
+> **Status:** version 1.0. Download the installer from [Releases](https://github.com/Zsl8/NovaGet/releases); user help is in [docs/index.html](docs/index.html) (Help → Contents in the app).
 
 ## Features
 
@@ -101,10 +101,22 @@ Files on disk: settings and the database live in `%APPDATA%\NovaGet`, temp files
 | 12 | Site grabber | Done |
 | 13 | Polish: icons, sounds, localization, themes, accessibility | Done |
 | 14 | Installer final | Done |
-| 15 | QA pass, v1.0.0 | Planned |
+| 15 | QA pass, v1.0.0 | Done |
 
 Design decisions are recorded in [DECISIONS.md](DECISIONS.md); the command line is documented in
-[docs/command-line.md](docs/command-line.md).
+[docs/command-line.md](docs/command-line.md); the manual release checklist is [docs/qa-checklist.md](docs/qa-checklist.md).
+
+## Testing
+
+| Suite | What it covers | Runs on |
+|---|---|---|
+| `tests/NovaGet.Core.Tests` | Engine against a local HTTP/HTTPS/FTP test server (1–32 connections, drops, kill and resume, validators, redirects, auth, FTP passive/active, HTTP CONNECT and SOCKS5 proxies, speed limiter), streams with ffmpeg, queues, a 200-download soak, data, settings, IPC, grabber, packaging checks | everywhere |
+| `tests/NovaGet.App.Tests` | Every window and dialog loads; dark theme and Arabic right-to-left renders | Windows |
+| `tests/NovaGet.UiTests` | FlaUI: the real NovaGet.exe driven through UI Automation | Windows |
+| `browser-extension/test` | Background logic under Node; the video panel in Chromium (Playwright) | Node / Playwright |
+| `installer/smoke-test.ps1` | Silent install, upgrade and uninstall of the built installer | Windows (CI) |
+
+Opt-in: `NOVAGET_BENCH=1` (16-connection throughput), `NOVAGET_SOAK=120` (two-hour soak), `NOVAGET_STRESS=1` (pipe stress).
 
 ## License
 
