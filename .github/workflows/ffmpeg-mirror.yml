@@ -1,0 +1,74 @@
+name: ffmpeg-mirror
+
+# Run by hand. Copies the newest FFmpeg LGPL shared Windows build (BtbN/FFmpeg-Builds, release branches only),
+# after checking it against the publisher's checksums, into a pre-release of this repository together with the
+# matching FFmpeg source. The printed url and sha256 go into build/ffmpeg.json: release builds need a pinned
+# archive at an address that never changes, and the LGPL source stays available next to it.
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'FFmpeg release branch, e.g. 7.1 (empty: the newest)'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Mirror the build and its source
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRANCH: ${{ inputs.branch }}
+        run: |
+          set -euo pipefail
+          api=https://api.github.com/repos/BtbN/FFmpeg-Builds/releases/tags/latest
+          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" "$api" > release.json
+          names=$(jq -r '.assets[].name' release.json | grep -E '^ffmpeg-n[0-9]+\.[0-9]+-latest-win64-lgpl-shared-[0-9]+\.[0-9]+\.zip$')
+          if [ -n "$BRANCH" ]; then names=$(echo "$names" | grep -F "ffmpeg-n$BRANCH-latest-"); fi
+          name=$(echo "$names" | sed -E 's/^ffmpeg-n([0-9.]+)-.*/\1 &/' | sort -V | tail -n1 | cut -d' ' -f2)
+          [ -n "$name" ] || { echo "No LGPL shared release-branch build found"; exit 1; }
+          url=$(jq -r --arg n "$name" '.assets[] | select(.name == $n) | .browser_download_url' release.json)
+          sums=$(jq -r '.assets[] | select(.name == "checksums.sha256") | .browser_download_url' release.json)
+          curl -fsSL -o "$name" "$url"
+          curl -fsSL -o checksums.sha256 "$sums"
+          expected=$(grep -E "[[:space:]]\*?$name\$" checksums.sha256 | cut -c1-64)
+          actual=$(sha256sum "$name" | cut -c1-64)
+          [ -n "$expected" ] && [ "$expected" = "$actual" ] || { echo "Checksum mismatch: $expected vs $actual"; exit 1; }
+
+          # The exact build (e.g. ffmpeg-n7.1.1-22-g0f1fe3d153-win64-lgpl-shared-7.1) names the mirror.
+          build=$(unzip -Z1 "$name" | head -n1 | cut -d/ -f1)
+          commit=$(echo "$build" | sed -nE 's/.*-g([0-9a-f]+)-win64.*/\1/p')
+          tag="deps-${build%-win64-lgpl-shared-*}"
+          file="$build.zip"
+          mv "$name" "$file"
+          if [ -n "$commit" ]; then
+            curl -fsSL -o "ffmpeg-source-$commit.tar.gz" "https://github.com/FFmpeg/FFmpeg/archive/$commit.tar.gz"
+            source="ffmpeg-source-$commit.tar.gz"
+          else
+            source=""
+          fi
+          printf '%s  %s\n' "$actual" "$file" > "$file.sha256"
+
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            echo "$tag already exists; reusing it"
+          else
+            gh release create "$tag" "$file" "$file.sha256" $source \
+              --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --prerelease --latest=false \
+              --title "FFmpeg $build (LGPL, mirrored for NovaGet builds)" \
+              --notes "FFmpeg LGPL shared build from BtbN/FFmpeg-Builds ($url), SHA-256 $actual, with the FFmpeg source of commit $commit. Bundled by the NovaGet installer to merge HLS/DASH downloads. Not a NovaGet release."
+          fi
+          mirror="https://github.com/$GITHUB_REPOSITORY/releases/download/$tag/$file"
+          echo "FFMPEG_URL=$mirror"
+          echo "FFMPEG_SHA256=$actual"
+          {
+            echo "### Pin in build/ffmpeg.json"
+            echo '```json'
+            echo "\"version\": \"FFmpeg $build\","
+            echo "\"url\": \"$mirror\","
+            echo "\"sha256\": \"$actual\""
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

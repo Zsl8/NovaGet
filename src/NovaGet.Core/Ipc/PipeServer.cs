@@ -144,7 +144,7 @@ public sealed class PipeServer : IAsyncDisposable
                     IpcRequest? request = null;
                     try
                     {
-                        request = IpcJson.Deserialize<IpcRequest>(body);
+                        request = IpcJson.DeserializeRequest(body);
                     }
                     catch (JsonException ex)
                     {

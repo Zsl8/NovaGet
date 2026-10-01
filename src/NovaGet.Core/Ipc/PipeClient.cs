@@ -57,7 +57,7 @@ public sealed class PipeClient : IAsyncDisposable
             await MessageFraming.WriteAsync(_pipe, IpcJson.Serialize(request), cancellationToken).ConfigureAwait(false);
             var body = await MessageFraming.ReadAsync(_pipe, cancellationToken: cancellationToken).ConfigureAwait(false)
                 ?? throw new IOException("The app closed the connection.");
-            return IpcJson.Deserialize<IpcResponse>(body) ?? IpcResponse.Failure("Empty response.");
+            return IpcJson.DeserializeResponse(body) ?? IpcResponse.Failure("Empty response.");
         }
         finally
         {

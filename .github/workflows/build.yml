@@ -41,7 +41,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
           # The theme tests save their off-screen renders here (dark theme, Arabic right-to-left).
           NOVAGET_SCREENSHOTS: ${{ runner.temp }}/screens
-        run: ./build.ps1
+        run: ./build.ps1 -SmokeTest
 
       - name: Upload UI screenshots
         if: always()

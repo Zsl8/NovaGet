@@ -45,25 +45,46 @@ public sealed class IpcResponse
     public static IpcResponse Failure(string error) => new() { Ok = false, Error = error };
 }
 
+/// <summary>
+/// JSON for the pipe: camelCase names, nulls left out. The request and response envelopes use source-generated
+/// serializers, so the trimmed native host needs no reflection; payloads built by the app use <see cref="Options"/>.
+/// </summary>
 public static class IpcJson
 {
-    public static JsonSerializerOptions Options { get; } = CreateOptions();
+    /// <summary>Reflection-based options for payload objects (the app only).</summary>
+    public static JsonSerializerOptions Options => Reflection.Options;
 
-    private static JsonSerializerOptions CreateOptions()
-    {
-        var options = new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-        };
-        options.TypeInfoResolver = new DefaultJsonTypeInfoResolver();
-        options.MakeReadOnly();
-        return options;
-    }
+    public static byte[] Serialize(IpcRequest request) => JsonSerializer.SerializeToUtf8Bytes(request, IpcJsonContext.Default.IpcRequest);
 
-    public static byte[] Serialize<T>(T value) => JsonSerializer.SerializeToUtf8Bytes(value, Options);
+    public static byte[] Serialize(IpcResponse response) => JsonSerializer.SerializeToUtf8Bytes(response, IpcJsonContext.Default.IpcResponse);
 
-    public static T? Deserialize<T>(byte[] utf8) => JsonSerializer.Deserialize<T>(utf8, Options);
+    public static IpcRequest? DeserializeRequest(byte[] utf8) => JsonSerializer.Deserialize(utf8, IpcJsonContext.Default.IpcRequest);
+
+    public static IpcResponse? DeserializeResponse(byte[] utf8) => JsonSerializer.Deserialize(utf8, IpcJsonContext.Default.IpcResponse);
 
     public static JsonElement ToElement<T>(T value) => JsonSerializer.SerializeToElement(value, Options);
+
+    private static class Reflection
+    {
+        internal static readonly JsonSerializerOptions Options = Create();
+
+        private static JsonSerializerOptions Create()
+        {
+            var options = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            };
+            options.TypeInfoResolver = new DefaultJsonTypeInfoResolver();
+            options.MakeReadOnly();
+            return options;
+        }
+    }
+}
+
+[JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull)]
+[JsonSerializable(typeof(IpcRequest))]
+[JsonSerializable(typeof(IpcResponse))]
+internal sealed partial class IpcJsonContext : JsonSerializerContext
+{
 }

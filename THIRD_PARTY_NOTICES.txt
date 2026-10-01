@@ -42,8 +42,10 @@ The ffmpeg\ folder holds an unmodified LGPL *shared* build of FFmpeg for Windows
 a separate program to join the tracks of HLS/DASH downloads without re-encoding; it
 is not linked into NovaGet. FFmpeg is licensed under the GNU Lesser General Public
 License version 2.1 or later (ffmpeg\LICENSE.txt); ffmpeg\VERSION.txt names the
-exact build. Its source code is available from https://ffmpeg.org/download.html and,
-for that build, from https://github.com/BtbN/FFmpeg-Builds. You may replace the
+exact build. Its source code is available from https://ffmpeg.org/download.html; the
+source of the exact commit is published next to the mirrored build (the "deps-ffmpeg"
+pre-releases of https://github.com/Zsl8/NovaGet) and the build scripts at
+https://github.com/BtbN/FFmpeg-Builds. You may replace the
 files in the ffmpeg\ folder with another FFmpeg build of your choice.
 FFmpeg is a trademark of Fabrice Bellard, originator of the FFmpeg project.
 

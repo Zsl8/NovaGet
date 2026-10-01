@@ -13,6 +13,12 @@ public static class AppInfo
     /// <summary>Named pipe (<c>\\.\pipe\NovaGet.Main</c>) used for single-instance forwarding and the native host.</summary>
     public const string PipeName = "NovaGet.Main";
 
+    /// <summary>
+    /// The app's AppUserModelID, shared by the process and the Start menu shortcut the installer creates, so a pinned
+    /// taskbar button and the running window are one button.
+    /// </summary>
+    public const string AppUserModelId = "NovaGet.DownloadManager";
+
     /// <summary>Native messaging host name registered for the browsers.</summary>
     public const string NativeHostName = "com.novaget.nativehost";
 

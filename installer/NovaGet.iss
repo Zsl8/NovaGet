@@ -11,16 +11,17 @@
 #define NativeHostExeName "NovaGet.NativeHost.exe"
 #define NativeHostName "com.novaget.nativehost"
 #define AppPublisher "NovaGet contributors"
-#define AppUrl "https://github.com/zsl8/novaget"
+#define AppUrl "https://github.com/Zsl8/NovaGet"
 #define AppMutexName "NovaGet.SingleInstance"
 #define AppUserModelId "NovaGet.DownloadManager"
+#define AppGuid "{8C1B5E7A-3F7D-4C8E-9C2B-6E1F0A4D2B77}"
 #define SourceDir "..\out\app"
 #define ExtensionDir "..\out\extension"
 
 #include "extension-ids.iss"
 
 [Setup]
-AppId={{8C1B5E7A-3F7D-4C8E-9C2B-6E1F0A4D2B77}
+AppId={#StringChange(AppGuid, "{", "{{")}
 AppName={#AppName}
 AppVersion={#AppVersion}
 AppVerName={#AppName} {#AppVersion}
@@ -70,6 +71,8 @@ english.TaskGroupIntegration=Integration:
 english.RunLaunch=Launch NovaGet
 english.RunExtensionGuide=Open browser extension setup page
 english.UninstallRemoveData=Remove your download list and settings too?%n%nChoose No to keep them for a future installation.
+english.CloseRunningApp=NovaGet is running. Setup will close it first; downloads in progress are paused and can be resumed later.%n%nClose NovaGet and continue?
+english.CloseRunningAppFailed=NovaGet could not be closed. Please exit it from its notification area icon (right-click, Exit), then try again.
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:TaskDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
@@ -120,8 +123,85 @@ Filename: "{app}\{#AppExeName}"; Parameters: "/cleanup"; Flags: runhidden waitun
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}\native-host"
 Type: files; Name: "{app}\install-defaults.json"
+Type: dirifempty; Name: "{app}\lang"
+Type: dirifempty; Name: "{app}"
 
 [Code]
+const
+  UninstallKey = 'Software\Microsoft\Windows\CurrentVersion\Uninstall\{#AppGuid}_is1';
+  NativeHostKeys = 'Software\Google\Chrome|Software\Microsoft\Edge|Software\Chromium|Software\Mozilla';
+
+{ NovaGet.exe of an earlier installation (per-user or all-users), or ''. }
+function InstalledExe: String;
+var
+  Location: String;
+begin
+  Result := '';
+  if RegQueryStringValue(HKCU, UninstallKey, 'InstallLocation', Location) or
+     (IsWin64 and RegQueryStringValue(HKLM64, UninstallKey, 'InstallLocation', Location)) or
+     RegQueryStringValue(HKLM32, UninstallKey, 'InstallLocation', Location) then
+    Result := AddBackslash(Location) + '{#AppExeName}';
+end;
+
+{ Asks a running NovaGet to exit (NovaGet.exe /exit sends "exit" over its pipe) and waits up to 15 s for it.
+  Silent runs close it without asking. Returns False when NovaGet keeps running or the user says no. }
+function CloseRunningApp(const Exe: String; const Silent: Boolean): Boolean;
+var
+  Code, Waited: Integer;
+begin
+  Result := True;
+  if not CheckForMutexes('{#AppMutexName}') then
+    Exit;
+  if not Silent then
+    if MsgBox(CustomMessage('CloseRunningApp'), mbConfirmation, MB_YESNO) <> IDYES then
+    begin
+      Result := False;
+      Exit;
+    end;
+  if (Exe <> '') and FileExists(Exe) then
+    Exec(Exe, '/exit', '', SW_HIDE, ewWaitUntilTerminated, Code);
+  Waited := 0;
+  while CheckForMutexes('{#AppMutexName}') and (Waited < 15000) do
+  begin
+    Sleep(250);
+    Waited := Waited + 250;
+  end;
+  Result := not CheckForMutexes('{#AppMutexName}');
+  if (not Result) and (not Silent) then
+    MsgBox(CustomMessage('CloseRunningAppFailed'), mbError, MB_OK);
+end;
+
+function InitializeSetup: Boolean;
+begin
+  Result := CloseRunningApp(InstalledExe, WizardSilent);
+end;
+
+function InitializeUninstall: Boolean;
+begin
+  Result := CloseRunningApp(ExpandConstant('{app}\{#AppExeName}'), UninstallSilent);
+end;
+
+{ An upgrade that unticks a task removes what an earlier installation registered for it. }
+procedure RemoveUnselectedTaskEntries;
+var
+  Rest, Base: String;
+  P: Integer;
+begin
+  if not WizardIsTaskSelected('browsers') then
+  begin
+    Rest := NativeHostKeys + '|';
+    while Rest <> '' do
+    begin
+      P := Pos('|', Rest);
+      Base := Copy(Rest, 1, P - 1);
+      Rest := Copy(Rest, P + 1, Length(Rest));
+      RegDeleteKeyIncludingSubkeys(HKA, Base + '\NativeMessagingHosts\{#NativeHostName}');
+    end;
+  end;
+  if not WizardIsTaskSelected('startup') then
+    RegDeleteValue(HKA, 'Software\Microsoft\Windows\CurrentVersion\Run', '{#AppName}');
+end;
+
 { JSON string escaping that keeps the file pure ASCII (non-ASCII becomes \uXXXX). }
 function JsonEscape(const S: String): String;
 var
@@ -197,6 +277,7 @@ begin
   begin
     WriteNativeHostManifests;
     WriteInstallDefaults;
+    RemoveUnselectedTaskEntries;
   end;
 end;
 

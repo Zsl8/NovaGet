@@ -12,12 +12,16 @@
   6. Copy runtime assets (sounds, lang, docs) -> out\app
   7. iscc /DAppVersion=<version> installer\NovaGet.iss -> dist\
   8. Print the installer's SHA-256
+  9. With -SmokeTest: install silently (per user), check files, registry, native host and the running app,
+     upgrade in place, uninstall, and check that only the user's data is left (installer\smoke-test.ps1)
 
-  Code signing: set CERT_PFX (path to a .pfx) and CERT_PASS to sign the installer and uninstaller.
+  Code signing: set CERT_PFX (path to a .pfx) and CERT_PASS to sign NovaGet.exe, NovaGet.NativeHost.exe, the
+  installer and the uninstaller (signtool from the Windows SDK; RFC 3161 timestamp).
 
 .EXAMPLE
   ./build.ps1
   ./build.ps1 -SkipTests -Runtime win-arm64
+  ./build.ps1 -SmokeTest
 #>
 [CmdletBinding()]
 param(
@@ -29,7 +33,8 @@ param(
 
     [switch] $SkipTests,
     [switch] $SkipFfmpeg,
-    [switch] $SkipInstaller
+    [switch] $SkipInstaller,
+    [switch] $SmokeTest
 )
 
 Set-StrictMode -Version Latest
@@ -80,6 +85,21 @@ function Find-Iscc {
     if ($candidates) { return @($candidates)[0] }
     throw 'ISCC.exe (Inno Setup 6) not found. Install it with: choco install innosetup -y'
 }
+
+function Find-SignTool {
+    $onPath = Get-Command 'signtool' -ErrorAction SilentlyContinue
+    if ($onPath) { return $onPath.Source }
+    $kits = Join-Path ${env:ProgramFiles(x86)} 'Windows Kits\10\bin'
+    if (Test-Path $kits) {
+        $tool = Get-ChildItem $kits -Recurse -Filter 'signtool.exe' -ErrorAction SilentlyContinue |
+            Where-Object { $_.FullName -match '\\x64\\' } | Sort-Object FullName -Descending | Select-Object -First 1
+        if ($tool) { return $tool.FullName }
+    }
+    throw 'signtool.exe (Windows SDK) not found; it is needed when CERT_PFX is set.'
+}
+
+$signing = [bool] ($env:CERT_PFX -and (Test-Path $env:CERT_PFX))
+$signTool = if ($signing) { Find-SignTool } else { $null }
 
 $version = Get-ProductVersion
 Write-Host "NovaGet $version ($Configuration, $Runtime)" -ForegroundColor Green
@@ -241,6 +261,15 @@ if ($ffmpegBin) {
     }
 }
 
+if ($signing) {
+    Invoke-Step '5b. Sign the executables' {
+        foreach ($exe in @('NovaGet.exe', 'NovaGet.NativeHost.exe')) {
+            Invoke-Native $signTool @('sign', '/fd', 'sha256', '/tr', 'http://timestamp.digicert.com', '/td', 'sha256',
+                '/f', $env:CERT_PFX, '/p', $env:CERT_PASS, (Join-Path $appOut $exe)) -HideArguments
+        }
+    }
+}
+
 Invoke-Step '6. Copy runtime assets' {
     foreach ($asset in @('sounds', 'lang')) {
         $source = Join-Path $root "assets/$asset"
@@ -261,11 +290,9 @@ if (-not $SkipInstaller) {
     Invoke-Step '7. Build installer (Inno Setup)' {
         $iscc = Find-Iscc
         $isccArgs = @("/DAppVersion=$version", '/Qp')
-        $signing = $false
-        if ($env:CERT_PFX -and (Test-Path $env:CERT_PFX)) {
-            $signing = $true
+        if ($signing) {
             Write-Host '    Code signing enabled'
-            $sign = 'signtool sign /fd sha256 /tr http://timestamp.digicert.com /td sha256 /f $q' + $env:CERT_PFX + '$q /p $q' + $env:CERT_PASS + '$q $f'
+            $sign = '$q' + $signTool + '$q sign /fd sha256 /tr http://timestamp.digicert.com /td sha256 /f $q' + $env:CERT_PFX + '$q /p $q' + $env:CERT_PASS + '$q $f'
             $isccArgs += @('/DSignEnabled', "/Ssigntool=$sign")
         }
         else {
@@ -282,6 +309,15 @@ if (-not $SkipInstaller) {
         Set-Content -Path "$setup.sha256" -Value "$hash  $([IO.Path]::GetFileName($setup))"
         Write-Host "    $([IO.Path]::GetFileName($setup))"
         Write-Host "    SHA-256: $hash" -ForegroundColor Green
+        $size = (Get-Item $setup).Length / 1MB
+        Write-Host ("    Size: {0:N1} MB" -f $size)
+    }
+
+    if ($SmokeTest) {
+        Invoke-Step '9. Installer smoke test' {
+            & (Join-Path $root 'installer/smoke-test.ps1') -Setup (Join-Path $dist "NovaGet-Setup-$version.exe")
+            if (-not $?) { throw 'Installer smoke test failed' }
+        }
     }
 }
 

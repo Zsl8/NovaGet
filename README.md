@@ -30,11 +30,16 @@ Requirements: .NET 8 SDK, PowerShell 7, and [Inno Setup 6](https://jrsoftware.or
 ```powershell
 ./build.ps1                 # test, publish, package -> dist\NovaGet-Setup-<version>.exe
 ./build.ps1 -SkipInstaller  # everything except the Inno Setup step
+./build.ps1 -SmokeTest      # ...then install, upgrade and uninstall it for the current user (as CI does)
 dotnet test                 # tests only (UI smoke tests run on Windows only)
 ```
 
+ffmpeg (LGPL shared build) is fetched by build.ps1 and verified by SHA-256 (`build/ffmpeg.json`). Release builds
+need it pinned: run the `ffmpeg-mirror` workflow, which publishes a checked copy and its source as a pre-release of
+this repository, and put the url and hash it prints into `build/ffmpeg.json`.
+
 The version lives in one place, `Directory.Build.props`, and flows into every assembly, the About box and the installer.
-Set `CERT_PFX` and `CERT_PASS` to sign the installer.
+Set `CERT_PFX` and `CERT_PASS` to sign the executables, the installer and the uninstaller.
 
 Core, Data and the test suite are cross-platform; the WPF app also compiles on Linux/macOS
 (`EnableWindowsTargeting`), but only runs on Windows. CI (`.github/workflows/build.yml`) builds on
@@ -95,7 +100,7 @@ Files on disk: settings and the database live in `%APPDATA%\NovaGet`, temp files
 | 11 | Batch, import/export, command line | Done |
 | 12 | Site grabber | Done |
 | 13 | Polish: icons, sounds, localization, themes, accessibility | Done |
-| 14 | Installer final | Planned |
+| 14 | Installer final | Done |
 | 15 | QA pass, v1.0.0 | Planned |
 
 Design decisions are recorded in [DECISIONS.md](DECISIONS.md); the command line is documented in

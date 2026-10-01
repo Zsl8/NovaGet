@@ -136,4 +136,49 @@ public sealed class SettingsServiceTests : IDisposable
         Assert.Equal("ar", new SettingsService(_paths).Current.General.Language);
         Assert.Equal("ar", service.Current.General.Language);
     }
+
+    [Fact]
+    public void A_first_run_applies_the_installer_choices_once()
+    {
+        File.WriteAllText(Path.Combine(_paths.ExecutableDir, InstallDefaults.FileName),
+            """{ "launchOnStartup": true, "browserIntegration": false, "monitorClipboard": true }""");
+
+        var first = new SettingsService(_paths);
+        Assert.True(first.IsFirstRun);
+        Assert.True(first.Current.General.MonitorClipboard);
+        Assert.Empty(first.Current.General.IntegratedBrowsers);
+
+        // Once settings exist, the installer's file no longer matters (an upgrade keeps the user's options).
+        first.Update(s => s.General.MonitorClipboard = false);
+        var later = new SettingsService(_paths);
+        Assert.False(later.IsFirstRun);
+        Assert.False(later.Current.General.MonitorClipboard);
+    }
+
+    [Theory]
+    [InlineData("""{ "browserIntegration": true, "monitorClipboard": false }""", false, 6)]
+    [InlineData("""{ "monitorClipboard": "yes" }""", false, 6)]
+    [InlineData("not json", false, 6)]
+    [InlineData("[]", false, 6)]
+    public void Install_defaults_are_read_leniently(string json, bool clipboard, int browsers)
+    {
+        File.WriteAllText(Path.Combine(_paths.ExecutableDir, InstallDefaults.FileName), json);
+
+        var service = new SettingsService(_paths);
+
+        Assert.Equal(clipboard, service.Current.General.MonitorClipboard);
+        Assert.Equal(browsers, service.Current.General.IntegratedBrowsers.Count);
+    }
+
+    [Fact]
+    public void A_corrupt_settings_file_is_not_a_first_run()
+    {
+        File.WriteAllText(_paths.SettingsFile, "{ not json");
+        File.WriteAllText(Path.Combine(_paths.ExecutableDir, InstallDefaults.FileName), """{ "monitorClipboard": true }""");
+
+        var service = new SettingsService(_paths);
+
+        Assert.False(service.IsFirstRun);
+        Assert.False(service.Current.General.MonitorClipboard);
+    }
 }

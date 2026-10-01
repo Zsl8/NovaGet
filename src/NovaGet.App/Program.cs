@@ -39,6 +39,11 @@ public static partial class Program
             return ExitOk; // "/exit" with nothing running: nothing to close.
         }
 
+        if (OperatingSystem.IsWindowsVersionAtLeast(6, 1))
+        {
+            _ = SetCurrentProcessExplicitAppUserModelID(AppInfo.AppUserModelId);
+        }
+
         var paths = AppPaths.Resolve();
         paths.EnsureCreated();
         Log.Logger = AppLogging.CreateLogger(paths);
@@ -122,4 +127,7 @@ public static partial class Program
     [LibraryImport("user32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static partial bool AllowSetForegroundWindow(int dwProcessId);
+
+    [LibraryImport("shell32.dll", StringMarshalling = StringMarshalling.Utf16)]
+    private static partial int SetCurrentProcessExplicitAppUserModelID(string appId);
 }

@@ -16,20 +16,26 @@ public sealed class SettingsService : ISettingsService
     private readonly string _file;
     private readonly string _backupFile;
     private readonly ILogger _logger;
+    private readonly string? _installDefaultsFile;
     private AppSettings _current;
 
     public SettingsService(AppPaths paths, ILogger<SettingsService>? logger = null)
-        : this(paths.SettingsFile, paths.SettingsBackupFile, logger)
+        : this(paths.SettingsFile, paths.SettingsBackupFile, logger, Path.Combine(paths.ExecutableDir, InstallDefaults.FileName))
     {
     }
 
-    public SettingsService(string file, string backupFile, ILogger<SettingsService>? logger = null)
+    /// <param name="installDefaultsFile">The installer's choices, applied when there are no settings yet.</param>
+    public SettingsService(string file, string backupFile, ILogger<SettingsService>? logger = null, string? installDefaultsFile = null)
     {
         _file = file;
         _backupFile = backupFile;
         _logger = (ILogger?)logger ?? NullLogger.Instance;
+        _installDefaultsFile = installDefaultsFile;
         _current = Load();
     }
+
+    /// <summary>True when no settings existed (a first run): defaults were used, with the installer's choices.</summary>
+    public bool IsFirstRun { get; private set; }
 
     public AppSettings Current
     {
@@ -109,6 +115,15 @@ public sealed class SettingsService : ISettingsService
         }
 
         var defaults = new AppSettings();
+        if (!mainWasCorrupt)
+        {
+            IsFirstRun = true;
+            if (_installDefaultsFile is not null && InstallDefaults.TryApply(defaults, _installDefaultsFile))
+            {
+                _logger.LogInformation("First run: applied the installer's choices from {File}", _installDefaultsFile);
+            }
+        }
+
         SettingsNormalizer.Normalize(defaults);
         return defaults;
     }
