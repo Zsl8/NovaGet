@@ -17,6 +17,9 @@ public sealed class TestFile
 
     public string Path { get; }
 
+    /// <summary>Fixed content (playlists, keys, real media); null for generated content.</summary>
+    public byte[]? Data { get; private set; }
+
     public long Size => Volatile.Read(ref _size);
 
     public int Seed => Volatile.Read(ref _seed);
@@ -97,7 +100,30 @@ public sealed class TestFile
         LastModified = LastModified.AddHours(1);
     }
 
-    public byte[] Content() => ContentGenerator.Generate(Seed, Size);
+    /// <summary>Serves exactly these bytes from now on (validators change as with <see cref="ChangeContent"/>).</summary>
+    public void SetData(byte[] data)
+    {
+        ArgumentNullException.ThrowIfNull(data);
+        Data = data;
+        Volatile.Write(ref _size, data.Length);
+        ETag = $"\"d{data.Length}-{data.GetHashCode()}\"";
+    }
 
-    public string Sha256() => ContentGenerator.Sha256Hex(Seed, Size);
+    public void Fill(int seed, long offset, Span<byte> destination)
+    {
+        if (Data is { } data)
+        {
+            data.AsSpan((int)offset, destination.Length).CopyTo(destination);
+        }
+        else
+        {
+            ContentGenerator.Fill(seed, offset, destination);
+        }
+    }
+
+    public byte[] Content() => Data is { } data ? [.. data] : ContentGenerator.Generate(Seed, Size);
+
+    public string Sha256() => Data is { } data
+        ? Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(data))
+        : ContentGenerator.Sha256Hex(Seed, Size);
 }

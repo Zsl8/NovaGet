@@ -1,6 +1,7 @@
 {
-  "_comment": "Pinned ffmpeg LGPL *shared* build for Windows (called as an external process for HLS/DASH merging). build.ps1 downloads 'url', verifies 'sha256' and copies bin\\* to out\\app\\ffmpeg. Empty url = ffmpeg not bundled.",
-  "version": "",
-  "url": "",
+  "_comment": "ffmpeg LGPL *shared* build for Windows, run as an external process to merge HLS/DASH downloads. build.ps1 downloads 'url' and verifies it: against 'sha256' when pinned, otherwise against the publisher's 'checksumsUrl' (and prints the hash to pin). Release (v*) builds require 'sha256'; pin a stable copy (a release asset that never changes), not a rolling 'latest' file.",
+  "version": "FFmpeg n7.1 (BtbN LGPL shared, win64)",
+  "url": "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-n7.1-latest-win64-lgpl-shared-7.1.zip",
+  "checksumsUrl": "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/checksums.sha256",
   "sha256": ""
 }

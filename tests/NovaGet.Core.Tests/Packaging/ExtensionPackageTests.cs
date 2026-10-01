@@ -45,13 +45,29 @@ public sealed partial class ExtensionPackageTests
         var files = new List<string>();
         files.AddRange(manifest.GetProperty("icons").EnumerateObject().Select(p => p.Value.GetString()!));
         files.Add(manifest.GetProperty("action").GetProperty("default_popup").GetString()!);
-        files.AddRange(manifest.GetProperty("content_scripts")[0].GetProperty("js").EnumerateArray().Select(j => j.GetString()!));
+        files.AddRange(manifest.GetProperty("content_scripts").EnumerateArray().SelectMany(c => c.GetProperty("js").EnumerateArray()).Select(j => j.GetString()!));
         var background = manifest.GetProperty("background");
         files.AddRange(background.TryGetProperty("service_worker", out var worker)
             ? [worker.GetString()!]
             : background.GetProperty("scripts").EnumerateArray().Select(s => s.GetString()!));
 
         Assert.All(files, file => Assert.True(File.Exists(RepoPaths.Combine("browser-extension", "src", file)), file));
+    }
+
+    [Fact]
+    public void Only_the_drm_observer_runs_in_the_page_context()
+    {
+        var chromium = Manifest("chromium").GetProperty("content_scripts").EnumerateArray().ToList();
+        var main = Assert.Single(chromium, c => c.TryGetProperty("world", out var w) && w.GetString() == "MAIN");
+        Assert.Equal(["eme.js"], main.GetProperty("js").EnumerateArray().Select(j => j.GetString()));
+        Assert.All(Manifest("firefox").GetProperty("content_scripts").EnumerateArray(), c => Assert.False(c.TryGetProperty("world", out _)));
+
+        // It observes only: no network, no messaging, no storage from the page context.
+        var eme = File.ReadAllText(RepoPaths.Combine("browser-extension", "src", "eme.js"));
+        Assert.DoesNotContain("fetch(", eme, StringComparison.Ordinal);
+        Assert.DoesNotContain("XMLHttpRequest", eme, StringComparison.Ordinal);
+        Assert.DoesNotContain("postMessage", eme, StringComparison.Ordinal);
+        Assert.Contains("original.apply(this, args)", eme, StringComparison.Ordinal);
     }
 
     [Fact]

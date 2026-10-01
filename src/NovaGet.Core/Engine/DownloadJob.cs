@@ -30,22 +30,20 @@ internal enum StopReason
 /// validation of resumed responses, and the final move to the Save To folder.
 /// </summary>
 [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1001", Justification = "The stop token source has no timer or wait handle; not disposing it avoids races with late Stop() calls.")]
-internal sealed class DownloadJob
+internal sealed class DownloadJob : IEngineJob
 {
     private readonly Download _download;
     private readonly IDownloadRepository _repository;
     private readonly ITransferProtocol _protocol;
     private readonly ILogger _logger;
-    private readonly Action<DownloadJob> _onFinished;
+    private readonly Action<IEngineJob> _onFinished;
     private readonly CancellationTokenSource _stop = new();
     private readonly SpeedMeter _speed = new();
     private readonly object _checkpointGate = new();
     private readonly List<ConnectionWorker> _workers = [];
     private readonly List<Task> _running = [];
-    private readonly TokenBucket _limiter;
-    private readonly SpeedLimits _speedLimits;
+    private readonly TransferThrottle _throttle;
     private readonly TrafficCounter _traffic;
-    private readonly bool _startedByQueue;
     private readonly HostConnectionLimits _hostLimits;
     private CancellationToken _workersToken;
     private int _maxConnections = 1;
@@ -64,21 +62,19 @@ internal sealed class DownloadJob
         JobServices services,
         bool startedByQueue,
         ILogger logger,
-        Action<DownloadJob> onFinished)
+        Action<IEngineJob> onFinished)
     {
         _download = download;
         Options = options;
         _repository = repository;
         _protocol = protocol;
-        _speedLimits = services.SpeedLimits;
         _traffic = services.Traffic;
         _hostLimits = services.HostLimits;
-        _startedByQueue = startedByQueue;
         _logger = logger;
         _onFinished = onFinished;
         _status = download.Status;
         var limitKBps = download.SpeedLimitKBps ?? HostPattern.Lookup(options.HostSpeedLimitsKBps, Host) ?? 0;
-        _limiter = new TokenBucket(Math.Max(0, limitKBps) * 1024L);
+        _throttle = new TransferThrottle(Math.Max(0, limitKBps) * 1024L, services.SpeedLimits, startedByQueue);
     }
 
     /// <summary>Host of the current address (used for per-server limits).</summary>
@@ -88,7 +84,7 @@ internal sealed class DownloadJob
     public void SetSpeedLimit(int? kilobytesPerSecond)
     {
         _download.SpeedLimitKBps = kilobytesPerSecond;
-        _limiter.BytesPerSecond = kilobytesPerSecond is > 0 ? kilobytesPerSecond.Value * 1024L : 0;
+        _throttle.SetLimit(kilobytesPerSecond);
     }
 
     public long Id => _download.Id;
@@ -602,42 +598,11 @@ internal sealed class DownloadJob
         Volatile.Write(ref _consecutiveFailures, 0);
     }
 
-    /// <summary>
-    /// Largest read a connection should make: unlimited normally, about 100 ms worth of the tightest active
-    /// limit otherwise, so a limited download doesn't burst a whole buffer per connection before waiting.
-    /// </summary>
-    public int MaxReadSize
-    {
-        get
-        {
-            var rate = long.MaxValue;
-            if (_limiter.IsLimited)
-            {
-                rate = _limiter.BytesPerSecond;
-            }
+    /// <inheritdoc cref="TransferThrottle.MaxReadSize"/>
+    public int MaxReadSize => _throttle.MaxReadSize;
 
-            if (_speedLimits.For(_startedByQueue) is { } global)
-            {
-                rate = Math.Min(rate, global.BytesPerSecond);
-            }
-
-            return rate == long.MaxValue ? int.MaxValue : (int)Math.Clamp(rate / 10, 4096, 64 * 1024);
-        }
-    }
-
-    /// <summary>Waits as needed to respect this download's limit and the global limiter.</summary>
-    public async ValueTask ThrottleAsync(int count, CancellationToken token)
-    {
-        if (_limiter.IsLimited)
-        {
-            await _limiter.ConsumeAsync(count, token).ConfigureAwait(false);
-        }
-
-        if (_speedLimits.For(_startedByQueue) is { } global)
-        {
-            await global.ConsumeAsync(count, token).ConfigureAwait(false);
-        }
-    }
+    /// <inheritdoc cref="TransferThrottle.ThrottleAsync"/>
+    public ValueTask ThrottleAsync(int count, CancellationToken token) => _throttle.ThrottleAsync(count, token);
 
     /// <summary>Counts a transient failure; returns false once the retry budget is used up.</summary>
     public bool RegisterFailure(ConnectionWorker worker, DownloadException error)

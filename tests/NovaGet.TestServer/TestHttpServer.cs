@@ -61,6 +61,18 @@ public sealed class TestHttpServer : IAsyncDisposable
         return file;
     }
 
+    /// <summary>Serves fixed bytes (a playlist, a key, a media segment).</summary>
+    public TestFile AddContent(string path, byte[] data, string contentType = "application/octet-stream")
+    {
+        var file = AddFile(path, data.Length);
+        file.SetData(data);
+        file.ContentType = contentType;
+        return file;
+    }
+
+    public TestFile AddText(string path, string text, string contentType) =>
+        AddContent(path, System.Text.Encoding.UTF8.GetBytes(text), contentType);
+
     public Uri UrlFor(string path) => new(BaseUri, path.TrimStart('/'));
 
     public Uri UrlFor(TestFile file) => UrlFor(file.Path);
@@ -273,7 +285,7 @@ public sealed class TestHttpServer : IAsyncDisposable
 
             if (count > 0)
             {
-                ContentGenerator.Fill(seed, start + sent, buffer.AsSpan(0, count));
+                file.Fill(seed, start + sent, buffer.AsSpan(0, count));
                 try
                 {
                     await context.Response.Body.WriteAsync(buffer.AsMemory(0, count), ct).ConfigureAwait(false);

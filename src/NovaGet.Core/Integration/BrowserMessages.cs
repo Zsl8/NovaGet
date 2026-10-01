@@ -23,6 +23,9 @@ public static class BrowserMessageTypes
 
     /// <summary>The popup's "Open NovaGet" button.</summary>
     public const string OpenApp = "openApp";
+
+    /// <summary>The video panel's "Settings" item: Options → General (web player panel).</summary>
+    public const string OpenOptions = "openOptions";
 }
 
 /// <summary>A validated message from the extension.</summary>
@@ -95,7 +98,7 @@ public static class BrowserMessageValidator
             return type switch
             {
                 BrowserMessageTypes.Hello or BrowserMessageTypes.GetSettings or BrowserMessageTypes.Ping or BrowserMessageTypes.OpenApp
-                    => new BrowserSimpleMessage(type),
+                    or BrowserMessageTypes.OpenOptions => new BrowserSimpleMessage(type),
                 BrowserMessageTypes.Download => Download(message),
                 BrowserMessageTypes.Links => Links(message),
                 BrowserMessageTypes.Media => Media(message),

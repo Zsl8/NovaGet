@@ -41,10 +41,21 @@
       ],
       "run_at": "document_start",
       "all_frames": true
+    },
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "eme.js"
+      ],
+      "run_at": "document_start",
+      "all_frames": true,
+      "world": "MAIN"
     }
   ],
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtIM7/rMLzy3NJJTJPOxm7eSU9/JBubJVoFJNEJYiA6wpCJllE3BR8lPrwk/q6tDgjeS3wAgzUw+jCadBhziny5eNh+kSOzNa9Qo3X1O1uu5/N/ylBwYuu5fbOLoBr5IsBgoppLftRon4OZcB+OyYHfmylBZ0ASXnApOYoq3vD9YYW0uAo3RF61gPG9KexCTNqx05dvWuLFdRjNfRyD0L1cVmgdqRdTuLJru2pSDHa/cKQjW+8Thb3NvawnVmyvuBb5pP9AB+zgL83a2qR/8RMGUtMZOEamiGYq8O7QgWdshDis41QNFirN0qS2Yujyvgs9W9UNf/ivcX3DauEfZUeQIDAQAB",
-  "minimum_chrome_version": "110",
+  "minimum_chrome_version": "111",
   "background": {
     "service_worker": "background.js"
   }

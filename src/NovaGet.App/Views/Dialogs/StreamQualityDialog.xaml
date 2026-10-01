@@ -1,0 +1,36 @@
+<v:DialogWindow x:Class="NovaGet.App.Views.Dialogs.StreamQualityDialog"
+                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:v="clr-namespace:NovaGet.App.Views"
+                xmlns:l="clr-namespace:NovaGet.App.Localization"
+                xmlns:vm="clr-namespace:NovaGet.App.ViewModels"
+                Title="{l:Loc Stream_Title}" FocusManager.FocusedElement="{Binding ElementName=QualityList}">
+  <v:DialogWindow.Resources>
+    <BooleanToVisibilityConverter x:Key="Visible" />
+  </v:DialogWindow.Resources>
+  <StackPanel Margin="14" Width="380">
+    <TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" ToolTip="{Binding Title}" />
+    <TextBlock Text="{Binding DurationText}" Margin="0,2,0,0" Foreground="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
+    <TextBlock Text="{l:Loc Stream_Live}" Margin="0,6,0,0" TextWrapping="Wrap" Visibility="{Binding IsLive, Converter={StaticResource Visible}}" />
+    <Label Content="{l:Loc Stream_Prompt}" Target="{Binding ElementName=QualityList}" Padding="0" Margin="0,10,0,0" />
+    <ListBox x:Name="QualityList" Height="170" Margin="0,4,0,0" ItemsSource="{Binding Options}" SelectedItem="{Binding Selected}"
+             HorizontalContentAlignment="Stretch" MouseDoubleClick="OnOk" AutomationProperties.Name="{l:Loc Stream_Prompt}">
+      <ListBox.ItemTemplate>
+        <DataTemplate DataType="{x:Type vm:StreamOptionViewModel}">
+          <DockPanel>
+            <TextBlock DockPanel.Dock="Right" Text="{Binding SizeText}" Margin="12,0,0,0" />
+            <TextBlock Text="{Binding Label}" />
+          </DockPanel>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+    <DockPanel Margin="0,8,0,0" Visibility="{Binding HasAudioChoice, Converter={StaticResource Visible}}">
+      <Label Content="{l:Loc Stream_Audio}" Target="{Binding ElementName=AudioBox}" Padding="0,0,8,0" VerticalAlignment="Center" />
+      <ComboBox x:Name="AudioBox" ItemsSource="{Binding AudioOptions}" SelectedItem="{Binding SelectedAudio}" DisplayMemberPath="Title" />
+    </DockPanel>
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
+      <Button Content="{l:Loc Common_OK}" MinWidth="80" IsDefault="True" Click="OnOk" />
+      <Button Content="{l:Loc Common_Cancel}" MinWidth="80" Margin="8,0,0,0" IsCancel="True" />
+    </StackPanel>
+  </StackPanel>
+</v:DialogWindow>

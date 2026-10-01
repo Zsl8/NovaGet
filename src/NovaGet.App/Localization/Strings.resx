@@ -543,6 +543,14 @@ Stop all downloads until {1}? Choose No to keep downloading for the rest of this
   <data name="StatusBar_LimiterOff" xml:space="preserve"><value>Speed limiter: Off</value></data>
   <data name="StatusBar_LimiterOn" xml:space="preserve"><value>Speed limiter: {0} KB/s</value></data>
   <data name="StatusBar_LimiterTip" xml:space="preserve"><value>Click to turn the speed limiter on or off</value></data>
+  <data name="Stream_Audio" xml:space="preserve"><value>_Audio:</value></data>
+  <data name="Stream_Duration" xml:space="preserve"><value>Duration: {0}</value></data>
+  <data name="Stream_Live" xml:space="preserve"><value>This is a live stream: only the part available now will be downloaded.</value></data>
+  <data name="Stream_NotAStream" xml:space="preserve"><value>The address does not point to a video stream playlist.</value></data>
+  <data name="Stream_Prompt" xml:space="preserve"><value>_Quality:</value></data>
+  <data name="Stream_Protected" xml:space="preserve"><value>This stream is protected and cannot be downloaded.</value></data>
+  <data name="Stream_ReadFailed" xml:space="preserve"><value>The stream could not be read: {0}</value></data>
+  <data name="Stream_Title" xml:space="preserve"><value>Choose video quality</value></data>
   <data name="Tb_AddUrl" xml:space="preserve"><value>Add URL</value></data>
   <data name="Tb_Delete" xml:space="preserve"><value>Delete</value></data>
   <data name="Tb_DeleteCompleted" xml:space="preserve"><value>Delete Completed</value></data>

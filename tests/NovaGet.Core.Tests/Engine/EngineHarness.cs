@@ -59,8 +59,13 @@ internal sealed class EngineHarness : IAsyncDisposable
     /// <summary>Site Logins seen by the HTTP protocol.</summary>
     public ISiteCredentials? SiteCredentials { get; set; }
 
+    /// <summary>The stream muxer (default: none, so streams keep their joined tracks).</summary>
+    public NovaGet.Core.Engine.Streams.IStreamMuxer Muxer { get; set; } = new NovaGet.Core.Engine.Streams.FfmpegMuxer(null);
+
     public DownloadEngine CreateEngine() =>
-        new(Repository, [new HttpTransferProtocol(_clients, SiteCredentials), .. ExtraProtocols], () => Options);
+        new(Repository, [new HttpTransferProtocol(_clients, SiteCredentials), .. ExtraProtocols], () => Options, muxer: Muxer);
+
+    public HttpTransferProtocol Http => new(_clients, SiteCredentials);
 
     /// <summary>Replaces the engine, as a restarted app would (the old one is simply abandoned).</summary>
     public void RestartEngine() => Engine = CreateEngine();

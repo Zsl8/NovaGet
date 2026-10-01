@@ -10,6 +10,7 @@ using NovaGet.Core.CommandLine;
 using NovaGet.Core.Engine.Naming;
 using NovaGet.Core.Integration;
 using NovaGet.Core.Engine;
+using NovaGet.Core.Engine.Streams;
 using NovaGet.Core.Models;
 using NovaGet.Core.Paths;
 using NovaGet.Core.Services;
@@ -25,6 +26,7 @@ internal sealed class DownloadUiService(
     IDownloadService downloads,
     IDownloadEngine engine,
     IDownloadProber prober,
+    IStreamProber streams,
     ICategoryRepository categories,
     IQueueRepository queues,
     ISettingsService settings,
@@ -69,7 +71,105 @@ internal sealed class DownloadUiService(
         }
 
         RememberAddress(dialog.Url);
-        await AddAsync(new DownloadRequest { Url = dialog.Url, AuthUser = dialog.UserName, AuthPassword = dialog.Password }, dialog.Probe, interactive: true);
+        var request = new DownloadRequest { Url = dialog.Url, AuthUser = dialog.UserName, AuthPassword = dialog.Password };
+        if (IsStreamCandidate(dialog.Probe?.FinalUri ?? new Uri(dialog.Url), dialog.Probe?.ContentType))
+        {
+            await AddStreamAsync(request, title: null, interactive: true);
+            return;
+        }
+
+        await AddAsync(request, dialog.Probe, interactive: true);
+    }
+
+    /// <summary>An HLS/DASH manifest by its type or extension (.m3u8, .mpd).</summary>
+    public static bool IsStreamCandidate(Uri url, string? contentType) =>
+        StreamManifestLoader.IsManifestType(contentType) || StreamManifestLoader.IsManifestAddress(url);
+
+    /// <summary>
+    /// Section 4.8: reads an HLS/DASH manifest, refuses DRM ("This stream is protected and cannot be downloaded."),
+    /// lets the user choose the quality, then continues like any download (File Info dialog) as a stream download.
+    /// An address that turns out not to be a manifest is added as an ordinary file.
+    /// </summary>
+    public async Task<long?> AddStreamAsync(DownloadRequest request, string? title, bool interactive)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        var options = EngineOptions.FromSettings(settings.Current, paths);
+        var context = new RequestContext
+        {
+            Url = new Uri(request.Url),
+            Referrer = request.Referrer,
+            Cookies = request.Cookies,
+            UserAgent = string.IsNullOrWhiteSpace(request.UserAgent) ? options.UserAgent : request.UserAgent,
+            UserName = request.AuthUser,
+            Password = request.AuthPassword,
+            Timeout = options.Timeout,
+        };
+
+        StreamInfo? info;
+        try
+        {
+            info = await streams.ProbeAsync(context, CancellationToken.None);
+        }
+        catch (DownloadException ex)
+        {
+            logger.LogWarning(ex, "Could not read the stream at {Url}", request.Url);
+            if (interactive)
+            {
+                dialogs.Error(Localizer.Format("Stream_ReadFailed", ex.Message));
+            }
+
+            return null;
+        }
+
+        if (info is null)
+        {
+            return await AddAsync(request, probe: null, interactive);
+        }
+
+        if (info.IsProtected)
+        {
+            // Ground rule 2: DRM is detected and refused, never worked around.
+            logger.LogInformation("Refused a protected stream ({Protection}): {Url}", info.Protection, request.Url);
+            if (interactive)
+            {
+                dialogs.Error(StreamSelection.ProtectedMessage);
+            }
+
+            return null;
+        }
+
+        if (info.Variants.Count == 0)
+        {
+            if (interactive)
+            {
+                dialogs.Error(Localizer.Get("Stream_NotAStream"));
+            }
+
+            return null;
+        }
+
+        var name = string.IsNullOrWhiteSpace(title)
+            ? Path.GetFileNameWithoutExtension(FileNameResolver.NameFromUrl(info.ManifestUrl) ?? "video")
+            : FileNameSanitizer.Sanitize(title);
+        var choice = new StreamQualityViewModel(info, string.IsNullOrWhiteSpace(title) ? info.ManifestUrl.AbsoluteUri : title);
+        if (interactive && (info.Variants.Count > 1 || choice.HasAudioChoice || info.IsLive))
+        {
+            if (dialogs.ShowModal(new StreamQualityDialog(choice)) != true)
+            {
+                return null;
+            }
+        }
+
+        return await AddAsync(request with
+        {
+            Url = info.ManifestUrl.AbsoluteUri,
+            OriginalUrl = request.OriginalUrl ?? request.Url,
+            FileName = name + choice.Extension,
+            Size = -1,
+            ResumeCapable = true,
+            IsStream = true,
+            StreamManifestJson = choice.Selection.ToJson(),
+        }, probe: null, interactive);
     }
 
     /// <summary>
@@ -249,7 +349,10 @@ internal sealed class DownloadUiService(
             SaveFolder = options.SaveFolder,
             QueueId = options.AddToQueueOnly ? DownloadQueue.MainQueueId : null,
         };
-        return AddAsync(request, probe: null, interactive: !options.Silent && !options.AddToQueueOnly);
+        var interactive = !options.Silent && !options.AddToQueueOnly;
+        return Uri.TryCreate(request.Url, UriKind.Absolute, out var url) && StreamManifestLoader.IsManifestAddress(url)
+            ? AddStreamAsync(request, title: null, interactive)
+            : AddAsync(request, probe: null, interactive);
     }
 
     /// <summary>
@@ -269,7 +372,23 @@ internal sealed class DownloadUiService(
             FileName = string.IsNullOrWhiteSpace(download.FileName) ? null : FileNameSanitizer.Sanitize(download.FileName),
             Size = download.FileSize,
         };
-        return AddAsync(request, probe: null, interactive: true);
+        return IsStreamCandidate(download.FinalUrl ?? download.Url, download.Mime)
+            ? AddStreamAsync(request, download.PageTitle, interactive: true)
+            : AddAsync(request, probe: null, interactive: true);
+    }
+
+    /// <summary>"Download this video" on an HLS/DASH player: the quality list, named after the page.</summary>
+    public Task<long?> AddStreamFromBrowserAsync(Uri manifest, string? pageTitle, BrowserRequestInfo request)
+    {
+        ArgumentNullException.ThrowIfNull(manifest);
+        ArgumentNullException.ThrowIfNull(request);
+        return AddStreamAsync(new DownloadRequest
+        {
+            Url = manifest.AbsoluteUri,
+            Referrer = request.Referrer,
+            Cookies = request.Cookies,
+            UserAgent = request.UserAgent,
+        }, pageTitle, interactive: true);
     }
 
     /// <summary>

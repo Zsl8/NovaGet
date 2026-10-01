@@ -25,11 +25,25 @@ Serilog                                     Apache-2.0     https://github.com/se
 Serilog.Extensions.Hosting                  Apache-2.0     https://github.com/serilog/serilog-extensions-hosting
 Serilog.Extensions.Logging                  Apache-2.0     https://github.com/serilog/serilog-extensions-logging
 Serilog.Sinks.File                          Apache-2.0     https://github.com/serilog/serilog-sinks-file
+FFmpeg (ffmpeg\ folder, see below)          LGPL-2.1+      https://ffmpeg.org
 
 Build-time only (not distributed):
 xUnit                                       Apache-2.0     https://github.com/xunit/xunit
 resvg / resvg-js (icon rendering)           MPL-2.0        https://github.com/yisibl/resvg-js
+Playwright (optional extension test)        Apache-2.0     https://github.com/microsoft/playwright
 Inno Setup                                  Inno Setup     https://jrsoftware.org/files/is/license.txt
+
+FFmpeg
+------
+The ffmpeg\ folder holds an unmodified LGPL *shared* build of FFmpeg for Windows
+(ffmpeg.exe and its DLLs; https://github.com/BtbN/FFmpeg-Builds). NovaGet runs it as
+a separate program to join the tracks of HLS/DASH downloads without re-encoding; it
+is not linked into NovaGet. FFmpeg is licensed under the GNU Lesser General Public
+License version 2.1 or later (ffmpeg\LICENSE.txt); ffmpeg\VERSION.txt names the
+exact build. Its source code is available from https://ffmpeg.org/download.html and,
+for that build, from https://github.com/BtbN/FFmpeg-Builds. You may replace the
+files in the ffmpeg\ folder with another FFmpeg build of your choice.
+FFmpeg is a trademark of Fabrice Bellard, originator of the FFmpeg project.
 
 Copyright notices
 -----------------

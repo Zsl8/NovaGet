@@ -89,8 +89,13 @@ internal static class AppHostBuilder
                         .GroupBy(e => e.Host, StringComparer.OrdinalIgnoreCase)
                         .ToDictionary(g => g.Key, g => g.First().MaxConnections, StringComparer.OrdinalIgnoreCase),
                 },
-                sp.GetRequiredService<Microsoft.Extensions.Logging.ILoggerFactory>());
+                sp.GetRequiredService<Microsoft.Extensions.Logging.ILoggerFactory>(),
+                sp.GetRequiredService<NovaGet.Core.Engine.Streams.IStreamMuxer>());
         });
+        builder.Services.AddSingleton<NovaGet.Core.Engine.Streams.IStreamMuxer>(_ =>
+            new NovaGet.Core.Engine.Streams.FfmpegMuxer(NovaGet.Core.Engine.Streams.FfmpegMuxer.Locate(AppContext.BaseDirectory)));
+        builder.Services.AddSingleton<NovaGet.Core.Engine.Streams.IStreamProber>(sp =>
+            new NovaGet.Core.Engine.Streams.StreamManifestLoader(sp.GetServices<ITransferProtocol>()));
         builder.Services.AddSingleton<IDownloadEngine>(sp => sp.GetRequiredService<DownloadEngine>());
         builder.Services.AddSingleton<IDownloadProber, DownloadProber>();
         builder.Services.AddHostedService<EngineLifetimeService>();

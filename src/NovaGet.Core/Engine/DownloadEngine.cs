@@ -4,16 +4,18 @@ using System.Text;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NovaGet.Core.Abstractions;
+using NovaGet.Core.Engine.Streams;
 using NovaGet.Core.Models;
 
 namespace NovaGet.Core.Engine;
 
 public sealed class DownloadEngine : IDownloadEngine, IAsyncDisposable
 {
-    private readonly ConcurrentDictionary<long, DownloadJob> _jobs = new();
+    private readonly ConcurrentDictionary<long, IEngineJob> _jobs = new();
     private readonly IDownloadRepository _repository;
     private readonly IReadOnlyList<ITransferProtocol> _protocols;
     private readonly Func<EngineOptions> _options;
+    private readonly IStreamMuxer _muxer;
     private readonly ILoggerFactory _loggerFactory;
     private readonly ILogger _logger;
 
@@ -27,11 +29,13 @@ public sealed class DownloadEngine : IDownloadEngine, IAsyncDisposable
         IDownloadRepository repository,
         IEnumerable<ITransferProtocol> protocols,
         Func<EngineOptions> options,
-        ILoggerFactory? loggerFactory = null)
+        ILoggerFactory? loggerFactory = null,
+        IStreamMuxer? muxer = null)
     {
         _repository = repository;
         _protocols = [.. protocols];
         _options = options;
+        _muxer = muxer ?? new FfmpegMuxer(FfmpegMuxer.Locate(AppContext.BaseDirectory));
         _loggerFactory = loggerFactory ?? NullLoggerFactory.Instance;
         _logger = _loggerFactory.CreateLogger<DownloadEngine>();
     }
@@ -68,15 +72,12 @@ public sealed class DownloadEngine : IDownloadEngine, IAsyncDisposable
             return false;
         }
 
-        var job = new DownloadJob(
-            download,
-            _options(),
-            _repository,
-            protocol,
-            new JobServices(SpeedLimits, HostLimits, Traffic),
-            startedByQueue,
-            _loggerFactory.CreateLogger($"NovaGet.Download.{downloadId.ToString(CultureInfo.InvariantCulture)}"),
-            finished => _jobs.TryRemove(KeyValuePair.Create(finished.Id, finished)));
+        var services = new JobServices(SpeedLimits, HostLimits, Traffic);
+        var logger = _loggerFactory.CreateLogger($"NovaGet.Download.{downloadId.ToString(CultureInfo.InvariantCulture)}");
+        Action<IEngineJob> onFinished = finished => _jobs.TryRemove(KeyValuePair.Create(finished.Id, finished));
+        IEngineJob job = download.IsStream
+            ? new StreamJob(download, _options(), _repository, _protocols, _muxer, services, startedByQueue, logger, onFinished)
+            : new DownloadJob(download, _options(), _repository, protocol, services, startedByQueue, logger, onFinished);
         if (!_jobs.TryAdd(downloadId, job))
         {
             return false;

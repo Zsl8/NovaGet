@@ -21,6 +21,17 @@ public sealed partial class ThirdPartyNoticeTests
         Assert.All(packages, package => Assert.True(IsListed(package, notices), $"{package} is missing from THIRD_PARTY_NOTICES.txt"));
     }
 
+    [Fact]
+    public void The_bundled_ffmpeg_is_listed_with_its_license_and_source()
+    {
+        var notices = File.ReadAllText(RepoPaths.Combine("THIRD_PARTY_NOTICES.txt"));
+
+        Assert.Contains("FFmpeg", notices, StringComparison.Ordinal);
+        Assert.Contains("LGPL", notices, StringComparison.Ordinal);
+        Assert.Contains("https://ffmpeg.org/download.html", notices, StringComparison.Ordinal);
+        Assert.Contains("lgpl-shared", File.ReadAllText(RepoPaths.Combine("build", "ffmpeg.json")), StringComparison.Ordinal);
+    }
+
     /// <summary>Listed by name, or by a wildcard line such as <c>Microsoft.Extensions.*</c> or <c>Serilog.*</c>.</summary>
     private static bool IsListed(string package, string notices)
     {

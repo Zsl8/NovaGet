@@ -47,6 +47,9 @@ internal sealed class BrowserIntegrationService(
             case BrowserSimpleMessage { Type: BrowserMessageTypes.OpenApp }:
                 controller.Value.ShowMainWindow();
                 return IpcResponse.Success();
+            case BrowserSimpleMessage { Type: BrowserMessageTypes.OpenOptions }:
+                OnUi(() => controller.Value.ShowOptions("General"));
+                return IpcResponse.Success();
         }
 
         if (!current.Enabled)
@@ -69,12 +72,16 @@ internal sealed class BrowserIntegrationService(
                 return Accepted();
             case BrowserMedia { Protected: true }:
                 return IpcResponse.Failure("protected");
-            case BrowserMedia media when media.Items.FirstOrDefault(i => !i.IsManifest) is { } item:
+            case BrowserMedia { Items: [var item, ..] } media when item.IsManifest:
+                // The item the user clicked comes first; a playlist goes through the quality list.
+                OnUi(() => _ = downloadUi.AddStreamFromBrowserAsync(item.Url, media.PageTitle, media.Request));
+                return Accepted();
+            case BrowserMedia { Items: [var item, ..] } media:
                 OnUi(() => _ = downloadUi.AddFromBrowserAsync(new BrowserDownload(
                     item.Url, null, MediaFileName(media.PageTitle, item), item.Size, item.Mime, media.PageTitle, media.Request, null, Forced: true)));
                 return Accepted();
             case BrowserMedia:
-                return IpcResponse.Failure("Stream downloads are not supported yet.");
+                return IpcResponse.Failure("No media.");
             default:
                 return IpcResponse.Failure("Unsupported message.");
         }

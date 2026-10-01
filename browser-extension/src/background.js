@@ -1,4 +1,4 @@
-// NovaGet Integration: hands downloads and links to the NovaGet app through its native messaging host.
+// NovaGet Integration: hands downloads, links and videos to the NovaGet app through its native messaging host.
 // Runs as the Chromium service worker and as the Firefox background script.
 'use strict';
 
@@ -247,6 +247,180 @@ api.webRequest.onBeforeRequest.addListener(
   { urls: ['<all_urls>'], types: ['main_frame', 'sub_frame'] },
 );
 
+// ---------------------------------------------------------------- media detection (the "Download this video" panel)
+
+const MEDIA_MIN_BYTES = 300 * 1024;
+const MAX_MEDIA_PER_TAB = 40;
+const MANIFEST_TYPES = ['application/vnd.apple.mpegurl', 'application/x-mpegurl', 'audio/mpegurl', 'audio/x-mpegurl', 'application/dash+xml'];
+const MEDIA_EXTENSIONS = ['mp4', 'm4v', 'webm', 'mov', 'mkv', 'flv', 'ts', 'm4a', 'mp3', 'aac', 'ogg', 'ogv', 'oga', 'opus', 'wav'];
+const SEGMENT_EXTENSIONS = ['m4s', 'cmfv', 'cmfa']; // pieces of a stream, only offered through their playlist
+const mediaLoads = new Map(); // tabId -> Promise<{ items: Map(url -> item), protected: boolean }>
+
+function headerValue(headers, name) {
+  const found = (headers || []).find((h) => h.name.toLowerCase() === name);
+  return found ? String(found.value || '') : '';
+}
+
+/** The whole resource's size: Content-Range's total for a 206, else Content-Length. */
+function resourceSize(headers) {
+  const total = /\/(\d+)\s*$/.exec(headerValue(headers, 'content-range'));
+  if (total) return Number(total[1]);
+  const length = Number(headerValue(headers, 'content-length'));
+  return Number.isFinite(length) ? length : 0;
+}
+
+/** A response worth offering in the panel, or null. Playlists always count; files from about 300 KB. */
+function classifyMedia(url, contentType, size, viaScript) {
+  const mime = String(contentType || '').split(';')[0].trim().toLowerCase();
+  const ext = extensionOf(nameFromUrl(url));
+  if (SEGMENT_EXTENSIONS.includes(ext)) return null;
+  if (MANIFEST_TYPES.includes(mime) || ext === 'm3u8' || ext === 'mpd') {
+    const dash = ext === 'mpd' || mime === 'application/dash+xml';
+    return { url, mime, size: 0, manifest: true, kind: dash ? 'dash' : 'hls', viaScript };
+  }
+  const isMedia = mime.startsWith('video/') || mime.startsWith('audio/');
+  if ((!isMedia && !MEDIA_EXTENSIONS.includes(ext)) || size < MEDIA_MIN_BYTES) return null;
+  const audio = mime.startsWith('audio/') || ['m4a', 'mp3', 'aac', 'oga', 'opus', 'wav'].includes(ext);
+  const segment = mime === 'video/mp2t' || ext === 'ts';
+  return { url, mime, size, manifest: false, kind: audio ? 'audio' : segment ? 'ts' : 'video', viaScript };
+}
+
+async function loadTabMedia(tabId) {
+  const entry = { items: new Map(), protected: false };
+  try {
+    const key = `media:${tabId}`;
+    const saved = (await api.storage.session.get(key))[key];
+    if (saved) {
+      (saved.items || []).forEach((item) => entry.items.set(item.url, item));
+      entry.protected = Boolean(saved.protected);
+    }
+  } catch {
+    // storage.session is unavailable: the list lives as long as the background page
+  }
+  return entry;
+}
+
+/** The media seen in a tab (kept in session storage, so it survives the service worker being stopped). */
+function tabMedia(tabId) {
+  if (!mediaLoads.has(tabId)) mediaLoads.set(tabId, loadTabMedia(tabId));
+  return mediaLoads.get(tabId);
+}
+
+function saveTabMedia(tabId, entry) {
+  try {
+    api.storage.session.set({ [`media:${tabId}`]: { items: [...entry.items.values()], protected: entry.protected } }).catch(() => {});
+  } catch {
+    // not available
+  }
+}
+
+function clearTabMedia(tabId) {
+  mediaLoads.delete(tabId);
+  try {
+    api.storage.session.remove(`media:${tabId}`).catch(() => {});
+  } catch {
+    // not available
+  }
+}
+
+/** Playlists first, then files by size. */
+function mediaList(entry) {
+  return [...entry.items.values()]
+    .sort((a, b) => Number(b.manifest) - Number(a.manifest) || (b.size || 0) - (a.size || 0))
+    .map(({ url, mime, size, manifest, kind }) => ({ url, mime, size, manifest, kind }));
+}
+
+function notifyTab(tabId, entry) {
+  try {
+    Promise.resolve(api.tabs.sendMessage(tabId, { kind: 'media', items: mediaList(entry), protected: entry.protected })).catch(() => {});
+  } catch {
+    // no content script in that tab
+  }
+}
+
+async function addMedia(tabId, item) {
+  const entry = await tabMedia(tabId);
+  if (entry.items.has(item.url)) return;
+  const values = [...entry.items.values()];
+  // A page that streams (HLS/DASH) fetches its pieces from script; offer the playlist, not the pieces.
+  if (!item.manifest && (item.kind === 'ts' || item.viaScript) && values.some((other) => other.manifest)) return;
+  if (item.manifest) {
+    for (const other of values) {
+      if (!other.manifest && (other.kind === 'ts' || other.viaScript)) entry.items.delete(other.url);
+    }
+  }
+  entry.items.set(item.url, item);
+  while (entry.items.size > MAX_MEDIA_PER_TAB) {
+    entry.items.delete(entry.items.keys().next().value);
+  }
+  saveTabMedia(tabId, entry);
+  notifyTab(tabId, entry);
+}
+
+api.webRequest.onHeadersReceived.addListener(
+  (details) => {
+    if (details.tabId < 0 || details.statusCode < 200 || details.statusCode >= 300 || !/^https?:/i.test(details.url)) return;
+    const item = classifyMedia(
+      details.url,
+      headerValue(details.responseHeaders, 'content-type'),
+      resourceSize(details.responseHeaders),
+      details.type === 'xmlhttprequest',
+    );
+    if (item) addMedia(details.tabId, item);
+  },
+  { urls: ['<all_urls>'], types: ['media', 'xmlhttprequest', 'object', 'other'] },
+  ['responseHeaders'],
+);
+
+api.tabs.onUpdated.addListener((tabId, change) => {
+  if (change.status === 'loading' && change.url) clearTabMedia(tabId);
+});
+api.tabs.onRemoved.addListener((tabId) => clearTabMedia(tabId));
+
+/** What the panel needs from the app's settings (Options → General → Edit panel for web players). */
+function panelSettings(s, tab) {
+  let pageHost = '';
+  try {
+    pageHost = tab && tab.url ? new URL(tab.url).hostname : '';
+  } catch {
+    // not a web page
+  }
+  return {
+    show: Boolean(s && s.enabled && s.panelShow),
+    inPopups: Boolean(s && s.panelInPopups),
+    position: (s && s.panelPosition) || 'topRight',
+    onHover: Boolean(s && s.panelOnHover),
+    excludedSites: (s && s.panelExcludedSites) || [],
+    pageHost,
+  };
+}
+
+/** Sends the chosen media (first) and the page's other media to the app. */
+async function downloadMedia(tab, url, title, width, height) {
+  if (!tab || !isSupportedUrl(url)) return { ok: false };
+  const entry = await tabMedia(tab.id);
+  if (entry.protected) return { ok: false, protected: true }; // ground rule: DRM is never downloaded
+  const listed = mediaList(entry);
+  const chosen = listed.find((item) => item.url === url) || { url, manifest: /\.(m3u8|mpd)([?#]|$)/i.test(url) };
+  const items = [chosen, ...listed.filter((item) => item.url !== url).slice(0, 20)].map((item) => ({
+    url: item.url,
+    mime: item.mime || undefined,
+    size: item.size > 0 ? item.size : undefined,
+    width: item === chosen && width > 0 ? width : undefined,
+    height: item === chosen && height > 0 ? height : undefined,
+    manifest: Boolean(item.manifest),
+  }));
+  const pageUrl = tab.url || '';
+  const reply = await send({
+    type: 'media',
+    pageUrl: isSupportedUrl(pageUrl) ? pageUrl : undefined,
+    pageTitle: title || tab.title || undefined,
+    items,
+    ...(await requestInfo(chosen.url, pageUrl)),
+  });
+  return { ok: Boolean(reply.ok), error: reply.error };
+}
+
 // ---------------------------------------------------------------- context menus
 
 const MENU_LINK = 'novaget-link';
@@ -317,15 +491,10 @@ api.contextMenus.onClicked.addListener(async (info, tab) => {
       links,
       ...(await requestInfo(pageUrl, pageUrl)),
     });
-  } else if (info.menuItemId === MENU_MEDIA && info.srcUrl) {
-    if (!isSupportedUrl(info.srcUrl)) return; // blob: sources are handled by the video panel
-    await send({
-      type: 'media',
-      pageUrl: isSupportedUrl(pageUrl) ? pageUrl : undefined,
-      pageTitle: tab && tab.title,
-      items: [{ url: info.srcUrl }],
-      ...(await requestInfo(info.srcUrl, pageUrl)),
-    });
+  } else if (info.menuItemId === MENU_MEDIA && tab && tab.id !== undefined) {
+    // A player fed from script (blob: source) is offered through the playlist the page loaded.
+    const url = isSupportedUrl(info.srcUrl) ? info.srcUrl : (mediaList(await tabMedia(tab.id))[0] || {}).url;
+    if (url) await downloadMedia(tab, url);
   }
 });
 
@@ -353,6 +522,35 @@ api.runtime.onMessage.addListener((message, sender, sendResponse) => {
     case 'openApp':
       send({ type: 'openApp' }).then((reply) => sendResponse({ ok: Boolean(reply.ok) }));
       return true;
+    case 'getMedia':
+      (async () => {
+        const tab = sender.tab;
+        const entry = tab ? await tabMedia(tab.id) : null;
+        sendResponse({
+          items: entry ? mediaList(entry) : [],
+          protected: Boolean(entry && entry.protected),
+          panel: panelSettings(await getSettings(false), tab),
+        });
+      })();
+      return true;
+    case 'protected':
+      if (sender.tab) {
+        tabMedia(sender.tab.id).then((entry) => {
+          if (!entry.protected) {
+            entry.protected = true;
+            saveTabMedia(sender.tab.id, entry);
+            notifyTab(sender.tab.id, entry);
+          }
+        });
+      }
+      return false;
+    case 'downloadMedia':
+      downloadMedia(sender.tab, String(message.url || ''), message.title ? String(message.title).slice(0, 2048) : undefined,
+        Number(message.width) || 0, Number(message.height) || 0).then(sendResponse);
+      return true;
+    case 'openOptions':
+      send({ type: 'openOptions' });
+      return false;
     default:
       return false;
   }
