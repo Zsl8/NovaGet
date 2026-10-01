@@ -1,0 +1,58 @@
+<v:DialogWindow x:Class="NovaGet.App.Views.Dialogs.FileInfoDialog"
+                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:v="clr-namespace:NovaGet.App.Views"
+                xmlns:l="clr-namespace:NovaGet.App.Localization"
+                Title="{l:Loc FileInfo_Title}" ShowInTaskbar="True" Topmost="True"
+                FocusManager.FocusedElement="{Binding ElementName=StartButton}">
+  <Grid Margin="14" Width="560">
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="Auto" />
+      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="Auto" />
+    </Grid.ColumnDefinitions>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+
+    <TextBlock Text="{l:Loc FileInfo_Url}" VerticalAlignment="Center" Margin="0,0,10,0" />
+    <TextBox x:Name="UrlBox" Grid.Column="1" Grid.ColumnSpan="2" IsReadOnly="True" Height="23" VerticalContentAlignment="Center" />
+
+    <Label Grid.Row="1" Content="{l:Loc FileInfo_Category}" Target="{Binding ElementName=CategoryBox}" Padding="0,0,10,0" VerticalAlignment="Center" Margin="0,8,0,0" />
+    <ComboBox x:Name="CategoryBox" Grid.Row="1" Grid.Column="1" Margin="0,8,0,0" Height="23" DisplayMemberPath="Title"
+              SelectionChanged="OnCategoryChanged" />
+    <Button Grid.Row="1" Grid.Column="2" Content="+" Width="28" Margin="6,8,0,0" Click="OnAddCategory"
+            ToolTip="{l:Loc FileInfo_AddCategory}" AutomationProperties.Name="{l:Loc FileInfo_AddCategory}" />
+
+    <Label Grid.Row="2" Content="{l:Loc FileInfo_SaveAs}" Target="{Binding ElementName=SaveAsBox}" Padding="0,0,10,0" VerticalAlignment="Center" Margin="0,8,0,0" />
+    <ComboBox x:Name="SaveAsBox" Grid.Row="2" Grid.Column="1" Margin="0,8,0,0" Height="23" IsEditable="True"
+              SelectionChanged="OnRecentFolderChosen" AutomationProperties.Name="{l:Loc FileInfo_SaveAs}" />
+    <Button Grid.Row="2" Grid.Column="2" Content="{l:Loc Common_Browse}" Width="28" Margin="6,8,0,0" Click="OnBrowse" />
+
+    <CheckBox x:Name="RememberBox" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Margin="0,8,0,0" />
+
+    <Label Grid.Row="4" Content="{l:Loc FileInfo_Description}" Target="{Binding ElementName=DescriptionBox}" Padding="0,0,10,0" VerticalAlignment="Center" Margin="0,8,0,0" />
+    <TextBox x:Name="DescriptionBox" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Margin="0,8,0,0" Height="23" VerticalContentAlignment="Center" />
+
+    <DockPanel Grid.Row="5" Grid.ColumnSpan="3" Margin="0,12,0,0">
+      <TextBlock x:Name="SizeText" DockPanel.Dock="Right" Margin="12,0,0,0" VerticalAlignment="Center" />
+      <Image x:Name="FileIcon" Width="32" Height="32" Margin="0,0,8,0" />
+      <TextBlock x:Name="NameText" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" FontWeight="SemiBold" />
+    </DockPanel>
+
+    <DockPanel Grid.Row="6" Grid.ColumnSpan="3" Margin="0,16,0,0" LastChildFill="False">
+      <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+        <Button x:Name="LaterButton" Content="{l:Loc FileInfo_DownloadLater}" MinWidth="110" Click="OnLater" />
+        <Button x:Name="LaterMenuButton" Content="▾" Width="20" Click="OnLaterMenu" AutomationProperties.Name="{l:Loc FileInfo_ChooseQueue}" />
+      </StackPanel>
+      <Button DockPanel.Dock="Right" Content="{l:Loc Common_Cancel}" MinWidth="80" Margin="8,0,0,0" IsCancel="True" />
+      <Button x:Name="StartButton" DockPanel.Dock="Right" Content="{l:Loc FileInfo_Start}" MinWidth="120" IsDefault="True" Click="OnStart" />
+    </DockPanel>
+  </Grid>
+</v:DialogWindow>

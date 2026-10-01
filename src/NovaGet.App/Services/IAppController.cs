@@ -34,6 +34,9 @@ public interface IAppController
 
     void ShowExport(bool ef2, IReadOnlyCollection<long>? ids);
 
+    /// <summary>Starts or resumes a download the user asked for (opens its progress dialog if enabled).</summary>
+    void StartDownload(long downloadId);
+
     /// <summary>Progress dialog of an unfinished download.</summary>
     void ShowProgress(long downloadId);
 

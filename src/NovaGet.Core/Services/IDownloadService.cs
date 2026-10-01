@@ -34,6 +34,15 @@ public interface IDownloadService
 
     Download Add(DownloadRequest request);
 
+    /// <summary>An existing entry for the same address (original or current), for duplicate handling.</summary>
+    Download? FindByUrl(string url);
+
+    /// <summary>
+    /// Changes a download's folder and/or name. A finished file is moved on disk (a numbered name is used if the
+    /// target exists); an unfinished download simply gets the new destination. Returns the error, or null.
+    /// </summary>
+    Task<string?> MoveOrRenameAsync(long id, string folder, string fileName);
+
     /// <summary>Starts or resumes. Returns false if running, complete or unknown.</summary>
     bool Start(long id, bool startedByQueue = false);
 

@@ -44,6 +44,9 @@ public sealed record DownloadRequest
 
     public int? SpeedLimitKBps { get; init; }
 
+    /// <summary>Replace an existing file with the same name when finished ("Add duplicate and overwrite").</summary>
+    public bool OverwriteExisting { get; init; }
+
     public bool IsStream { get; init; }
 
     public string? StreamManifestJson { get; init; }

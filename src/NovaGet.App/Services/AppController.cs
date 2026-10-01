@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using NovaGet.App.Localization;
 using NovaGet.App.Views;
 using NovaGet.Core.CommandLine;
+using NovaGet.Core.Services;
 using NovaGet.Core.Paths;
 
 namespace NovaGet.App.Services;
@@ -12,6 +13,8 @@ namespace NovaGet.App.Services;
 internal sealed class AppController(
     Lazy<MainWindow> mainWindow,
     TrayIconService tray,
+    DownloadUiService downloadUi,
+    IDownloadService downloads,
     IDialogService dialogs,
     AppPaths paths,
     ILogger<AppController> logger) : IAppController
@@ -23,6 +26,7 @@ internal sealed class AppController(
     public void Initialize(bool showMainWindow)
     {
         tray.Initialize(this);
+        downloadUi.Initialize();
         if (showMainWindow)
         {
             ShowMainWindow();
@@ -57,14 +61,18 @@ internal sealed class AppController(
             return;
         }
 
-        if (options.Url is not null || options.StartMainQueue || options.StartQueues.Count > 0 || options.StopQueues.Count > 0)
+        if (options.Url is not null)
         {
-            // Download and queue switches are executed once the dialogs and queues exist (milestones 5–11).
-            logger.LogInformation("Command line actions received: url={Url} startQueues={Start} stopQueues={Stop}",
-                options.Url, options.StartQueues, options.StopQueues);
+            _ = downloadUi.AddFromCommandLineAsync(options);
         }
 
-        if (!options.StartInTray && !options.Silent)
+        if (options.StartMainQueue || options.StartQueues.Count > 0 || options.StopQueues.Count > 0)
+        {
+            // Queue switches are executed once queues run (milestone 7).
+            logger.LogInformation("Queue switches received: startQueues={Start} stopQueues={Stop}", options.StartQueues, options.StopQueues);
+        }
+
+        if (!options.StartInTray && !options.Silent && options.Url is null)
         {
             ShowMainWindow();
         }
@@ -88,7 +96,9 @@ internal sealed class AppController(
         Application.Current.Shutdown();
     });
 
-    public void ShowAddUrl(string? url = null) => NotAvailable();
+    public void ShowAddUrl(string? url = null) => OnUiThread(() => _ = downloadUi.ShowAddUrlAsync(url));
+
+    public void StartDownload(long downloadId) => OnUiThread(() => downloadUi.StartDownload(downloadId));
 
     public void ShowAddBatch(bool fromClipboard) => NotAvailable();
 
@@ -102,11 +112,23 @@ internal sealed class AppController(
 
     public void ShowExport(bool ef2, IReadOnlyCollection<long>? ids) => NotAvailable();
 
-    public void ShowProgress(long downloadId) => NotAvailable();
+    public void ShowProgress(long downloadId) => OnUiThread(() => downloadUi.ShowProgress(downloadId));
 
-    public void ShowProperties(long downloadId) => NotAvailable();
+    public void ShowProperties(long downloadId) => OnUiThread(() =>
+    {
+        if (downloads.Find(downloadId) is { } download)
+        {
+            dialogs.ShowModal(new Views.Dialogs.PropertiesDialog(download, downloads));
+        }
+    });
 
-    public void ShowMoveRename(long downloadId) => NotAvailable();
+    public void ShowMoveRename(long downloadId) => OnUiThread(() =>
+    {
+        if (downloads.Find(downloadId) is { } download)
+        {
+            dialogs.ShowModal(new Views.Dialogs.MoveRenameDialog(download, downloads));
+        }
+    });
 
     public void RefreshAddress(long downloadId) => NotAvailable();
 

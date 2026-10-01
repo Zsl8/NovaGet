@@ -86,7 +86,7 @@ Files on disk: settings and the database live in `%APPDATA%\NovaGet`, temp files
 | 2 | Engine v1: probe, single connection, pause/resume, temp → final move | Done |
 | 3 | Engine v2: dynamic segmentation, reuse, retries, crash-safe resume, speed limiter | Done |
 | 4 | Main window, toolbar, categories, virtualized list, tray | Done |
-| 5 | Download dialogs | Planned |
+| 5 | Download dialogs | Done |
 | 6 | Options dialog | Planned |
 | 7 | Queues and scheduler | Planned |
 | 8 | FTP/FTPS, proxies, logins, quotas, dial-up | Planned |

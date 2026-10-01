@@ -94,6 +94,7 @@ public sealed class DownloadService : IDownloadService
             LastModified = request.LastModified,
             IsStream = request.IsStream,
             StreamManifestJson = request.StreamManifestJson,
+            OverwriteExisting = request.OverwriteExisting,
             AddedAt = DateTime.UtcNow,
         };
 
@@ -111,6 +112,83 @@ public sealed class DownloadService : IDownloadService
 
         Raise(DownloadListChange.Added, [download.Id]);
         return download.Clone();
+    }
+
+    public Download? FindByUrl(string url)
+    {
+        if (string.IsNullOrWhiteSpace(url))
+        {
+            return null;
+        }
+
+        lock (_gate)
+        {
+            return _downloads.Values
+                .Where(d => SameAddress(d.OriginalUrl, url) || SameAddress(d.Url, url))
+                .OrderByDescending(d => d.Id)
+                .FirstOrDefault()?.Clone();
+        }
+    }
+
+    public async Task<string?> MoveOrRenameAsync(long id, string folder, string fileName)
+    {
+        var name = FileNameSanitizer.Sanitize(fileName);
+        Download download;
+        lock (_gate)
+        {
+            if (!_downloads.TryGetValue(id, out var cached))
+            {
+                return "The download no longer exists.";
+            }
+
+            download = cached.Clone();
+        }
+
+        if (download.Status == DownloadStatus.Completed)
+        {
+            var source = download.FullPath;
+            if (!File.Exists(source))
+            {
+                return $"The file \"{source}\" doesn't exist any more.";
+            }
+
+            try
+            {
+                Directory.CreateDirectory(folder);
+                if (!string.Equals(Path.GetFullPath(source), Path.GetFullPath(Path.Combine(folder, name)), StringComparison.OrdinalIgnoreCase))
+                {
+                    name = FileNameSanitizer.MakeUnique(folder, name);
+                    var target = Path.Combine(folder, name);
+                    await Task.Run(() => File.Move(source, target)).ConfigureAwait(false);
+                }
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException)
+            {
+                _logger.LogWarning(ex, "Move/rename of download {Id} failed", id);
+                return ex.Message;
+            }
+        }
+
+        download.SavePath = folder;
+        download.FileName = name;
+        Save(download);
+        return null;
+    }
+
+    private static bool SameAddress(string? a, string b)
+    {
+        if (string.IsNullOrEmpty(a))
+        {
+            return false;
+        }
+
+        if (Uri.TryCreate(a, UriKind.Absolute, out var x) && Uri.TryCreate(b, UriKind.Absolute, out var y))
+        {
+            // Scheme and host are case-insensitive; path and query are not.
+            return Uri.Compare(x, y, UriComponents.AbsoluteUri & ~UriComponents.Fragment, UriFormat.SafeUnescaped, StringComparison.Ordinal) == 0;
+        }
+
+        return string.Equals(a, b, StringComparison.Ordinal);
     }
 
     public bool Start(long id, bool startedByQueue = false)

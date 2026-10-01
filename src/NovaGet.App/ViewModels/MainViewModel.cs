@@ -592,7 +592,7 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
     {
         foreach (var item in _selection.Where(i => i.Status.IsResumable()))
         {
-            _downloads.Start(item.Id);
+            _controller.StartDownload(item.Id);
         }
     }
 
@@ -778,7 +778,7 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
 
         foreach (var item in _selection.Where(i => i.Status.IsResumable()))
         {
-            _downloads.Start(item.Id);
+            _controller.StartDownload(item.Id);
         }
     }
 

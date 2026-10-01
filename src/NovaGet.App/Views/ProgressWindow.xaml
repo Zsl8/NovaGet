@@ -1,0 +1,97 @@
+<Window x:Class="NovaGet.App.Views.ProgressWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:l="clr-namespace:NovaGet.App.Localization"
+        xmlns:c="clr-namespace:NovaGet.App.Controls"
+        xmlns:s="clr-namespace:NovaGet.App.Services"
+        Width="500" SizeToContent="Height" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen"
+        Icon="pack://application:,,,/NovaGet;component/Assets/novaget.ico" UseLayoutRounding="True"
+        Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+  <Window.TaskbarItemInfo>
+    <TaskbarItemInfo x:Name="Taskbar" ProgressState="Normal" />
+  </Window.TaskbarItemInfo>
+  <TabControl Margin="6">
+    <!-- ========================== Download status ========================== -->
+    <TabItem Header="{l:Loc Progress_TabStatus}">
+      <StackPanel Margin="8">
+        <TextBox x:Name="UrlText" IsReadOnly="True" BorderThickness="0" Background="Transparent" TextWrapping="NoWrap"
+                 AutomationProperties.Name="URL" />
+        <Grid Margin="0,8,0,0">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+          </Grid.ColumnDefinitions>
+          <Grid.RowDefinitions>
+            <RowDefinition /><RowDefinition /><RowDefinition /><RowDefinition /><RowDefinition /><RowDefinition />
+          </Grid.RowDefinitions>
+          <TextBlock Grid.Row="0" Text="{l:Loc Progress_Status}" Margin="0,2,16,2" />
+          <TextBlock Grid.Row="0" Grid.Column="1" x:Name="StatusText" Margin="0,2" TextTrimming="CharacterEllipsis" />
+          <TextBlock Grid.Row="1" Text="{l:Loc Progress_FileSize}" Margin="0,2,16,2" />
+          <TextBlock Grid.Row="1" Grid.Column="1" x:Name="SizeText" Margin="0,2" />
+          <TextBlock Grid.Row="2" Text="{l:Loc Progress_Downloaded}" Margin="0,2,16,2" />
+          <TextBlock Grid.Row="2" Grid.Column="1" x:Name="DownloadedText" Margin="0,2" />
+          <TextBlock Grid.Row="3" Text="{l:Loc Progress_Rate}" Margin="0,2,16,2" />
+          <TextBlock Grid.Row="3" Grid.Column="1" x:Name="RateText" Margin="0,2" />
+          <TextBlock Grid.Row="4" Text="{l:Loc Progress_TimeLeft}" Margin="0,2,16,2" />
+          <TextBlock Grid.Row="4" Grid.Column="1" x:Name="TimeLeftText" Margin="0,2" />
+          <TextBlock Grid.Row="5" Text="{l:Loc Progress_ResumeCapability}" Margin="0,2,16,2" />
+          <TextBlock Grid.Row="5" Grid.Column="1" x:Name="ResumeText" Margin="0,2" />
+        </Grid>
+        <ProgressBar x:Name="OverallBar" Height="18" Margin="0,10,0,0" Maximum="1000" AutomationProperties.Name="{l:Loc Progress_Downloaded}" />
+        <c:SegmentBar x:Name="SegmentMap" Height="14" Margin="0,4,0,0" />
+        <DockPanel Margin="0,10,0,0" LastChildFill="False">
+          <Button x:Name="DetailsButton" DockPanel.Dock="Left" MinWidth="110" Click="OnToggleDetails" />
+          <Button x:Name="CancelButton" DockPanel.Dock="Right" Content="{l:Loc Progress_Cancel}" MinWidth="80" Margin="8,0,0,0" Click="OnCancel" />
+          <Button x:Name="PauseButton" DockPanel.Dock="Right" MinWidth="80" IsDefault="True" Click="OnPauseResume" />
+        </DockPanel>
+        <StackPanel x:Name="DetailsPanel" Margin="0,10,0,0">
+          <TextBlock Text="{l:Loc Progress_Connections}" />
+          <ListView x:Name="ConnectionList" Height="130" Margin="0,4,0,0" AutomationProperties.Name="{l:Loc Progress_Connections}">
+            <ListView.View>
+              <GridView>
+                <GridViewColumn Header="{l:Loc Progress_ColNumber}" Width="36" DisplayMemberBinding="{Binding Number}" />
+                <GridViewColumn Header="{l:Loc Progress_ColDownloaded}" Width="100" DisplayMemberBinding="{Binding DownloadedText}" />
+                <GridViewColumn Header="{l:Loc Progress_ColInfo}" Width="300" DisplayMemberBinding="{Binding Info}" />
+              </GridView>
+            </ListView.View>
+          </ListView>
+        </StackPanel>
+      </StackPanel>
+    </TabItem>
+
+    <!-- ========================== Speed limiter ========================== -->
+    <TabItem Header="{l:Loc Progress_TabLimiter}">
+      <StackPanel Margin="12">
+        <CheckBox x:Name="UseLimiterBox" Content="{l:Loc Progress_UseLimiter}" Checked="OnLimiterChanged" Unchecked="OnLimiterChanged" />
+        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+          <Label Content="{l:Loc Progress_MaxSpeed}" Target="{Binding ElementName=LimitBox}" Padding="0,0,8,0" VerticalAlignment="Center" />
+          <TextBox x:Name="LimitBox" Width="80" Height="23" VerticalContentAlignment="Center" HorizontalContentAlignment="Right"
+                   LostFocus="OnLimiterChanged" KeyDown="OnLimitKeyDown" />
+          <TextBlock Text="{l:Loc LimiterDialog_Unit}" Margin="6,0,0,0" VerticalAlignment="Center" />
+        </StackPanel>
+        <CheckBox x:Name="RememberBox" Content="{l:Loc Progress_RememberServer}" Margin="0,10,0,0" Checked="OnLimiterChanged" Unchecked="OnLimiterChanged" />
+      </StackPanel>
+    </TabItem>
+
+    <!-- ========================== Options on completion ========================== -->
+    <TabItem Header="{l:Loc Progress_TabCompletion}">
+      <StackPanel Margin="12" x:Name="CompletionPanel">
+        <CheckBox Content="{l:Loc Progress_ShowComplete}" IsChecked="{Binding ShowCompleteDialog}" />
+        <CheckBox Content="{l:Loc Progress_HangUp}" IsChecked="{Binding HangUp}" Margin="0,8,0,0" />
+        <CheckBox Content="{l:Loc Progress_ExitWhenDone}" IsChecked="{Binding ExitWhenDone}" Margin="0,8,0,0" />
+        <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+          <CheckBox x:Name="TurnOffBox" Content="{l:Loc Progress_TurnOff}" IsChecked="{Binding TurnOff}" VerticalAlignment="Center" />
+          <ComboBox x:Name="PowerCombo" Margin="8,0,0,0" MinWidth="110" SelectedItem="{Binding PowerAction}"
+                    IsEnabled="{Binding TurnOff}" AutomationProperties.Name="{l:Loc Progress_TurnOff}">
+            <ComboBox.ItemTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding Converter={x:Static s:PowerActionNames.Converter}}" />
+              </DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
+        </StackPanel>
+        <CheckBox Content="{l:Loc Progress_Force}" IsChecked="{Binding ForceProcesses}" IsEnabled="{Binding TurnOff}" Margin="20,8,0,0" />
+      </StackPanel>
+    </TabItem>
+  </TabControl>
+</Window>

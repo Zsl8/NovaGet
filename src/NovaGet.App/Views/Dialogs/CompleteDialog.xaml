@@ -1,0 +1,35 @@
+<v:DialogWindow x:Class="NovaGet.App.Views.Dialogs.CompleteDialog"
+                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:v="clr-namespace:NovaGet.App.Views"
+                xmlns:l="clr-namespace:NovaGet.App.Localization"
+                Title="{l:Loc Complete_Title}" ShowInTaskbar="True" Topmost="True"
+                FocusManager.FocusedElement="{Binding ElementName=OpenButton}">
+  <StackPanel Margin="16" Width="500">
+    <DockPanel>
+      <Image x:Name="FileIcon" Width="32" Height="32" Margin="0,0,12,0" VerticalAlignment="Top" />
+      <TextBlock Text="{l:Loc Complete_Title}" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center" />
+    </DockPanel>
+    <Grid Margin="0,12,0,0">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="*" />
+      </Grid.ColumnDefinitions>
+      <Grid.RowDefinitions>
+        <RowDefinition /><RowDefinition /><RowDefinition />
+      </Grid.RowDefinitions>
+      <TextBlock Text="{l:Loc Complete_Address}" Margin="0,2,12,2" />
+      <TextBox x:Name="AddressText" Grid.Column="1" IsReadOnly="True" BorderThickness="0" Background="Transparent" />
+      <TextBlock x:Name="SizeText" Grid.Row="1" Grid.Column="1" Margin="2,2" />
+      <TextBlock Grid.Row="2" Text="{l:Loc Complete_SavedTo}" Margin="0,2,12,2" />
+      <TextBox x:Name="PathText" Grid.Row="2" Grid.Column="1" IsReadOnly="True" BorderThickness="0" Background="Transparent" TextWrapping="Wrap" />
+    </Grid>
+    <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
+      <Button x:Name="OpenButton" Content="{l:Loc Complete_Open}" MinWidth="80" IsDefault="True" Click="OnOpen" />
+      <Button Content="{l:Loc Complete_OpenWith}" MinWidth="90" Margin="8,0,0,0" Click="OnOpenWith" />
+      <Button Content="{l:Loc Complete_OpenFolder}" MinWidth="90" Margin="8,0,0,0" Click="OnOpenFolder" />
+      <Button Content="{l:Loc Common_Close}" MinWidth="80" Margin="8,0,0,0" IsCancel="True" Click="OnClose" />
+    </StackPanel>
+    <CheckBox x:Name="DontShowBox" Content="{l:Loc Complete_DontShow}" Margin="0,14,0,0" />
+  </StackPanel>
+</v:DialogWindow>

@@ -61,6 +61,7 @@ internal static class AppHostBuilder
                 sp.GetRequiredService<Microsoft.Extensions.Logging.ILoggerFactory>());
         });
         builder.Services.AddSingleton<IDownloadEngine>(sp => sp.GetRequiredService<DownloadEngine>());
+        builder.Services.AddSingleton<IDownloadProber, DownloadProber>();
         builder.Services.AddHostedService<EngineLifetimeService>();
 
         // Download list
@@ -68,7 +69,10 @@ internal static class AppHostBuilder
 
         // App shell
         builder.Services.AddSingleton<IDialogService, DialogService>();
+        builder.Services.AddSingleton<IDialUpService, NoDialUpService>();
+        builder.Services.AddSingleton<DownloadUiService>();
         builder.Services.AddSingleton<IAppController, AppController>();
+        builder.Services.AddSingleton(sp => new Lazy<IAppController>(sp.GetRequiredService<IAppController>));
         builder.Services.AddSingleton<TrayIconService>();
         builder.Services.AddSingleton<IIpcRequestHandler, IpcRequestRouter>();
         builder.Services.AddHostedService<IpcServerHostedService>();

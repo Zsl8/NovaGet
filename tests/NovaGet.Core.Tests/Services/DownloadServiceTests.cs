@@ -253,4 +253,54 @@ public sealed class DownloadServiceTests : IAsyncLifetime
         Assert.Equal(Path.Combine(_h.SaveDirectory, "elsewhere", "renamed.bin"), done.FullPath);
         Assert.Equal(file.Sha256(), EngineHarness.Sha256OfFile(done.FullPath));
     }
+
+    [Fact]
+    public void Finds_duplicates_by_original_or_current_address()
+    {
+        var added = _service.Add(new DownloadRequest { Url = "https://CDN.example.com/final/a.zip", OriginalUrl = "https://example.com/get?id=1", FileName = "a.zip" });
+
+        Assert.Equal(added.Id, _service.FindByUrl("https://example.com/get?id=1")!.Id);
+        Assert.Equal(added.Id, _service.FindByUrl("https://cdn.example.com/final/a.zip")!.Id);
+        Assert.Null(_service.FindByUrl("https://example.com/get?id=2"));
+        Assert.Null(_service.FindByUrl("https://cdn.example.com/final/A.zip"));
+    }
+
+    [Fact]
+    public async Task Move_or_rename_moves_finished_files()
+    {
+        _h.Server.AddFile("mv.bin", 1000);
+        var added = AddUrl("mv.bin");
+        var completed = new TaskCompletionSource();
+        _service.StateChanged += (_, e) =>
+        {
+            if (e.Status == DownloadStatus.Completed)
+            {
+                completed.TrySetResult();
+            }
+        };
+        _service.Start(added.Id);
+        await completed.Task.WaitAsync(TimeSpan.FromSeconds(30));
+        var before = _service.Find(added.Id)!.FullPath;
+        var folder = Path.Combine(_h.SaveDirectory, "moved");
+
+        var error = await _service.MoveOrRenameAsync(added.Id, folder, "new name.bin");
+
+        Assert.Null(error);
+        Assert.False(File.Exists(before));
+        Assert.True(File.Exists(Path.Combine(folder, "new name.bin")));
+        Assert.Equal(Path.Combine(folder, "new name.bin"), _service.Find(added.Id)!.FullPath);
+    }
+
+    [Fact]
+    public async Task Move_or_rename_of_unfinished_download_only_changes_the_destination()
+    {
+        var added = AddUrl("later.zip");
+
+        var error = await _service.MoveOrRenameAsync(added.Id, "/somewhere/else", "x?.zip");
+
+        Assert.Null(error);
+        var d = _service.Find(added.Id)!;
+        Assert.Equal("/somewhere/else", d.SavePath);
+        Assert.Equal("x_.zip", d.FileName);
+    }
 }

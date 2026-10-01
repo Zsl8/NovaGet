@@ -1,0 +1,15 @@
+<v:DialogWindow x:Class="NovaGet.App.Views.Dialogs.QueuePickDialog"
+                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:v="clr-namespace:NovaGet.App.Views"
+                xmlns:l="clr-namespace:NovaGet.App.Localization"
+                Title="{l:Loc QueuePick_Title}" FocusManager.FocusedElement="{Binding ElementName=QueueList}">
+  <StackPanel Margin="14" Width="300">
+    <Label Content="{l:Loc QueuePick_Prompt}" Target="{Binding ElementName=QueueList}" Padding="0" />
+    <ListBox x:Name="QueueList" Height="140" Margin="0,6,0,0" DisplayMemberPath="Title" MouseDoubleClick="OnOk" />
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
+      <Button Content="{l:Loc Common_OK}" MinWidth="80" IsDefault="True" Click="OnOk" />
+      <Button Content="{l:Loc Common_Cancel}" MinWidth="80" Margin="8,0,0,0" IsCancel="True" />
+    </StackPanel>
+  </StackPanel>
+</v:DialogWindow>

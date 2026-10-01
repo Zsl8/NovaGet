@@ -8,6 +8,13 @@
   <data name="About_Notices" xml:space="preserve"><value>Third-party notices</value></data>
   <data name="About_Text" xml:space="preserve"><value>A free download manager for Windows.</value></data>
   <data name="About_Title" xml:space="preserve"><value>About NovaGet</value></data>
+  <data name="AddUrl_AddAnyway" xml:space="preserve"><value>Press OK again to add it anyway.</value></data>
+  <data name="AddUrl_Address" xml:space="preserve"><value>_Address:</value></data>
+  <data name="AddUrl_Checking" xml:space="preserve"><value>Checking the address...</value></data>
+  <data name="AddUrl_Login" xml:space="preserve"><value>_Login:</value></data>
+  <data name="AddUrl_Password" xml:space="preserve"><value>_Password:</value></data>
+  <data name="AddUrl_Title" xml:space="preserve"><value>Enter new address to download</value></data>
+  <data name="AddUrl_UseAuth" xml:space="preserve"><value>Use _authorization</value></data>
   <data name="Arrange_Description" xml:space="preserve"><value>by _description</value></data>
   <data name="Arrange_FileName" xml:space="preserve"><value>by _file name</value></data>
   <data name="Arrange_LastTry" xml:space="preserve"><value>by last _try date</value></data>
@@ -108,6 +115,15 @@
   <data name="Common_OK" xml:space="preserve"><value>OK</value></data>
   <data name="Common_Reset" xml:space="preserve"><value>_Reset</value></data>
   <data name="Common_Yes" xml:space="preserve"><value>_Yes</value></data>
+  <data name="Complete_Address" xml:space="preserve"><value>Address:</value></data>
+  <data name="Complete_DontShow" xml:space="preserve"><value>_Don't show this dialog again</value></data>
+  <data name="Complete_Open" xml:space="preserve"><value>_Open</value></data>
+  <data name="Complete_OpenFolder" xml:space="preserve"><value>Open _folder</value></data>
+  <data name="Complete_OpenWith" xml:space="preserve"><value>Open _with...</value></data>
+  <data name="Complete_SavedTo" xml:space="preserve"><value>Saved to:</value></data>
+  <data name="Complete_Title" xml:space="preserve"><value>Download complete</value></data>
+  <data name="Confirm_CancelDownload" xml:space="preserve"><value>Cancel this download?
+The data received so far will be deleted.</value></data>
   <data name="Confirm_Delete" xml:space="preserve"><value>Are you sure you want to delete {0} file(s)?</value></data>
   <data name="Confirm_DeleteAlsoFromDisk" xml:space="preserve"><value>Delete also from _disk</value></data>
   <data name="Confirm_DeleteCategory" xml:space="preserve"><value>Delete the category "{0}"?
@@ -116,10 +132,36 @@ Its downloads move to General.</value></data>
 The downloaded files stay on disk.</value></data>
   <data name="Confirm_DeleteQueue" xml:space="preserve"><value>Delete the queue "{0}"?
 Its downloads stay in the list.</value></data>
+  <data name="Confirm_RestartChanged" xml:space="preserve"><value>The file on the server has changed. Restart download from the beginning?</value></data>
+  <data name="Duplicate_AddNumbered" xml:space="preserve"><value>Add with a _numbered name</value></data>
+  <data name="Duplicate_Message" xml:space="preserve"><value>This address is already in the download list as
+"{0}".
+
+What do you want to do?</value></data>
+  <data name="Duplicate_Overwrite" xml:space="preserve"><value>Add and _overwrite the file</value></data>
+  <data name="Duplicate_ShowExisting" xml:space="preserve"><value>_Show the existing download</value></data>
+  <data name="Duplicate_Title" xml:space="preserve"><value>Duplicate download</value></data>
   <data name="Error_FileMissing" xml:space="preserve"><value>The file "{0}" doesn't exist any more.</value></data>
+  <data name="Error_InvalidAddress" xml:space="preserve"><value>Please enter a valid address (http, https, ftp or ftps).</value></data>
   <data name="Error_InvalidNumber" xml:space="preserve"><value>Please enter a number between {0} and {1}.</value></data>
+  <data name="Error_InvalidPath" xml:space="preserve"><value>Please enter a full path for the file, for example C:\Downloads\file.zip.</value></data>
   <data name="Error_NameRequired" xml:space="preserve"><value>Please enter a name.</value></data>
+  <data name="Error_ProbeFailed" xml:space="preserve"><value>NovaGet couldn't get information about this address:
+{0}</value></data>
   <data name="Error_QueueExists" xml:space="preserve"><value>A queue with this name already exists.</value></data>
+  <data name="FileInfo_AddCategory" xml:space="preserve"><value>Add a category</value></data>
+  <data name="FileInfo_Category" xml:space="preserve"><value>_Category:</value></data>
+  <data name="FileInfo_ChooseQueue" xml:space="preserve"><value>Choose the queue</value></data>
+  <data name="FileInfo_CreateQueue" xml:space="preserve"><value>Create new queue...</value></data>
+  <data name="FileInfo_Description" xml:space="preserve"><value>_Description:</value></data>
+  <data name="FileInfo_DownloadLater" xml:space="preserve"><value>Download _Later</value></data>
+  <data name="FileInfo_Remember" xml:space="preserve"><value>_Remember this path for "{0}" category</value></data>
+  <data name="FileInfo_SaveAs" xml:space="preserve"><value>Save _As:</value></data>
+  <data name="FileInfo_Size" xml:space="preserve"><value>Size: {0}</value></data>
+  <data name="FileInfo_SizeUnknown" xml:space="preserve"><value>Unknown</value></data>
+  <data name="FileInfo_Start" xml:space="preserve"><value>_Start Download</value></data>
+  <data name="FileInfo_Title" xml:space="preserve"><value>Download File Info</value></data>
+  <data name="FileInfo_Url" xml:space="preserve"><value>URL:</value></data>
   <data name="Find_Label" xml:space="preserve"><value>Find _what:</value></data>
   <data name="Find_MatchCase" xml:space="preserve"><value>Match _case</value></data>
   <data name="Find_Next" xml:space="preserve"><value>_Find next</value></data>
@@ -144,16 +186,82 @@ Its downloads stay in the list.</value></data>
   <data name="Menu_Toolbar" xml:space="preserve"><value>_Toolbar</value></data>
   <data name="Menu_ToolbarTheme" xml:space="preserve"><value>Toolbar _theme</value></data>
   <data name="Menu_View" xml:space="preserve"><value>_View</value></data>
+  <data name="MoveRename_Folder" xml:space="preserve"><value>New _folder:</value></data>
+  <data name="MoveRename_Name" xml:space="preserve"><value>New _name:</value></data>
+  <data name="MoveRename_Title" xml:space="preserve"><value>Move/Rename</value></data>
   <data name="Msg_LanguageRestart" xml:space="preserve"><value>The new language is used the next time NovaGet starts.</value></data>
   <data name="Msg_NotAvailable" xml:space="preserve"><value>This feature isn't available yet.</value></data>
   <data name="Notify_Complete" xml:space="preserve"><value>Download complete</value></data>
   <data name="Notify_Failed" xml:space="preserve"><value>Download failed</value></data>
   <data name="Notify_QueueFinished" xml:space="preserve"><value>Queue finished</value></data>
   <data name="Notify_QueueStarted" xml:space="preserve"><value>Queue started</value></data>
+  <data name="Power_CountdownHibernate" xml:space="preserve"><value>The computer will hibernate in {0} seconds.</value></data>
+  <data name="Power_CountdownLogOff" xml:space="preserve"><value>You will be logged off in {0} seconds.</value></data>
+  <data name="Power_CountdownShutDown" xml:space="preserve"><value>The computer will shut down in {0} seconds.</value></data>
+  <data name="Power_CountdownSleep" xml:space="preserve"><value>The computer will go to sleep in {0} seconds.</value></data>
+  <data name="Power_Hibernate" xml:space="preserve"><value>Hibernate</value></data>
+  <data name="Power_LogOff" xml:space="preserve"><value>Log off</value></data>
+  <data name="Power_Now" xml:space="preserve"><value>Do it _now</value></data>
+  <data name="Power_ShutDown" xml:space="preserve"><value>Shut down</value></data>
+  <data name="Power_Sleep" xml:space="preserve"><value>Sleep</value></data>
+  <data name="Progress_Cancel" xml:space="preserve"><value>_Cancel</value></data>
+  <data name="Progress_ColDownloaded" xml:space="preserve"><value>Downloaded</value></data>
+  <data name="Progress_ColInfo" xml:space="preserve"><value>Info</value></data>
+  <data name="Progress_ColNumber" xml:space="preserve"><value>N.</value></data>
+  <data name="Progress_Connections" xml:space="preserve"><value>Start positions and download progress by connections:</value></data>
+  <data name="Progress_Downloaded" xml:space="preserve"><value>Downloaded</value></data>
+  <data name="Progress_DownloadedValue" xml:space="preserve"><value>{0} ( {1} % )</value></data>
+  <data name="Progress_ExitWhenDone" xml:space="preserve"><value>_Exit NovaGet when done</value></data>
+  <data name="Progress_FileSize" xml:space="preserve"><value>File size</value></data>
+  <data name="Progress_Force" xml:space="preserve"><value>_Force processes to terminate</value></data>
+  <data name="Progress_HangUp" xml:space="preserve"><value>_Hang up modem when done</value></data>
+  <data name="Progress_HideDetails" xml:space="preserve"><value>&lt;&lt; _Hide details</value></data>
+  <data name="Progress_MaxSpeed" xml:space="preserve"><value>_Maximum download speed:</value></data>
+  <data name="Progress_No" xml:space="preserve"><value>No</value></data>
+  <data name="Progress_Pause" xml:space="preserve"><value>_Pause</value></data>
+  <data name="Progress_Rate" xml:space="preserve"><value>Transfer rate</value></data>
+  <data name="Progress_RememberServer" xml:space="preserve"><value>_Remember speed limit for this server</value></data>
+  <data name="Progress_Resume" xml:space="preserve"><value>_Resume</value></data>
+  <data name="Progress_ResumeCapability" xml:space="preserve"><value>Resume capability</value></data>
+  <data name="Progress_ShowComplete" xml:space="preserve"><value>_Show download complete dialog</value></data>
+  <data name="Progress_ShowDetails" xml:space="preserve"><value>_Show details &gt;&gt;</value></data>
+  <data name="Progress_Status" xml:space="preserve"><value>Status</value></data>
+  <data name="Progress_TabCompletion" xml:space="preserve"><value>Options on completion</value></data>
+  <data name="Progress_TabLimiter" xml:space="preserve"><value>Speed Limiter</value></data>
+  <data name="Progress_TabStatus" xml:space="preserve"><value>Download status</value></data>
+  <data name="Progress_TimeLeft" xml:space="preserve"><value>Time left</value></data>
+  <data name="Progress_TitleKnown" xml:space="preserve"><value>{0}% {1}</value></data>
+  <data name="Progress_TurnOff" xml:space="preserve"><value>_Turn off computer when done</value></data>
+  <data name="Progress_Unknown" xml:space="preserve"><value>Unknown</value></data>
+  <data name="Progress_UseLimiter" xml:space="preserve"><value>_Use speed limiter</value></data>
+  <data name="Progress_Yes" xml:space="preserve"><value>Yes</value></data>
+  <data name="Props_Added" xml:space="preserve"><value>Added:</value></data>
+  <data name="Props_Address" xml:space="preserve"><value>_Address:</value></data>
+  <data name="Props_Checksum" xml:space="preserve"><value>Checksum:</value></data>
+  <data name="Props_ChecksumBad" xml:space="preserve"><value>The checksum does NOT match. Computed: {0}</value></data>
+  <data name="Props_ChecksumComputed" xml:space="preserve"><value>Computed: {0}</value></data>
+  <data name="Props_ChecksumOk" xml:space="preserve"><value>The checksum matches.</value></data>
+  <data name="Props_Completed" xml:space="preserve"><value>Completed:</value></data>
+  <data name="Props_Connections" xml:space="preserve"><value>_Connections:</value></data>
+  <data name="Props_ConnectionsDefault" xml:space="preserve"><value>Default</value></data>
+  <data name="Props_Description" xml:space="preserve"><value>_Description:</value></data>
+  <data name="Props_FileType" xml:space="preserve"><value>File type:</value></data>
+  <data name="Props_Login" xml:space="preserve"><value>_Login:</value></data>
+  <data name="Props_Password" xml:space="preserve"><value>_Password:</value></data>
+  <data name="Props_Referrer" xml:space="preserve"><value>_Referrer:</value></data>
+  <data name="Props_SaveTo" xml:space="preserve"><value>Save _To:</value></data>
+  <data name="Props_Size" xml:space="preserve"><value>Size:</value></data>
+  <data name="Props_Status" xml:space="preserve"><value>Status:</value></data>
+  <data name="Props_Title" xml:space="preserve"><value>Properties</value></data>
+  <data name="Props_TypeFile" xml:space="preserve"><value>{0} file</value></data>
+  <data name="Props_Verify" xml:space="preserve"><value>_Verify</value></data>
+  <data name="Props_Verifying" xml:space="preserve"><value>Calculating... {0}</value></data>
   <data name="Queue_Main" xml:space="preserve"><value>Main download queue</value></data>
   <data name="Queue_Sync" xml:space="preserve"><value>Synchronization queue</value></data>
   <data name="QueueDialog_Name" xml:space="preserve"><value>Queue _name:</value></data>
   <data name="QueueDialog_Title" xml:space="preserve"><value>Create New Queue</value></data>
+  <data name="QueuePick_Prompt" xml:space="preserve"><value>Add the download to this _queue:</value></data>
+  <data name="QueuePick_Title" xml:space="preserve"><value>Download Later</value></data>
   <data name="Sort_Ascending" xml:space="preserve"><value>_Ascending</value></data>
   <data name="Sort_Descending" xml:space="preserve"><value>_Descending</value></data>
   <data name="Status_Assembling" xml:space="preserve"><value>Assembling...</value></data>

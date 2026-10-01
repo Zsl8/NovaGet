@@ -76,3 +76,17 @@ Choices the specification left open, or where it had to be interpreted. Newest e
 | D53 | "Remove with file" deletes the finished file; partial data of unfinished downloads is always removed with the entry. | A partial `.ngpart` is useless without its list entry. |
 | D54 | `tests/NovaGet.App.Tests` opens the real windows and dialogs through the real composition root on an STA thread. It is a test project only on Windows, so `dotnet test` still works on Linux/macOS. | Catches XAML, resource and binding failures that compilation can't. |
 | D55 | Toolbar and tree icons are rendered from SVG at 96/48/32 px and shown at 48/24/16 px with high-quality scaling. | Crisp up to 200% DPI from one source set. |
+
+## Milestone 5 — Download dialogs
+
+| # | Decision | Why |
+|---|---|---|
+| D56 | A running download never writes its whole row: the engine updates only engine-owned fields (probe results, size, resume support, progress, completion) and re-reads folder/name/overwrite at completion; the UI saves only user-editable fields. | Edits made while a download runs (File Info with "start immediately", Properties, Move/Rename) are kept and used. |
+| D57 | Progress dialogs and the Download complete dialog are shown for downloads the user started (Start Download, Resume, double-click), not for queue/scheduler runs, which only get tray notifications. | Matches classic behavior and avoids a dialog storm when a queue runs. |
+| D58 | Progress dialog "Cancel" abandons the download (entry and partial data removed), asking first when data was already received; "Pause" keeps it. | §8.3 asks for a confirmation, which only makes sense for a destructive action. |
+| D59 | Add URL probes the address; if that fails, the error is shown and pressing OK again adds it anyway. | Some servers reject probes (HEAD, ranges, missing cookies) but still serve the file. |
+| D60 | Duplicates are detected by original or current address before File Info is shown. Non-interactive adds (dialogs off, `/n`) treat "Show dialog" as "numbered name". | A dialog can't be shown when the user asked for none. |
+| D61 | File Info shows the final name: if the file already exists in the folder, Save As gets `name (2).ext`. The category's folder is followed until the user types another folder. | No surprises at completion. |
+| D62 | Editing the address in Properties replaces both the current and the original address. | The usual reason is an expired link; restarts must use the new one. |
+| D63 | Power actions: 30-second countdown with Cancel and "Do it now"; "Force processes to terminate" maps to `EWX_FORCE`, otherwise `EWX_FORCEIFHUNG`. Hang-up goes through `IDialUpService` (implemented with Dial Up/VPN). | §8.3 and §16. |
+| D64 | Minimizing a progress dialog hides it (double-click the download to bring it back); the taskbar button shows the progress. | §8.3 "minimize sends it to the tray". |

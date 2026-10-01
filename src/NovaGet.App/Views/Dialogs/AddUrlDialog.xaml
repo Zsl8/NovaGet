@@ -1,0 +1,32 @@
+<v:DialogWindow x:Class="NovaGet.App.Views.Dialogs.AddUrlDialog"
+                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:v="clr-namespace:NovaGet.App.Views"
+                xmlns:l="clr-namespace:NovaGet.App.Localization"
+                Title="{l:Loc AddUrl_Title}" FocusManager.FocusedElement="{Binding ElementName=AddressBox}">
+  <StackPanel Margin="16" Width="500">
+    <Label Content="{l:Loc AddUrl_Address}" Target="{Binding ElementName=AddressBox}" Padding="0" />
+    <ComboBox x:Name="AddressBox" IsEditable="True" Margin="0,4,0,0" Height="24" VerticalContentAlignment="Center"
+              AutomationProperties.Name="{l:Loc AddUrl_Address}" />
+    <CheckBox x:Name="UseAuthBox" Content="{l:Loc AddUrl_UseAuth}" Margin="0,12,0,0" Checked="OnAuthToggled" Unchecked="OnAuthToggled" />
+    <Grid x:Name="AuthGrid" Margin="20,8,0,0" Visibility="Collapsed">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="*" />
+      </Grid.ColumnDefinitions>
+      <Grid.RowDefinitions>
+        <RowDefinition />
+        <RowDefinition />
+      </Grid.RowDefinitions>
+      <Label Content="{l:Loc AddUrl_Login}" Target="{Binding ElementName=LoginBox}" Padding="0,0,8,0" VerticalAlignment="Center" />
+      <TextBox x:Name="LoginBox" Grid.Column="1" Height="23" VerticalContentAlignment="Center" />
+      <Label Grid.Row="1" Content="{l:Loc AddUrl_Password}" Target="{Binding ElementName=PasswordBox}" Padding="0,0,8,0" VerticalAlignment="Center" Margin="0,6,0,0" />
+      <PasswordBox x:Name="PasswordBox" Grid.Row="1" Grid.Column="1" Height="23" VerticalContentAlignment="Center" Margin="0,6,0,0" />
+    </Grid>
+    <TextBlock x:Name="StatusText" Margin="0,10,0,0" TextWrapping="Wrap" Visibility="Collapsed" />
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
+      <Button x:Name="OkButton" Content="{l:Loc Common_OK}" MinWidth="80" IsDefault="True" Click="OnOk" />
+      <Button Content="{l:Loc Common_Cancel}" MinWidth="80" Margin="8,0,0,0" Click="OnCancel" />
+    </StackPanel>
+  </StackPanel>
+</v:DialogWindow>
