@@ -91,6 +91,12 @@ public sealed class DownloadEngine : IDownloadEngine, IAsyncDisposable
 
     public async Task RestartAsync(long downloadId)
     {
+        await ResetAsync(downloadId).ConfigureAwait(false);
+        Start(downloadId);
+    }
+
+    public async Task ResetAsync(long downloadId)
+    {
         await StopAsync(downloadId, StopReason.Pause).ConfigureAwait(false);
         var download = _repository.Get(downloadId) ?? throw new KeyNotFoundException($"Download {downloadId} does not exist.");
         DeleteTempFiles(downloadId);
@@ -108,7 +114,6 @@ public sealed class DownloadEngine : IDownloadEngine, IAsyncDisposable
         }
 
         _repository.Update(download);
-        Start(downloadId);
     }
 
     public async Task RemoveAsync(long downloadId)

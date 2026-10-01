@@ -106,3 +106,17 @@ Choices the specification left open, or where it had to be interpreted. Newest e
 | D73 | The default sounds are synthesized by `tools/make-sounds.py` and ship in `assets/sounds`. | Original, license-free audio. |
 | D74 | A new UI language applies at the next start (the dialog says so). The toolbar skin list has only the default skin until the theme work in M13. | Live re-localization of every open window isn't worth the complexity. |
 | D75 | File-type, site and web-panel options are saved now and used by browser integration (M9); download limits and dial-up by M8; virus scan and Mark of the Web by M13. | Each option is consumed in the milestone that builds its feature. |
+
+## Milestone 7 — Queues & Scheduler
+
+| # | Decision | Why |
+|---|---|---|
+| D76 | The scheduler ticks every 15 s. A start or stop time fires only if it was reached within the last 5 minutes; a time missed while the PC slept or was off is skipped (the wake task covers that case). | A queue shouldn't start hours late after a resume from sleep. |
+| D77 | A file the user stops while its queue runs is skipped for the rest of that run. The queue then ends as "stopped" and the after-queue actions (power off, exit…) don't run. Stop all / Pause all stop the queues first. | Stopping things by hand must never end in a surprise shutdown. |
+| D78 | A failed file is retried at the next tick, up to "Number of retries for each file" times (on top of the engine's own connection retries), then skipped. | Section 10: "A failed item counts retries and then moves on." |
+| D79 | Stop queue stops every active download in that queue, including ones the user resumed by hand. | The queue is the unit the user is stopping. |
+| D80 | The synchronization queue does not finish. Once started (by hand, schedule or "At startup") it downloads its unfinished files and re-checks finished ones every N minutes until stopped. A file has changed when its size, ETag (weak and strong compare equal) or Last-Modified (±1 s) differ, or when the local file is gone. | Section 10. |
+| D81 | Re-downloading a finished file (Redownload or synchronization) replaces it in place instead of creating a numbered copy; synchronization can first keep it as `<file>.bak`. | Sync must keep paths stable, and "redownload" means the same file. |
+| D82 | Wake tasks are Task Scheduler XML definitions registered with `schtasks /Create /XML` as `\NovaGet\Queue <id>`: interactive token, least privilege, WakeToRun, running `NovaGet.exe /startqueue "<name>"`. They are updated on Apply and removed when waking is turned off, when the queue is deleted, and on uninstall (`/cleanup`). Queue names cannot contain quotes. | `schtasks` switches cannot set WakeToRun; XML can. No elevation is needed. |
+| D83 | "Open the following file when done" opens only the file the user picked in the scheduler, never a downloaded file. | Section 22: downloaded files are never executed automatically. |
+| D84 | Scheduler edits are kept per queue until Apply. Start now applies the selected queue first, and closing with unsaved edits asks. Reordering files (buttons or drag and drop) and "Delete from queue" act immediately, like in the main list. | The schedule is a form; the file list is live data. |

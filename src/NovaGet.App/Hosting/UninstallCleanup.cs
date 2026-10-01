@@ -1,14 +1,18 @@
+using Microsoft.Extensions.Logging.Abstractions;
+using NovaGet.App.Services;
+
 namespace NovaGet.App.Hosting;
 
-/// <summary>
-/// <c>NovaGet.exe /cleanup</c>, run by the uninstaller: removes registrations the app made at run time
-/// (the Run key when set from Options, scheduled wake tasks). Must never show UI.
-/// </summary>
+/// <summary><c>NovaGet.exe /cleanup</c>, run by the uninstaller: removes what NovaGet registered outside its folders.</summary>
 internal static class UninstallCleanup
 {
     public static int Run()
     {
-        // Wake tasks and startup registration are added by later milestones; each registers its cleanup here.
+        // Scheduled queue wake tasks (\NovaGet\Queue n).
+        new WakeTaskService(NullLogger<WakeTaskService>.Instance).RemoveAll();
+
+        // "Launch on startup" set from Options (the installer removes its own Run value).
+        StartupRegistration.Remove();
         return 0;
     }
 }

@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NovaGet.App.Services;
 using NovaGet.App.ViewModels;
+using NovaGet.App.ViewModels.Scheduler;
 using NovaGet.App.Views;
 using NovaGet.Core;
 using NovaGet.Core.CommandLine;
@@ -10,6 +11,7 @@ using NovaGet.Core.Engine.Http;
 using NovaGet.Core.Ipc;
 using NovaGet.Core.Paths;
 using NovaGet.Core.Security;
+using NovaGet.Core.Services.Queues;
 using NovaGet.Core.Settings;
 using NovaGet.Data;
 using Serilog;
@@ -73,6 +75,32 @@ internal static class AppHostBuilder
 
         // Download list
         builder.Services.AddSingleton<NovaGet.Core.Services.IDownloadService, NovaGet.Core.Services.DownloadService>();
+
+        // Queues and scheduler
+        builder.Services.AddSingleton(sp =>
+        {
+            var settings = sp.GetRequiredService<ISettingsService>();
+            return new QueueManager(
+                sp.GetRequiredService<NovaGet.Core.Services.IDownloadService>(),
+                sp.GetRequiredService<NovaGet.Core.Abstractions.IQueueRepository>(),
+                sp.GetRequiredService<IDownloadProber>(),
+                () => EngineOptions.FromSettings(settings.Current, paths),
+                TimeProvider.System,
+                sp.GetRequiredService<Microsoft.Extensions.Logging.ILogger<QueueManager>>());
+        });
+        builder.Services.AddSingleton<IQueueManager>(sp => sp.GetRequiredService<QueueManager>());
+        builder.Services.AddHostedService<QueueLifetimeService>();
+        builder.Services.AddSingleton<WakeTaskService>();
+        builder.Services.AddSingleton<QueueUiService>();
+        builder.Services.AddTransient(sp => new SchedulerViewModel(
+            sp.GetRequiredService<NovaGet.Core.Abstractions.IQueueRepository>(),
+            sp.GetRequiredService<NovaGet.Core.Services.IDownloadService>(),
+            sp.GetRequiredService<IDownloadEngine>(),
+            sp.GetRequiredService<IQueueManager>(),
+            sp.GetRequiredService<IAppController>(),
+            sp.GetRequiredService<IDialogService>(),
+            sp.GetRequiredService<QueueUiService>()));
+        builder.Services.AddSingleton<Func<SchedulerViewModel>>(sp => sp.GetRequiredService<SchedulerViewModel>);
 
         // App shell
         builder.Services.AddSingleton<IDialogService, DialogService>();

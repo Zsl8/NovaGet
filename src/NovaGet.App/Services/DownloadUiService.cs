@@ -391,7 +391,7 @@ internal sealed class DownloadUiService(
     }
 
     /// <summary>"Options on completion": hang up, then shut down / sleep / … (after a countdown) or exit.</summary>
-    private void RunCompletionActions(CompletionOptions options)
+    internal void RunCompletionActions(CompletionOptions options)
     {
         if (options.HangUp)
         {
@@ -433,20 +433,8 @@ internal sealed class DownloadUiService(
         return new ChoiceItem(category.Id, category.Name);
     }
 
-    private ChoiceItem? CreateQueueInteractive()
-    {
-        var dialog = new InputDialog(Localizer.Get("QueueDialog_Title"), Localizer.Get("QueueDialog_Name"), string.Empty,
-            name => queues.GetByName(name) is null ? null : Localizer.Get("Error_QueueExists"));
-        if (dialogs.ShowModal(dialog) != true)
-        {
-            return null;
-        }
-
-        var queue = new DownloadQueue { Name = dialog.Value };
-        queues.Insert(queue);
-        RefreshMainWindowTree();
-        return new ChoiceItem(queue.Id, queue.Name);
-    }
+    private ChoiceItem? CreateQueueInteractive() =>
+        controller.Value.CreateQueue() is { } queue ? new ChoiceItem(queue.Id, queue.Name) : null;
 
     private static void RefreshMainWindowTree()
     {

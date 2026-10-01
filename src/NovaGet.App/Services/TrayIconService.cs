@@ -191,7 +191,7 @@ internal sealed partial class TrayIconService(
             (Application.Current.MainWindow?.DataContext as MainViewModel)?.LimiterSettingsCommand.Execute(null);
         }));
         menu.Items.Add(speed);
-        menu.Items.Add(Item("Cmd_PauseAll", () => _ = downloads.StopAllAsync()));
+        menu.Items.Add(Item("Cmd_PauseAll", () => _ = controller.StopAllAsync()));
         menu.Items.Add(Item("Tray_ResumeAll", ResumeAll));
         menu.Items.Add(new Separator());
 

@@ -267,7 +267,7 @@ public sealed class DownloadService : IDownloadService
         return completed.Count;
     }
 
-    public async Task RedownloadAsync(long id)
+    public async Task RedownloadAsync(long id, bool start = true)
     {
         await _engine.PauseAsync(id).ConfigureAwait(false);
         lock (_gate)
@@ -279,14 +279,24 @@ public sealed class DownloadService : IDownloadService
 
             if (download.Status == DownloadStatus.Completed)
             {
-                // Clear the completed state so the engine accepts it; RestartAsync resets the rest.
+                // Clear the completed state so the engine accepts it; the engine resets the rest. The new copy
+                // replaces the old file instead of getting a numbered name.
                 download.Status = DownloadStatus.Paused;
                 download.CompletedAt = null;
+                download.OverwriteExisting = true;
                 _repository.Update(download);  // not running: a full write is safe
             }
         }
 
-        await _engine.RestartAsync(id).ConfigureAwait(false);
+        if (start)
+        {
+            await _engine.RestartAsync(id).ConfigureAwait(false);
+        }
+        else
+        {
+            await _engine.ResetAsync(id).ConfigureAwait(false);
+        }
+
         Refresh(id);
     }
 
@@ -342,7 +352,7 @@ public sealed class DownloadService : IDownloadService
 
             var ordered = _downloads.Values.Where(d => d.QueueId == queueId).OrderBy(d => d.QueuePosition).ThenBy(d => d.Id).ToList();
             var index = ordered.IndexOf(download);
-            var target = Math.Clamp(index + Math.Sign(delta), 0, ordered.Count - 1);
+            var target = Math.Clamp(index + delta, 0, ordered.Count - 1);
             if (target == index)
             {
                 return;

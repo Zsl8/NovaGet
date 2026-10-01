@@ -27,4 +27,20 @@ public sealed record RequestContext
     public bool IgnoreCertificateErrors { get; init; }
 
     public bool HasCredentials => !string.IsNullOrEmpty(UserName);
+
+    /// <summary>The request a download makes: its address, referrer, cookies, login and user agent.</summary>
+    public static RequestContext For(Models.Download download, string defaultUserAgent, TimeSpan timeout)
+    {
+        ArgumentNullException.ThrowIfNull(download);
+        return new RequestContext
+        {
+            Url = new Uri(download.Url),
+            Referrer = download.Referrer,
+            Cookies = download.Cookies,
+            UserAgent = string.IsNullOrWhiteSpace(download.UserAgent) ? defaultUserAgent : download.UserAgent,
+            UserName = download.AuthUser,
+            Password = download.AuthPassword,
+            Timeout = timeout,
+        };
+    }
 }

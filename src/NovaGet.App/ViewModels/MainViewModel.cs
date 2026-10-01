@@ -607,10 +607,10 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
     private bool CanStopAll() => _engine.RunningIds.Count > 0;
 
     [RelayCommand(CanExecute = nameof(CanStopAll))]
-    private Task StopAll() => _downloads.StopAllAsync();
+    private Task StopAll() => _controller.StopAllAsync();
 
     [RelayCommand]
-    private Task PauseAll() => _downloads.StopAllAsync();
+    private Task PauseAll() => _controller.StopAllAsync();
 
     private bool HasSelection() => _selection.Count > 0;
 
@@ -987,19 +987,7 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
     private void QueueEdit(TreeNodeViewModel? node) => _controller.ShowScheduler(node!.QueueId);
 
     [RelayCommand]
-    private void CreateQueue()
-    {
-        var dialog = new InputDialog(Localizer.Get("QueueDialog_Title"), Localizer.Get("QueueDialog_Name"), string.Empty,
-            name => _queues.GetByName(name) is null ? null : Localizer.Get("Error_QueueExists"));
-        if (_dialogs.ShowModal(dialog) != true)
-        {
-            return;
-        }
-
-        _queues.Insert(new DownloadQueue { Name = dialog.Value });
-        BuildTree();
-        BuildQueueMenus();
-    }
+    private void CreateQueue() => _controller.CreateQueue();
 
     private static bool IsUserQueue(TreeNodeViewModel? node) => IsQueue(node) && !node!.IsBuiltIn;
 
@@ -1011,10 +999,6 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
             return;
         }
 
-        _controller.StopQueue(id);
-        _downloads.SetQueue([.. Items.Where(i => i.QueueId == id).Select(i => i.Id)], null);
-        _queues.Delete(id);
-        BuildTree();
-        BuildQueueMenus();
+        _ = _controller.DeleteQueueAsync(id);
     }
 }

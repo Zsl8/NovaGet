@@ -63,6 +63,21 @@ internal static class StartupRegistration
         }
     }
 
+    /// <summary>Uninstall: removes the per-user values.</summary>
+    public static void Remove()
+    {
+        try
+        {
+            using var run = Registry.CurrentUser.OpenSubKey(RunKey, writable: true);
+            run?.DeleteValue(ValueName, throwOnMissingValue: false);
+            using var approved = Registry.CurrentUser.OpenSubKey(ApprovedKey, writable: true);
+            approved?.DeleteValue(ValueName, throwOnMissingValue: false);
+        }
+        catch (Exception ex) when (ex is UnauthorizedAccessException or System.Security.SecurityException or System.IO.IOException)
+        {
+        }
+    }
+
     private static bool HasValue(RegistryKey hive)
     {
         using var key = hive.OpenSubKey(RunKey);

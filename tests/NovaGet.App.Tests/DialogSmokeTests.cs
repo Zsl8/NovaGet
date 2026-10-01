@@ -104,7 +104,7 @@ public sealed class DialogSmokeTests(WpfFixture wpf)
 
         public int RemoveCompleted() => 0;
 
-        public Task RedownloadAsync(long id) => Task.CompletedTask;
+        public Task RedownloadAsync(long id, bool start = true) => Task.CompletedTask;
 
         public void SetQueue(IReadOnlyCollection<long> ids, long? queueId)
         {

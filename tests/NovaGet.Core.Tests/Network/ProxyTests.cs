@@ -11,7 +11,7 @@ namespace NovaGet.Core.Tests.Network;
 
 public sealed class ProxyTests
 {
-    private static readonly ISecretProtector Protector = new DevOnlySecretProtector();
+    private static readonly DevOnlySecretProtector Protector = new();
 
     private static ProxySettings Manual(string host = "proxy.example", int port = 3128) => new()
     {

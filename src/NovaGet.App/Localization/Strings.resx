@@ -169,6 +169,8 @@ What do you want to do?</value></data>
   <data name="Error_ProbeFailed" xml:space="preserve"><value>NovaGet couldn't get information about this address:
 {0}</value></data>
   <data name="Error_QueueExists" xml:space="preserve"><value>A queue with this name already exists.</value></data>
+  <data name="Error_QueueNameChars" xml:space="preserve"><value>Queue names can't contain quotation marks.</value></data>
+  <data name="Error_QueueNameLength" xml:space="preserve"><value>Queue names can be at most {0} characters long.</value></data>
   <data name="FileInfo_AddCategory" xml:space="preserve"><value>Add a category</value></data>
   <data name="FileInfo_Category" xml:space="preserve"><value>_Category:</value></data>
   <data name="FileInfo_ChooseQueue" xml:space="preserve"><value>Choose the queue</value></data>
@@ -182,6 +184,7 @@ What do you want to do?</value></data>
   <data name="FileInfo_Start" xml:space="preserve"><value>_Start Download</value></data>
   <data name="FileInfo_Title" xml:space="preserve"><value>Download File Info</value></data>
   <data name="FileInfo_Url" xml:space="preserve"><value>URL:</value></data>
+  <data name="Filter_AllFiles" xml:space="preserve"><value>All files (*.*)|*.*</value></data>
   <data name="Filter_Programs" xml:space="preserve"><value>Programs (*.exe;*.com;*.bat;*.cmd)|*.exe;*.com;*.bat;*.cmd|All files (*.*)|*.*</value></data>
   <data name="Filter_Settings" xml:space="preserve"><value>NovaGet settings (*.json)|*.json|All files (*.*)|*.*</value></data>
   <data name="Filter_Wave" xml:space="preserve"><value>Wave sounds (*.wav)|*.wav</value></data>
@@ -439,6 +442,43 @@ What do you want to do?</value></data>
   <data name="QueueDialog_Title" xml:space="preserve"><value>Create New Queue</value></data>
   <data name="QueuePick_Prompt" xml:space="preserve"><value>Add the download to this _queue:</value></data>
   <data name="QueuePick_Title" xml:space="preserve"><value>Download Later</value></data>
+  <data name="Scheduler_AfterDone" xml:space="preserve"><value>After the queue finishes</value></data>
+  <data name="Scheduler_Apply" xml:space="preserve"><value>_Apply</value></data>
+  <data name="Scheduler_ApplyChanges" xml:space="preserve"><value>Save the changes to your queues?</value></data>
+  <data name="Scheduler_Daily" xml:space="preserve"><value>_Daily</value></data>
+  <data name="Scheduler_ErrorDate" xml:space="preserve"><value>Choose the date for one-time downloading.</value></data>
+  <data name="Scheduler_ErrorDays" xml:space="preserve"><value>Choose at least one day.</value></data>
+  <data name="Scheduler_ErrorOpenFile" xml:space="preserve"><value>Choose the file to open when the queue finishes.</value></data>
+  <data name="Scheduler_ErrorRange" xml:space="preserve"><value>{0} must be between {1} and {2}.</value></data>
+  <data name="Scheduler_ErrorStartTime" xml:space="preserve"><value>Enter the start time as hours:minutes, e.g. 02:00.</value></data>
+  <data name="Scheduler_ErrorStopTime" xml:space="preserve"><value>Enter the stop time as hours:minutes, e.g. 07:00.</value></data>
+  <data name="Scheduler_ErrorWake" xml:space="preserve"><value>The queue was saved, but the wake-up task could not be created:
+
+{0}</value></data>
+  <data name="Scheduler_EveryDay" xml:space="preserve"><value>_Every day</value></data>
+  <data name="Scheduler_Minutes" xml:space="preserve"><value>minutes</value></data>
+  <data name="Scheduler_NewQueue" xml:space="preserve"><value>_New queue</value></data>
+  <data name="Scheduler_OneTime" xml:space="preserve"><value>_One time downloading</value></data>
+  <data name="Scheduler_OpenFile" xml:space="preserve"><value>Open the following _file when done:</value></data>
+  <data name="Scheduler_QueueName" xml:space="preserve"><value>Queue _name:</value></data>
+  <data name="Scheduler_Retries" xml:space="preserve"><value>Number of _retries for each file if downloading failed:</value></data>
+  <data name="Scheduler_Running" xml:space="preserve"><value>Running</value></data>
+  <data name="Scheduler_SameTimePrefix" xml:space="preserve"><value>Download</value></data>
+  <data name="Scheduler_SameTimeSuffix" xml:space="preserve"><value>files at the same time</value></data>
+  <data name="Scheduler_StartAt" xml:space="preserve"><value>Start _download at</value></data>
+  <data name="Scheduler_StartNow" xml:space="preserve"><value>_Start now</value></data>
+  <data name="Scheduler_StartOnStartup" xml:space="preserve"><value>Start queue on NovaGet start_up</value></data>
+  <data name="Scheduler_Stop" xml:space="preserve"><value>S_top</value></data>
+  <data name="Scheduler_StopAt" xml:space="preserve"><value>Sto_p download at</value></data>
+  <data name="Scheduler_SyncAtStartup" xml:space="preserve"><value>Check _at startup</value></data>
+  <data name="Scheduler_SyncBackup" xml:space="preserve"><value>_Keep the previous copy as .bak</value></data>
+  <data name="Scheduler_SyncEvery" xml:space="preserve"><value>Check for _updated files every</value></data>
+  <data name="Scheduler_SyncIntro" xml:space="preserve"><value>Files in this queue are checked for changes on the server (size, date and ETag). Changed files are downloaded again and replace the old copy.</value></data>
+  <data name="Scheduler_TabFiles" xml:space="preserve"><value>Files in the queue</value></data>
+  <data name="Scheduler_TabSchedule" xml:space="preserve"><value>Schedule</value></data>
+  <data name="Scheduler_TabSync" xml:space="preserve"><value>Synchronization</value></data>
+  <data name="Scheduler_Title" xml:space="preserve"><value>Scheduler</value></data>
+  <data name="Scheduler_Wake" xml:space="preserve"><value>_Wake the computer to start the queue</value></data>
   <data name="ServerExceptionDialog_Host" xml:space="preserve"><value>_Server:</value></data>
   <data name="ServerExceptionDialog_HostNote" xml:space="preserve"><value>For example files.example.com, or *.example.com for all its subdomains.</value></data>
   <data name="ServerExceptionDialog_Title" xml:space="preserve"><value>Server exception</value></data>

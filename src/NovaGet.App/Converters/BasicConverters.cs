@@ -19,3 +19,13 @@ public sealed class NotNullConverter : IValueConverter
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => Binding.DoNothing;
 }
+
+/// <summary><c>true</c> → Collapsed, <c>false</c> → Visible.</summary>
+[ValueConversion(typeof(bool), typeof(System.Windows.Visibility))]
+public sealed class CollapsedWhenTrueConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
+        value is true ? System.Windows.Visibility.Collapsed : System.Windows.Visibility.Visible;
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => Binding.DoNothing;
+}

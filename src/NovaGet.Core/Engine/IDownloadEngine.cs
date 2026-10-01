@@ -16,6 +16,9 @@ public interface IDownloadEngine
     /// <summary>Discards progress and downloads the file again from the beginning.</summary>
     Task RestartAsync(long downloadId);
 
+    /// <summary>Discards progress so the next start downloads from the beginning (leaves it paused).</summary>
+    Task ResetAsync(long downloadId);
+
     /// <summary>Stops a download that is being removed from the list and deletes its temp files.</summary>
     Task RemoveAsync(long downloadId);
 

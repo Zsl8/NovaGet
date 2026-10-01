@@ -5,9 +5,14 @@ using Microsoft.Extensions.Logging;
 using NovaGet.App.Localization;
 using NovaGet.App.ViewModels;
 using NovaGet.App.ViewModels.Options;
+using NovaGet.App.ViewModels.Scheduler;
 using NovaGet.App.Views;
 using NovaGet.App.Views.Dialogs;
+using NovaGet.Core.Abstractions;
 using NovaGet.Core.CommandLine;
+using NovaGet.Core.Models;
+using NovaGet.Core.Services.Queues;
+using NovaGet.Core.Settings;
 using NovaGet.Core.Services;
 using NovaGet.Core.Paths;
 
@@ -20,11 +25,18 @@ internal sealed class AppController(
     SoundService sounds,
     OptionsService options,
     SettingsPackageService settingsPackage,
+    IQueueManager queueManager,
+    QueueUiService queueUi,
+    IQueueRepository queues,
+    ISettingsService settings,
+    Func<SchedulerViewModel> schedulerFactory,
     IDownloadService downloads,
     IDialogService dialogs,
     AppPaths paths,
     ILogger<AppController> logger) : IAppController
 {
+    private SchedulerWindow? _scheduler;
+
     public bool IsExiting { get; private set; }
 
     private static Dispatcher Dispatcher => Application.Current.Dispatcher;
@@ -34,10 +46,13 @@ internal sealed class AppController(
         tray.Initialize(this);
         downloadUi.Initialize();
         sounds.Initialize();
+        queueUi.Initialize();
         if (showMainWindow)
         {
             ShowMainWindow();
         }
+
+        queueManager.OnAppStarted();
     }
 
     public void ShowMainWindow() => OnUiThread(() =>
@@ -73,10 +88,22 @@ internal sealed class AppController(
             _ = downloadUi.AddFromCommandLineAsync(options);
         }
 
-        if (options.StartMainQueue || options.StartQueues.Count > 0 || options.StopQueues.Count > 0)
+        if (options.StartMainQueue)
         {
-            // Queue switches are executed once queues run (milestone 7).
-            logger.LogInformation("Queue switches received: startQueues={Start} stopQueues={Stop}", options.StartQueues, options.StopQueues);
+            queueManager.Start(DownloadQueue.MainQueueId);
+        }
+
+        foreach (var name in options.StartQueues)
+        {
+            if (!queueManager.Start(name) && !queueManager.RunningQueueIds.Any(id => queues.Get(id)?.Name.Equals(name, StringComparison.OrdinalIgnoreCase) == true))
+            {
+                logger.LogWarning("/startqueue: no queue named {Queue}", name);
+            }
+        }
+
+        foreach (var name in options.StopQueues)
+        {
+            _ = queueManager.StopAsync(name);
         }
 
         if (!options.StartInTray && !options.Silent && options.Url is null)
@@ -128,7 +155,33 @@ internal sealed class AppController(
         }
     });
 
-    public void ShowScheduler(long? queueId = null) => NotAvailable();
+    public void ShowScheduler(long? queueId = null) => OnUiThread(() =>
+    {
+        if (_scheduler is { IsLoaded: true })
+        {
+            if (queueId is { } id)
+            {
+                _scheduler.Select(id);
+            }
+
+            if (_scheduler.WindowState == WindowState.Minimized)
+            {
+                _scheduler.WindowState = WindowState.Normal;
+            }
+
+            _scheduler.Activate();
+            return;
+        }
+
+        _scheduler = new SchedulerWindow(schedulerFactory(), settings, queueId);
+        if (mainWindow.IsValueCreated && mainWindow.Value.IsVisible)
+        {
+            _scheduler.Owner = mainWindow.Value;
+        }
+
+        _scheduler.Closed += (_, _) => _scheduler = null;
+        _scheduler.Show();
+    });
 
     public void ShowGrabber(long? projectId = null) => NotAvailable();
 
@@ -156,12 +209,19 @@ internal sealed class AppController(
 
     public void RefreshAddress(long downloadId) => NotAvailable();
 
-    public void StartQueue(long queueId) => NotAvailable();
+    public void StartQueue(long queueId) => queueManager.Start(queueId);
 
-    public void StopQueue(long queueId)
+    public void StopQueue(long queueId) => _ = queueManager.StopAsync(queueId);
+
+    public async Task StopAllAsync()
     {
-        // Nothing to stop until queues run (milestone 7).
+        await queueManager.StopAllAsync();
+        await downloads.StopAllAsync();
     }
+
+    public DownloadQueue? CreateQueue() => queueUi.CreateInteractive();
+
+    public Task DeleteQueueAsync(long queueId) => queueUi.DeleteAsync(queueId);
 
     public void ToggleDropTarget() => NotAvailable();
 

@@ -56,13 +56,16 @@ public interface IDownloadService
     /// <summary>Removes every completed entry from the list (files stay). Returns how many.</summary>
     int RemoveCompleted();
 
-    /// <summary>Downloads the file again from the beginning.</summary>
-    Task RedownloadAsync(long id);
+    /// <summary>
+    /// Downloads the file again from the beginning, replacing the finished file. With <paramref name="start"/> false the
+    /// entry is only reset (a queue starts it).
+    /// </summary>
+    Task RedownloadAsync(long id, bool start = true);
 
     /// <summary>Appends downloads to a queue (in the given order), or takes them out of their queue (null).</summary>
     void SetQueue(IReadOnlyCollection<long> ids, long? queueId);
 
-    /// <summary>Moves a queued download up (-1) or down (+1) within its queue.</summary>
+    /// <summary>Moves a queued download within its queue by <paramref name="delta"/> places (negative is up).</summary>
     void MoveInQueue(long id, int delta);
 
     void SetCategory(IReadOnlyCollection<long> ids, long categoryId);

@@ -50,6 +50,15 @@ public interface IAppController
 
     void StopQueue(long queueId);
 
+    /// <summary>Stops every queue and download (Stop all / Pause all).</summary>
+    Task StopAllAsync();
+
+    /// <summary>Asks for a name and adds a queue; null when canceled.</summary>
+    NovaGet.Core.Models.DownloadQueue? CreateQueue();
+
+    /// <summary>Deletes a user queue after its files leave it.</summary>
+    Task DeleteQueueAsync(long queueId);
+
     void ToggleDropTarget();
 
     void CheckForUpdates();

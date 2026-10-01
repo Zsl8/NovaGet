@@ -765,16 +765,7 @@ internal sealed class DownloadJob
         StateChanged?.Invoke(this, new DownloadStateChangedEventArgs(Id, status, DownloadErrorKind.None, message));
     }
 
-    private RequestContext RequestContextFor() => new()
-    {
-        Url = new Uri(_download.Url),
-        Referrer = _download.Referrer,
-        Cookies = _download.Cookies,
-        UserAgent = string.IsNullOrWhiteSpace(_download.UserAgent) ? Options.UserAgent : _download.UserAgent,
-        UserName = _download.AuthUser,
-        Password = _download.AuthPassword,
-        Timeout = Options.Timeout,
-    };
+    private RequestContext RequestContextFor() => RequestContext.For(_download, Options.UserAgent, Options.Timeout);
 
     private string TempDirectory => Path.Combine(Options.TempDirectory, Id.ToString(CultureInfo.InvariantCulture));
 
