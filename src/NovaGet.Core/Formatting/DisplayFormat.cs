@@ -2,10 +2,29 @@ using System.Globalization;
 
 namespace NovaGet.Core.Formatting;
 
+/// <summary>The unit words of <see cref="DisplayFormat"/>, in the UI language.</summary>
+public sealed record DisplayUnits(
+    string Bytes,
+    IReadOnlyList<string> Sizes,
+    string PerSecond,
+    string Second,
+    string Minute,
+    string Hour,
+    string Hours,
+    string Day,
+    string Days)
+{
+    public static DisplayUnits English { get; } = new("Bytes", ["KB", "MB", "GB", "TB", "PB"], "/sec", "sec", "min", "hour", "hours", "day", "days");
+}
+
 /// <summary>Sizes, rates and durations in the compact style of classic download managers ("4.7 GB", "3 min 5 sec").</summary>
 public static class DisplayFormat
 {
-    private static readonly string[] s_units = ["KB", "MB", "GB", "TB", "PB"];
+    /// <summary>
+    /// The unit words; the app sets them from its language. Words in the UI's own script also keep "4 KB" in the
+    /// right order in right-to-left windows (a Latin unit after a number would be shown first there).
+    /// </summary>
+    public static DisplayUnits Units { get; set; } = DisplayUnits.English;
 
     /// <summary><c>512 Bytes</c>, <c>85 MB</c>, <c>4.71 GB</c>; empty for an unknown size (&lt; 0).</summary>
     public static string Size(long bytes, int decimals = 2, CultureInfo? culture = null)
@@ -18,18 +37,18 @@ public static class DisplayFormat
 
         if (bytes < 1024)
         {
-            return string.Create(culture, $"{bytes} Bytes");
+            return string.Create(culture, $"{bytes} {Units.Bytes}");
         }
 
         double value = bytes;
         var unit = -1;
-        while (value >= 1024 && unit < s_units.Length - 1)
+        while (value >= 1024 && unit < Units.Sizes.Count - 1)
         {
             value /= 1024;
             unit++;
         }
 
-        return value.ToString(Format(decimals), culture) + " " + s_units[unit];
+        return value.ToString(Format(decimals), culture) + " " + Units.Sizes[unit];
     }
 
     /// <summary><c>12.4 MB/sec</c>; empty when not transferring.</summary>
@@ -43,18 +62,18 @@ public static class DisplayFormat
 
         if (bytesPerSecond < 1024)
         {
-            return bytesPerSecond.ToString("0", culture) + " Bytes/sec";
+            return bytesPerSecond.ToString("0", culture) + " " + Units.Bytes + Units.PerSecond;
         }
 
         var value = bytesPerSecond / 1024;
         var unit = 0;
-        while (value >= 1024 && unit < s_units.Length - 1)
+        while (value >= 1024 && unit < Units.Sizes.Count - 1)
         {
             value /= 1024;
             unit++;
         }
 
-        return value.ToString(Format(decimals), culture) + " " + s_units[unit] + "/sec";
+        return value.ToString(Format(decimals), culture) + " " + Units.Sizes[unit] + Units.PerSecond;
     }
 
     /// <summary>
@@ -68,6 +87,7 @@ public static class DisplayFormat
             return string.Empty;
         }
 
+        var u = Units;
         var totalSeconds = (long)Math.Ceiling(d.TotalSeconds);
         var days = totalSeconds / 86_400;
         var hours = totalSeconds % 86_400 / 3_600;
@@ -76,20 +96,20 @@ public static class DisplayFormat
 
         if (days > 0)
         {
-            return compact || hours == 0 ? Plural(days, "day") : $"{Plural(days, "day")} {Plural(hours, "hour")}";
+            return compact || hours == 0 ? Plural(days, u.Day, u.Days) : $"{Plural(days, u.Day, u.Days)} {Plural(hours, u.Hour, u.Hours)}";
         }
 
         if (hours > 0)
         {
-            return compact || minutes == 0 ? Plural(hours, "hour") : $"{Plural(hours, "hour")} {minutes} min";
+            return compact || minutes == 0 ? Plural(hours, u.Hour, u.Hours) : $"{Plural(hours, u.Hour, u.Hours)} {minutes} {u.Minute}";
         }
 
         if (minutes > 0)
         {
-            return compact || seconds == 0 ? $"{minutes} min" : $"{minutes} min {seconds} sec";
+            return compact || seconds == 0 ? $"{minutes} {u.Minute}" : $"{minutes} {u.Minute} {seconds} {u.Second}";
         }
 
-        return $"{seconds} sec";
+        return $"{seconds} {u.Second}";
     }
 
     /// <summary>Progress percentage for the Status column: <c>37.5%</c>.</summary>
@@ -112,7 +132,7 @@ public static class DisplayFormat
         return utc is { } value ? DateTime.SpecifyKind(value, DateTimeKind.Utc).ToLocalTime().ToString("MMM dd HH:mm", culture) : string.Empty;
     }
 
-    private static string Plural(long value, string unit) => value == 1 ? $"1 {unit}" : $"{value} {unit}s";
+    private static string Plural(long value, string one, string many) => value == 1 ? $"1 {one}" : $"{value} {many}";
 
     private static string Format(int decimals) => decimals <= 0 ? "0" : "0." + new string('#', decimals);
 }

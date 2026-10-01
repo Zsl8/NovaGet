@@ -716,6 +716,19 @@
   <data name="Tree_GrabberProjects" xml:space="preserve"><value>مشاريع الجامع</value></data>
   <data name="Tree_Queues" xml:space="preserve"><value>قوائم الانتظار</value></data>
   <data name="Tree_Unfinished" xml:space="preserve"><value>غير المكتملة</value></data>
+  <data name="Unit_Bytes" xml:space="preserve"><value>بايت</value></data>
+  <data name="Unit_Day" xml:space="preserve"><value>يوم</value></data>
+  <data name="Unit_Days" xml:space="preserve"><value>يوم</value></data>
+  <data name="Unit_GB" xml:space="preserve"><value>جيجابايت</value></data>
+  <data name="Unit_Hour" xml:space="preserve"><value>ساعة</value></data>
+  <data name="Unit_Hours" xml:space="preserve"><value>ساعة</value></data>
+  <data name="Unit_KB" xml:space="preserve"><value>كيلوبايت</value></data>
+  <data name="Unit_MB" xml:space="preserve"><value>ميجابايت</value></data>
+  <data name="Unit_Minute" xml:space="preserve"><value>د</value></data>
+  <data name="Unit_PB" xml:space="preserve"><value>بيتابايت</value></data>
+  <data name="Unit_PerSecond" xml:space="preserve"><value>/ث</value></data>
+  <data name="Unit_Second" xml:space="preserve"><value>ث</value></data>
+  <data name="Unit_TB" xml:space="preserve"><value>تيرابايت</value></data>
   <data name="Update_Available" xml:space="preserve"><value>يتوفر NovaGet {0} (لديك {1}).
 
 فتح صفحة التنزيل؟</value></data>

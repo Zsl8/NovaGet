@@ -36,6 +36,16 @@ public static class Localizer
         CultureInfo.DefaultThreadCurrentUICulture = Culture;
         CultureInfo.CurrentUICulture = Culture;
         s_pack = LoadPack(languageFolder, Culture);
+        NovaGet.Core.Formatting.DisplayFormat.Units = new NovaGet.Core.Formatting.DisplayUnits(
+            Get("Unit_Bytes"),
+            [Get("Unit_KB"), Get("Unit_MB"), Get("Unit_GB"), Get("Unit_TB"), Get("Unit_PB")],
+            Get("Unit_PerSecond"),
+            Get("Unit_Second"),
+            Get("Unit_Minute"),
+            Get("Unit_Hour"),
+            Get("Unit_Hours"),
+            Get("Unit_Day"),
+            Get("Unit_Days"));
     }
 
     public static string Get(string key)

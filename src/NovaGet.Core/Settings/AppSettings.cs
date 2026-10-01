@@ -427,7 +427,7 @@ public enum AppTheme
 /// <summary>Window placement, list layout and toolbar layout.</summary>
 public sealed class UiSettings
 {
-    public WindowPlacement MainWindow { get; set; } = new() { Width = 900, Height = 560 };
+    public WindowPlacement MainWindow { get; set; } = new() { Width = 960, Height = 580 };
 
     public double CategoriesPaneWidth { get; set; } = 190;
 

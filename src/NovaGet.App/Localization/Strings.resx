@@ -716,6 +716,19 @@ Stop all downloads until {1}? Choose No to keep downloading for the rest of this
   <data name="Tree_GrabberProjects" xml:space="preserve"><value>Grabber projects</value></data>
   <data name="Tree_Queues" xml:space="preserve"><value>Queues</value></data>
   <data name="Tree_Unfinished" xml:space="preserve"><value>Unfinished</value></data>
+  <data name="Unit_Bytes" xml:space="preserve"><value>Bytes</value></data>
+  <data name="Unit_Day" xml:space="preserve"><value>day</value></data>
+  <data name="Unit_Days" xml:space="preserve"><value>days</value></data>
+  <data name="Unit_GB" xml:space="preserve"><value>GB</value></data>
+  <data name="Unit_Hour" xml:space="preserve"><value>hour</value></data>
+  <data name="Unit_Hours" xml:space="preserve"><value>hours</value></data>
+  <data name="Unit_KB" xml:space="preserve"><value>KB</value></data>
+  <data name="Unit_MB" xml:space="preserve"><value>MB</value></data>
+  <data name="Unit_Minute" xml:space="preserve"><value>min</value></data>
+  <data name="Unit_PB" xml:space="preserve"><value>PB</value></data>
+  <data name="Unit_PerSecond" xml:space="preserve"><value>/sec</value></data>
+  <data name="Unit_Second" xml:space="preserve"><value>sec</value></data>
+  <data name="Unit_TB" xml:space="preserve"><value>TB</value></data>
   <data name="Update_Available" xml:space="preserve"><value>NovaGet {0} is available (you have {1}).
 
 Open the download page?</value></data>

@@ -131,6 +131,10 @@ public sealed class ThemeTests(WpfFixture wpf, ITestOutputHelper output)
             {
                 Localizer.Initialize("ar", null);
                 Assert.True(Localizer.IsRightToLeft);
+
+                // Units in Arabic script keep "4 KB" in reading order inside right-to-left text.
+                Assert.EndsWith("كيلوبايت", NovaGet.Core.Formatting.DisplayFormat.Size(4096), StringComparison.Ordinal);
+                Assert.Contains("/ث", NovaGet.Core.Formatting.DisplayFormat.Rate(2048), StringComparison.Ordinal);
                 foreach (var (name, window) in Windows(app))
                 {
                     ShowOffScreen(window);
@@ -292,21 +296,19 @@ public sealed class ThemeTests(WpfFixture wpf, ITestOutputHelper output)
         return bitmap;
     }
 
-    /// <summary>Share of the opaque pixels that are light (relative luminance above 0.6).</summary>
+    /// <summary>
+    /// Share of the area painted light (relative luminance above 0.6). Unpainted pixels count as dark: the dark window
+    /// shows through them, so text on a transparent control is only the share its glyphs cover.
+    /// </summary>
     private static double BrightShare(Visual visual, double width, double height)
     {
         var bitmap = Render(visual, width, height);
         var pixels = new byte[bitmap.PixelWidth * bitmap.PixelHeight * 4];
         bitmap.CopyPixels(pixels, bitmap.PixelWidth * 4, 0);
-        int opaque = 0, bright = 0;
+        var bright = 0;
         for (var i = 0; i < pixels.Length; i += 4)
         {
-            if (pixels[i + 3] < 250)
-            {
-                continue;
-            }
-
-            opaque++;
+            // Premultiplied: a half-covered white pixel counts half as bright.
             var luminance = ((0.0722 * pixels[i]) + (0.7152 * pixels[i + 1]) + (0.2126 * pixels[i + 2])) / 255;
             if (luminance > 0.6)
             {
@@ -314,7 +316,7 @@ public sealed class ThemeTests(WpfFixture wpf, ITestOutputHelper output)
             }
         }
 
-        return opaque == 0 ? 0 : (double)bright / opaque;
+        return pixels.Length == 0 ? 0 : bright / (pixels.Length / 4.0);
     }
 
     private static void Screenshot(FrameworkElement element, string name)
