@@ -77,22 +77,27 @@ public sealed class MainWindowSmokeTests(WpfFixture wpf)
         using var host = new AppHost();
         var service = host.Get<IDownloadService>();
         var added = service.Add(new DownloadRequest { Url = "https://example.com/b.zip", FileName = "b.zip" });
+        MainViewModel? vm = null;
 
         wpf.Run(() =>
         {
             var window = host.Get<MainWindow>();
             window.Left = -10000;
             window.Show();
-            var vm = (MainViewModel)window.DataContext;
+            vm = (MainViewModel)window.DataContext;
             vm.SelectedNode = vm.Tree[2]; // Finished
             Assert.Empty(vm.ItemsView.Cast<object>());
 
             host.Get<NovaGet.Core.Abstractions.IDownloadRepository>().MarkCompleted(added.Id, "b.zip", 1, DateTime.UtcNow);
             service.Reload(added.Id);
-            window.UpdateLayout();
+        });
 
-            Assert.Single(vm.ItemsView.Cast<object>());
-            window.Hide();
+        // Live filtering is applied on a later dispatcher pass.
+        wpf.Pump();
+        wpf.Run(() =>
+        {
+            Assert.Single(vm!.ItemsView.Cast<object>());
+            host.Get<MainWindow>().Hide();
         });
     }
 
