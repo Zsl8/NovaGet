@@ -137,7 +137,7 @@ function Resolve-FfmpegUrl($pin, [bool] $pinned) {
 # be pinned; release (v*) builds refuse to run unpinned. Returns the folder holding ffmpeg.exe, or $null.
 function Get-Ffmpeg {
     $pin = Get-Content (Join-Path $root 'build/ffmpeg.json') -Raw | ConvertFrom-Json
-    $isRelease = "$env:GITHUB_REF" -like 'refs/tags/v*'
+    $isRelease = ("$env:GITHUB_REF" -like 'refs/tags/v*') -or ($env:NOVAGET_RELEASE -eq 'true')
     $pinned = [bool] $pin.sha256
     if (-not $pin.url) {
         if ($isRelease) { throw 'Release builds bundle ffmpeg: set url and sha256 in build/ffmpeg.json.' }

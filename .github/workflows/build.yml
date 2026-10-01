@@ -6,6 +6,11 @@ on:
     tags: ['v*']
   pull_request:
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Publish a release with this new tag after a green build (must be v + the version, e.g. v1.0.0); empty: build only'
+        required: false
+        default: ''
 
 permissions:
   contents: read
@@ -21,6 +26,8 @@ jobs:
     env:
       DOTNET_NOLOGO: '1'
       DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+      # Release builds (a v* tag, or a manual run with release_tag) refuse an unpinned ffmpeg.
+      NOVAGET_RELEASE: ${{ startsWith(github.ref, 'refs/tags/v') || inputs.release_tag != '' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -83,13 +90,20 @@ jobs:
           path: '**/TestResults/**'
           if-no-files-found: ignore
 
+  # A pushed v* tag, or a manual run with release_tag (which creates the tag on the built commit).
   release:
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && inputs.release_tag != '')
     needs: build
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: Directory.Build.props
+          sparse-checkout-cone-mode: false
+
       - name: Download installer
         uses: actions/download-artifact@v4
         with:
@@ -99,8 +113,15 @@ jobs:
       - name: Create GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
+          TAG: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || inputs.release_tag }}
         run: |
-          gh release create "${GITHUB_REF_NAME}" dist/* \
+          version=$(sed -nE 's#.*<Version>([^<]+)</Version>.*#\1#p' Directory.Build.props)
+          if [ "$TAG" != "v$version" ]; then
+            echo "The tag $TAG does not match the version $version in Directory.Build.props"
+            exit 1
+          fi
+          gh release create "$TAG" dist/* \
             --repo "${GITHUB_REPOSITORY}" \
-            --title "NovaGet ${GITHUB_REF_NAME#v}" \
+            --target "${GITHUB_SHA}" \
+            --title "NovaGet $version" \
             --generate-notes
