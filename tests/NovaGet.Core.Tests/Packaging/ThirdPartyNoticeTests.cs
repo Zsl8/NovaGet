@@ -6,7 +6,7 @@ namespace NovaGet.Core.Tests.Packaging;
 /// <summary>Ground rule 4: every package NovaGet ships is listed in THIRD_PARTY_NOTICES.txt with its license.</summary>
 public sealed partial class ThirdPartyNoticeTests
 {
-    private static readonly string[] TestOnly = ["Microsoft.NET.Test.Sdk", "xunit", "xunit.runner.visualstudio"];
+    private static readonly string[] TestOnly = ["Microsoft.NET.Test.Sdk", "xunit", "xunit.runner.visualstudio", "FlaUI.UIA3"];
 
     [Fact]
     public void Every_shipped_package_is_in_the_notices()

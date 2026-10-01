@@ -431,6 +431,7 @@ What do you want to do?</value></data>
   <data name="Options_ExportSettings" xml:space="preserve"><value>E_xport settings…</value></data>
   <data name="Options_Extensions" xml:space="preserve"><value>_Extensions:</value></data>
   <data name="Options_ForceCapture" xml:space="preserve"><value>_Force capture when pressing:</value></data>
+  <data name="Options_FtpPassive" xml:space="preserve"><value>Use FTP in PAS_V mode</value></data>
   <data name="Options_Imported" xml:space="preserve"><value>The settings were imported.</value></data>
   <data name="Options_ImportSettings" xml:space="preserve"><value>_Import settings…</value></data>
   <data name="Options_InstallExtension" xml:space="preserve"><value>Install extension…</value></data>

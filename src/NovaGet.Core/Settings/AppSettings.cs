@@ -291,6 +291,9 @@ public sealed class ProxySettings
 
     /// <summary>Semicolon- or space-separated host patterns that bypass the proxy.</summary>
     public string BypassList { get; set; } = "localhost;127.0.0.1;<local>";
+
+    /// <summary>"Use FTP in PASV mode": off means active data connections (EPRT/PORT) when no proxy is used.</summary>
+    public bool FtpPassiveMode { get; set; } = true;
 }
 
 public sealed class ProxyServerSettings

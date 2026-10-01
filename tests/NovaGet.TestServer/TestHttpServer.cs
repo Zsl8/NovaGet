@@ -35,13 +35,20 @@ public sealed class TestHttpServer : IAsyncDisposable
 
     public IReadOnlyCollection<RequestRecord> Requests => _requests;
 
-    public static async Task<TestHttpServer> StartAsync(int port = 0)
+    /// <param name="https">Serve https with a self-signed localhost certificate (clients must accept it).</param>
+    public static async Task<TestHttpServer> StartAsync(int port = 0, bool https = false)
     {
         var builder = WebApplication.CreateSlimBuilder();
         builder.Logging.ClearProviders();
         builder.WebHost.UseKestrel(o =>
         {
-            o.Listen(IPAddress.Loopback, port);
+            o.Listen(IPAddress.Loopback, port, listen =>
+            {
+                if (https)
+                {
+                    listen.UseHttps(TestCertificates.CreateLocalhost());
+                }
+            });
             o.Limits.MaxConcurrentConnections = null;
             o.Limits.MinResponseDataRate = null;
         });

@@ -16,7 +16,8 @@ namespace NovaGet.Core.Engine.Ftp;
 /// <summary>
 /// FTP and FTPS through FluentFTP. <c>ftp://</c> is plain FTP, <c>ftps://</c> implicit TLS (port 990 by default;
 /// on port 21 it means explicit), <c>ftpes://</c> explicit TLS (AUTH TLS). Every connection of a download is its own
-/// control + passive data connection; a segment starts with REST and ends when the engine stops reading.
+/// control + data connection: passive (EPSV/PASV), or active (EPRT/PORT) when "Use FTP in PASV mode" is off and no
+/// proxy is in between. A segment starts with REST and ends when the engine stops reading.
 /// Logins come from the address, the download, then Site Logins, else anonymous.
 /// </summary>
 public sealed class FtpTransferProtocol(
@@ -166,7 +167,7 @@ public sealed class FtpTransferProtocol(
         {
             EncryptionMode = mode,
             DataConnectionEncryption = mode != FtpEncryptionMode.None,
-            DataConnectionType = FtpDataConnectionType.AutoPassive,
+            DataConnectionType = proxySettings?.Invoke().FtpPassiveMode == false ? FtpDataConnectionType.AutoActive : FtpDataConnectionType.AutoPassive,
             ConnectTimeout = timeout,
             ReadTimeout = timeout,
             DataConnectionConnectTimeout = timeout,
@@ -204,6 +205,8 @@ public sealed class FtpTransferProtocol(
         if (proxy is { Mode: ProxyMode.Manual } && protector is not null
             && !new BypassList(proxy.BypassList).Matches(new UriBuilder("ftp", host, port).Uri))
         {
+            // A server can't connect back through a proxy: data connections are always passive there.
+            config.DataConnectionType = FtpDataConnectionType.AutoPassive;
             if (proxy.Socks.Enabled && !string.IsNullOrWhiteSpace(proxy.Socks.Host))
             {
                 var profile = Profile(host, port, credential, proxy.Socks.Host, proxy.Socks.Port, proxy.Socks.User, proxy.Socks.ProtectedPassword);

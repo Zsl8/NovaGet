@@ -23,7 +23,8 @@ public enum FtpTlsMode
 }
 
 /// <summary>
-/// A small FTP/FTPS server for engine tests: login, SIZE, MDTM, REST, RETR over passive (PASV/EPSV) data connections,
+/// A small FTP/FTPS server for engine tests: login, SIZE, MDTM, REST, RETR over passive (PASV/EPSV) or active
+/// (PORT/EPRT) data connections,
 /// optional TLS on control and data channels, throttling and a connection limit (421). Files are <see cref="TestFile"/>s.
 /// </summary>
 public sealed class TestFtpServer : IAsyncDisposable
@@ -177,18 +178,7 @@ public sealed class TestFtpServer : IAsyncDisposable
         return ssl;
     }
 
-    private static X509Certificate2 CreateCertificate()
-    {
-        using var key = RSA.Create(2048);
-        var request = new CertificateRequest("CN=localhost", key, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
-        var san = new SubjectAlternativeNameBuilder();
-        san.AddDnsName("localhost");
-        san.AddIpAddress(IPAddress.Loopback);
-        request.CertificateExtensions.Add(san.Build());
-        using var certificate = request.CreateSelfSigned(DateTimeOffset.UtcNow.AddDays(-1), DateTimeOffset.UtcNow.AddDays(30));
-        // Re-import so the private key is usable by SslStream on every platform.
-        return new X509Certificate2(certificate.Export(X509ContentType.Pfx), (string?)null, X509KeyStorageFlags.Exportable);
-    }
+    private static X509Certificate2 CreateCertificate() => TestCertificates.CreateLocalhost();
 
     private sealed class Session(TestFtpServer server, Stream control)
     {
@@ -200,6 +190,7 @@ public sealed class TestFtpServer : IAsyncDisposable
         private bool _protectData;
         private long _restart;
         private TcpListener? _passive;
+        private IPEndPoint? _active;
 
         public async Task ReplyAsync(string line)
         {
@@ -338,6 +329,18 @@ public sealed class TestFtpServer : IAsyncDisposable
                     var pasv = OpenPassive();
                     await ReplyAsync($"227 Entering Passive Mode (127,0,0,1,{pasv / 256},{pasv % 256}).").ConfigureAwait(false);
                     return true;
+                case "PORT":
+                    // h1,h2,h3,h4,p1,p2: the client listens there for the data connection.
+                    var numbers = argument.Split(',').Select(n => int.Parse(n.Trim(), CultureInfo.InvariantCulture)).ToArray();
+                    UseActive(new IPEndPoint(IPAddress.Parse(string.Join('.', numbers[..4])), (numbers[4] * 256) + numbers[5]));
+                    await ReplyAsync("200 PORT command successful.").ConfigureAwait(false);
+                    return true;
+                case "EPRT":
+                    // |1|127.0.0.1|port| (any delimiter).
+                    var fields = argument.Split(argument[0]);
+                    UseActive(new IPEndPoint(IPAddress.Parse(fields[2]), int.Parse(fields[3], CultureInfo.InvariantCulture)));
+                    await ReplyAsync("200 EPRT command successful.").ConfigureAwait(false);
+                    return true;
                 case "RETR":
                     await RetrieveAsync(argument).ConfigureAwait(false);
                     return true;
@@ -378,8 +381,16 @@ public sealed class TestFtpServer : IAsyncDisposable
             return server._files.TryGetValue(path, out var file) ? file : null;
         }
 
+        private void UseActive(IPEndPoint endpoint)
+        {
+            _passive?.Stop();
+            _passive = null;
+            _active = endpoint;
+        }
+
         private int OpenPassive()
         {
+            _active = null;
             _passive?.Stop();
             _passive = new TcpListener(IPAddress.Loopback, 0);
             _passive.Start(1);
@@ -397,16 +408,29 @@ public sealed class TestFtpServer : IAsyncDisposable
                 return;
             }
 
-            if (_passive is null)
+            if (_passive is null && _active is null)
             {
-                await ReplyAsync("425 Use PASV or EPSV first.").ConfigureAwait(false);
+                await ReplyAsync("425 Use PORT, EPRT, PASV or EPSV first.").ConfigureAwait(false);
                 return;
             }
 
             using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(10));
-            using var data = await _passive.AcceptTcpClientAsync(timeout.Token).ConfigureAwait(false);
-            _passive.Stop();
-            _passive = null;
+            TcpClient data;
+            if (_active is { } endpoint)
+            {
+                // Active mode: the server connects to the client.
+                _active = null;
+                data = new TcpClient(endpoint.AddressFamily);
+                await data.ConnectAsync(endpoint, timeout.Token).ConfigureAwait(false);
+            }
+            else
+            {
+                data = await _passive!.AcceptTcpClientAsync(timeout.Token).ConfigureAwait(false);
+                _passive.Stop();
+                _passive = null;
+            }
+
+            using var dataConnection = data;
             await ReplyAsync($"150 Opening BINARY mode data connection for {file.Path} ({file.Size} bytes).").ConfigureAwait(false);
 
             Stream stream = data.GetStream();

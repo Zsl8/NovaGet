@@ -70,6 +70,37 @@ public sealed class FtpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task Active_mode_is_used_when_passive_mode_is_off()
+    {
+        var settings = new NovaGet.Core.Settings.ProxySettings { Mode = NovaGet.Core.Settings.ProxyMode.None, FtpPassiveMode = false };
+        _h.ExtraProtocols.Clear();
+        _h.ExtraProtocols.Add(new FtpTransferProtocol(_logins, () => settings));
+        _h.RestartEngine();
+        var file = _ftp.AddFile("/data/active.bin", 1_200_000, seed: 11);
+        file.BytesPerSecond = 2_000_000;
+        var id = _h.Add(_ftp.UrlFor(file));
+
+        var result = await _h.RunAsync(id);
+
+        Assert.Equal(DownloadStatus.Completed, result.Status);
+        Assert.Equal(file.Sha256(), Sha256(_h.Get(id).FullPath));
+        Assert.Contains(_ftp.Commands, c => c.StartsWith("EPRT ", StringComparison.Ordinal) || c.StartsWith("PORT ", StringComparison.Ordinal));
+        Assert.DoesNotContain(_ftp.Commands, c => c is "PASV" or "EPSV");
+    }
+
+    [Fact]
+    public async Task Passive_mode_is_the_default()
+    {
+        var file = _ftp.AddFile("/data/passive.bin", 200_000, seed: 12);
+
+        var result = await _h.RunAsync(_h.Add(_ftp.UrlFor(file)));
+
+        Assert.Equal(DownloadStatus.Completed, result.Status);
+        Assert.Contains(_ftp.Commands, c => c is "PASV" or "EPSV");
+        Assert.DoesNotContain(_ftp.Commands, c => c.StartsWith("EPRT ", StringComparison.Ordinal) || c.StartsWith("PORT ", StringComparison.Ordinal));
+    }
+
+    [Fact]
     public async Task Resumes_after_a_pause()
     {
         var file = _ftp.AddFile("/data/resume.bin", 1_500_000, seed: 3);

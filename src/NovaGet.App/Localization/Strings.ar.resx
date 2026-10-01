@@ -431,6 +431,7 @@
   <data name="Options_ExportSettings" xml:space="preserve"><value>تصدير الإعدادات (_X)…</value></data>
   <data name="Options_Extensions" xml:space="preserve"><value>الامتدادات (_E):</value></data>
   <data name="Options_ForceCapture" xml:space="preserve"><value>فرض الالتقاط عند الضغط على (_F):</value></data>
+  <data name="Options_FtpPassive" xml:space="preserve"><value>استخدام وضع PASV في FTP (_V)</value></data>
   <data name="Options_Imported" xml:space="preserve"><value>استُوردت الإعدادات.</value></data>
   <data name="Options_ImportSettings" xml:space="preserve"><value>استيراد الإعدادات (_I)…</value></data>
   <data name="Options_InstallExtension" xml:space="preserve"><value>تثبيت الإضافة…</value></data>

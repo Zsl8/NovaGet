@@ -33,6 +33,7 @@ Build-time only (not distributed):
 xUnit                                       Apache-2.0     https://github.com/xunit/xunit
 resvg / resvg-js (icon rendering)           MPL-2.0        https://github.com/yisibl/resvg-js
 Playwright (optional extension test)        Apache-2.0     https://github.com/microsoft/playwright
+FlaUI.UIA3, Interop.UIAutomationClient (UI) MIT          https://github.com/FlaUI/FlaUI
 Inno Setup                                  Inno Setup     https://jrsoftware.org/files/is/license.txt
 
 FFmpeg

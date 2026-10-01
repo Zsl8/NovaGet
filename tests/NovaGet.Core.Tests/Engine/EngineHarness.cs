@@ -14,7 +14,6 @@ internal sealed class EngineHarness : IAsyncDisposable
 {
     private readonly TempDirectory _temp = new();
     private readonly TestDatabase _db = new();
-    private readonly HttpClientProvider _clients = new();
 
     private EngineHarness(TestHttpServer server, Func<EngineOptions, EngineOptions>? configure)
     {
@@ -50,8 +49,11 @@ internal sealed class EngineHarness : IAsyncDisposable
 
     public string SaveDirectory => _temp.Combine("downloads");
 
-    public static async Task<EngineHarness> CreateAsync(Func<EngineOptions, EngineOptions>? configure = null) =>
-        new(await TestHttpServer.StartAsync(), configure);
+    public static async Task<EngineHarness> CreateAsync(Func<EngineOptions, EngineOptions>? configure = null, bool https = false) =>
+        new(await TestHttpServer.StartAsync(https: https), configure);
+
+    /// <summary>The HTTP clients (proxy tests use one with proxy settings); call <see cref="RestartEngine"/> after changing it.</summary>
+    public HttpClientProvider Clients { get; set; } = new();
 
     /// <summary>Protocols besides HTTP (FTP tests); call <see cref="RestartEngine"/> after changing them.</summary>
     public List<ITransferProtocol> ExtraProtocols { get; } = [];
@@ -63,9 +65,9 @@ internal sealed class EngineHarness : IAsyncDisposable
     public NovaGet.Core.Engine.Streams.IStreamMuxer Muxer { get; set; } = new NovaGet.Core.Engine.Streams.FfmpegMuxer(null);
 
     public DownloadEngine CreateEngine() =>
-        new(Repository, [new HttpTransferProtocol(_clients, SiteCredentials), .. ExtraProtocols], () => Options, muxer: Muxer);
+        new(Repository, [new HttpTransferProtocol(Clients, SiteCredentials), .. ExtraProtocols], () => Options, muxer: Muxer);
 
-    public HttpTransferProtocol Http => new(_clients, SiteCredentials);
+    public HttpTransferProtocol Http => new(Clients, SiteCredentials);
 
     /// <summary>Replaces the engine, as a restarted app would (the old one is simply abandoned).</summary>
     public void RestartEngine() => Engine = CreateEngine();
@@ -159,7 +161,7 @@ internal sealed class EngineHarness : IAsyncDisposable
     {
         await Engine.DisposeAsync();
         await Server.DisposeAsync();
-        _clients.Dispose();
+        Clients.Dispose();
         _db.Dispose();
         _temp.Dispose();
     }

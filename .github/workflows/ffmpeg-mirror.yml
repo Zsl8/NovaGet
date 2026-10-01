@@ -25,32 +25,35 @@ jobs:
           BRANCH: ${{ inputs.branch }}
         run: |
           set -euo pipefail
-          api=https://api.github.com/repos/BtbN/FFmpeg-Builds/releases/tags/latest
-          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" "$api" > release.json
-          names=$(jq -r '.assets[].name' release.json | grep -E '^ffmpeg-n[0-9]+\.[0-9]+-latest-win64-lgpl-shared-[0-9]+\.[0-9]+\.zip$')
-          if [ -n "$BRANCH" ]; then names=$(echo "$names" | grep -F "ffmpeg-n$BRANCH-latest-"); fi
-          name=$(echo "$names" | sed -E 's/^ffmpeg-n([0-9.]+)-.*/\1 &/' | sort -V | tail -n1 | cut -d' ' -f2)
-          [ -n "$name" ] || { echo "No LGPL shared release-branch build found"; exit 1; }
-          url=$(jq -r --arg n "$name" '.assets[] | select(.name == $n) | .browser_download_url' release.json)
-          sums=$(jq -r '.assets[] | select(.name == "checksums.sha256") | .browser_download_url' release.json)
+          auth=(-H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json")
+          # The newest release branch (or the one asked for), from the rolling "latest" builds.
+          curl -fsSL "${auth[@]}" https://api.github.com/repos/BtbN/FFmpeg-Builds/releases/tags/latest > latest.json
+          branches=$(jq -r '.assets[].name' latest.json | sed -nE 's/^ffmpeg-n([0-9]+\.[0-9]+)-latest-win64-lgpl-shared-[0-9.]+\.zip$/\1/p' | sort -V)
+          branch=${BRANCH:-$(echo "$branches" | tail -n1)}
+          echo "$branches" | grep -qx "$branch" || { echo "No LGPL shared builds for FFmpeg $branch"; exit 1; }
+
+          # The same build under its exact name (version and commit) in the newest dated autobuild release.
+          curl -fsSL "${auth[@]}" "https://api.github.com/repos/BtbN/FFmpeg-Builds/releases?per_page=15" > releases.json
+          pattern="^ffmpeg-n${branch//./\\.}(\\.[0-9]+)*-[0-9]+-g[0-9a-f]+-win64-lgpl-shared-${branch//./\\.}\\.zip$"
+          read -r release name url < <(jq -r --arg p "$pattern" '
+            [.[] | select(.tag_name | startswith("autobuild-")) | . as $r
+             | ($r.assets[] | select(.name | test($p))) as $a
+             | "\($r.tag_name) \($a.name) \($a.browser_download_url)"] | first // empty' releases.json) || true
+          [ -n "${name:-}" ] || { echo "No dated build of FFmpeg $branch found"; exit 1; }
+          sums=$(jq -r --arg t "$release" '.[] | select(.tag_name == $t) | .assets[] | select(.name == "checksums.sha256") | .browser_download_url' releases.json)
+          echo "Mirroring $name from $release"
           curl -fsSL -o "$name" "$url"
           curl -fsSL -o checksums.sha256 "$sums"
           expected=$(grep -E "[[:space:]]\*?$name\$" checksums.sha256 | cut -c1-64)
           actual=$(sha256sum "$name" | cut -c1-64)
           [ -n "$expected" ] && [ "$expected" = "$actual" ] || { echo "Checksum mismatch: $expected vs $actual"; exit 1; }
 
-          # The exact build (e.g. ffmpeg-n7.1.1-22-g0f1fe3d153-win64-lgpl-shared-7.1) names the mirror.
-          build=$(unzip -Z1 "$name" | head -n1 | cut -d/ -f1)
+          build="${name%.zip}"
           commit=$(echo "$build" | sed -nE 's/.*-g([0-9a-f]+)-win64.*/\1/p')
           tag="deps-${build%-win64-lgpl-shared-*}"
-          file="$build.zip"
-          mv "$name" "$file"
-          if [ -n "$commit" ]; then
-            curl -fsSL -o "ffmpeg-source-$commit.tar.gz" "https://github.com/FFmpeg/FFmpeg/archive/$commit.tar.gz"
-            source="ffmpeg-source-$commit.tar.gz"
-          else
-            source=""
-          fi
+          file="$name"
+          curl -fsSL -o "ffmpeg-source-$commit.tar.gz" "https://github.com/FFmpeg/FFmpeg/archive/$commit.tar.gz"
+          source="ffmpeg-source-$commit.tar.gz"
           printf '%s  %s\n' "$actual" "$file" > "$file.sha256"
 
           if gh release view "$tag" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
