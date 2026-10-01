@@ -1,0 +1,26 @@
+<Window x:Class="NovaGet.App.Views.DropTargetWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:l="clr-namespace:NovaGet.App.Localization"
+        Title="{l:Loc DropTarget_Title}" Width="64" Height="64" WindowStyle="None" AllowsTransparency="True" Background="Transparent"
+        Topmost="True" ShowInTaskbar="False" ResizeMode="NoResize" AllowDrop="True" ShowActivated="False"
+        ToolTip="{l:Loc DropTarget_Tooltip}" AutomationProperties.Name="{l:Loc DropTarget_Title}">
+  <Window.ContextMenu>
+    <ContextMenu>
+      <MenuItem Header="{l:Loc DropTarget_Hide}" Click="OnHide" />
+      <MenuItem Header="{l:Loc Tray_AddDownload}" Click="OnAddUrl" />
+      <MenuItem Header="{l:Loc Menu_SpeedLimiter}" Click="OnSpeedLimiter" />
+      <Separator />
+      <MenuItem Header="{l:Loc Cmd_Exit}" Click="OnExit" />
+    </ContextMenu>
+  </Window.ContextMenu>
+  <Border x:Name="Frame" CornerRadius="12" BorderThickness="2" Opacity="0.85">
+    <Border.Background>
+      <SolidColorBrush Color="#1E293B" />
+    </Border.Background>
+    <Border.BorderBrush>
+      <SolidColorBrush Color="#14C4B0" />
+    </Border.BorderBrush>
+    <Image x:Name="Badge" Width="40" Height="40" RenderOptions.BitmapScalingMode="HighQuality" />
+  </Border>
+</Window>

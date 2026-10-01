@@ -149,6 +149,9 @@ Its downloads stay in the list.</value></data>
   <data name="DoubleClick_OpenFile" xml:space="preserve"><value>Open the file</value></data>
   <data name="DoubleClick_OpenFolder" xml:space="preserve"><value>Open the folder</value></data>
   <data name="DoubleClick_Properties" xml:space="preserve"><value>Show properties</value></data>
+  <data name="DropTarget_Hide" xml:space="preserve"><value>_Hide drop target</value></data>
+  <data name="DropTarget_Title" xml:space="preserve"><value>NovaGet drop target</value></data>
+  <data name="DropTarget_Tooltip" xml:space="preserve"><value>Drop links here to download them with NovaGet</value></data>
   <data name="DupAction_AddAndOverwrite" xml:space="preserve"><value>Add duplicate and overwrite existing file</value></data>
   <data name="DupAction_AddNumbered" xml:space="preserve"><value>Add duplicate with a numbered file name</value></data>
   <data name="DupAction_ShowCompleteOrResume" xml:space="preserve"><value>If the file is complete, show the download complete dialog; otherwise resume</value></data>
@@ -205,6 +208,20 @@ What do you want to do?</value></data>
   <data name="LimiterDialog_QueueOnly" xml:space="preserve"><value>Apply to _scheduler queues only</value></data>
   <data name="LimiterDialog_Title" xml:space="preserve"><value>Speed Limiter</value></data>
   <data name="LimiterDialog_Unit" xml:space="preserve"><value>KBytes/sec</value></data>
+  <data name="Links_AutomaticCategory" xml:space="preserve"><value>(Automatic: by file type)</value></data>
+  <data name="Links_Download" xml:space="preserve"><value>_Download</value></data>
+  <data name="Links_DroppedTitle" xml:space="preserve"><value>Dropped links</value></data>
+  <data name="Links_Filter" xml:space="preserve"><value>_Filter:</value></data>
+  <data name="Links_NoExtension" xml:space="preserve"><value>No extension</value></data>
+  <data name="Links_NoneFound" xml:space="preserve"><value>No downloadable links were found.</value></data>
+  <data name="Links_NothingSelected" xml:space="preserve"><value>Select the links to download first.</value></data>
+  <data name="Links_SelectAll" xml:space="preserve"><value>Select _all</value></data>
+  <data name="Links_Selected" xml:space="preserve"><value>{0} of {1} selected</value></data>
+  <data name="Links_SelectNone" xml:space="preserve"><value>Select _none</value></data>
+  <data name="Links_Title" xml:space="preserve"><value>Download all links</value></data>
+  <data name="Links_Type" xml:space="preserve"><value>Type</value></data>
+  <data name="Links_Types" xml:space="preserve"><value>File types</value></data>
+  <data name="Links_Url" xml:space="preserve"><value>Address</value></data>
   <data name="Menu_AddToQueue" xml:space="preserve"><value>Add to _queue</value></data>
   <data name="Menu_Arrange" xml:space="preserve"><value>_Arrange files</value></data>
   <data name="Menu_Downloads" xml:space="preserve"><value>_Downloads</value></data>

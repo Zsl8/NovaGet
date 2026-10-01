@@ -36,7 +36,7 @@
     <span class="note">The default install folder is <code>%LOCALAPPDATA%\Programs\NovaGet</code> (per-user) or <code>C:\Program Files\NovaGet</code> (all users).</span>
   </div>
 
-  <h2>Chrome, Edge, Brave, Opera and Vivaldi</h2>
+  <h2 id="chromium">Chrome, Edge, Brave, Opera and Vivaldi</h2>
   <ol>
     <li>Open the extensions page:
       Chrome <code>chrome://extensions</code>, Edge <code>edge://extensions</code>, Brave <code>brave://extensions</code>,
@@ -47,7 +47,7 @@
   </ol>
   <p class="note">Store listing: not published yet. When it is, a link will appear here and in Options → General.</p>
 
-  <h2>Firefox</h2>
+  <h2 id="firefox">Firefox</h2>
   <ol>
     <li>If the folder contains a signed <code>.xpi</code> file, drag it onto a Firefox window and confirm.</li>
     <li>Otherwise open <code>about:debugging#/runtime/this-firefox</code>, click <b>Load Temporary Add-on…</b> and pick
@@ -55,13 +55,17 @@
   </ol>
   <p class="note">Add-ons store listing: not published yet.</p>
 
-  <h2>Check that it works</h2>
+  <h2 id="check">Check that it works</h2>
   <ol>
     <li>Start NovaGet (it runs in the notification area).</li>
     <li>Click the extension's toolbar button: the status should read <b>Connected</b>.</li>
     <li>Click a link to a <code>.zip</code> or <code>.exe</code> file: NovaGet shows its <b>Download File Info</b> dialog.</li>
+    <li>Right-click a page and choose <b>Download all links with NovaGet</b> to pick several files at once.</li>
   </ol>
-  <p class="note">Hold <b>Alt</b> while clicking a link to let the browser download it instead.</p>
+  <p class="note">Hold <b>Alt</b> while clicking a link to let the browser download it instead (the keys can be changed in
+    NovaGet's Options → General). If NovaGet isn't running or reachable, downloads simply stay in the browser.</p>
+  <p class="note">Which browsers NovaGet takes downloads from is set in Options → General; the extension's own switch
+    can turn capturing off for everything or for one site.</p>
 </main>
 </body>
 </html>

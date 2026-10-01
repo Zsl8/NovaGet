@@ -90,7 +90,7 @@ Files on disk: settings and the database live in `%APPDATA%\NovaGet`, temp files
 | 6 | Options dialog | Done |
 | 7 | Queues and scheduler | Done |
 | 8 | FTP/FTPS, proxies, logins, quotas, dial-up | Done |
-| 9 | Browser integration | Planned |
+| 9 | Browser integration | Done |
 | 10 | Video and streams | Planned |
 | 11 | Batch, import/export, command line | Planned |
 | 12 | Site grabber | Planned |

@@ -57,3 +57,12 @@ for (const file of readdirSync(svgDir).filter((f) => f.endsWith('.svg')).sort())
   }
   console.log(`${name}: ${sizes.join(', ')}`);
 }
+
+// Browser extension icons (toolbar and extension pages).
+const extensionDir = join(here, '..', '..', 'browser-extension', 'src', 'icons');
+mkdirSync(extensionDir, { recursive: true });
+const appSvg = readFileSync(join(svgDir, 'novaget.svg'));
+for (const size of [16, 32, 48, 128]) {
+  writeFileSync(join(extensionDir, `icon-${size}.png`), render(appSvg, size));
+}
+console.log('extension icons: 16, 32, 48, 128');

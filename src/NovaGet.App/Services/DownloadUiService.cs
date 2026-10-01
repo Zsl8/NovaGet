@@ -7,6 +7,8 @@ using NovaGet.App.Views;
 using NovaGet.App.Views.Dialogs;
 using NovaGet.Core.Abstractions;
 using NovaGet.Core.CommandLine;
+using NovaGet.Core.Engine.Naming;
+using NovaGet.Core.Integration;
 using NovaGet.Core.Engine;
 using NovaGet.Core.Models;
 using NovaGet.Core.Paths;
@@ -248,6 +250,92 @@ internal sealed class DownloadUiService(
             QueueId = options.AddToQueueOnly ? DownloadQueue.MainQueueId : null,
         };
         return AddAsync(request, probe: null, interactive: !options.Silent && !options.AddToQueueOnly);
+    }
+
+    /// <summary>
+    /// A captured browser download or "Download with NovaGet": the File Info dialog (or a direct start), with the
+    /// browser's referrer, cookies and user agent so the server sees the same client.
+    /// </summary>
+    public Task<long?> AddFromBrowserAsync(BrowserDownload download)
+    {
+        ArgumentNullException.ThrowIfNull(download);
+        var request = new DownloadRequest
+        {
+            Url = (download.FinalUrl ?? download.Url).AbsoluteUri,
+            OriginalUrl = download.Url.AbsoluteUri,
+            Referrer = download.Request.Referrer,
+            Cookies = download.Request.Cookies,
+            UserAgent = download.Request.UserAgent,
+            FileName = string.IsNullOrWhiteSpace(download.FileName) ? null : FileNameSanitizer.Sanitize(download.FileName),
+            Size = download.FileSize,
+        };
+        return AddAsync(request, probe: null, interactive: true);
+    }
+
+    /// <summary>
+    /// The "Download all links" selection dialog (also for several dropped or pasted links). "Download" appends the
+    /// chosen links to the main queue and starts it, so they run a few at a time; "Download Later" only queues them.
+    /// Cookies go only to links on the page's own site.
+    /// </summary>
+    public void ShowLinks(string title, IReadOnlyList<(Uri Url, string? Description)> links, BrowserRequestInfo? request = null, Uri? pageUrl = null)
+    {
+        ArgumentNullException.ThrowIfNull(links);
+        if (links.Count == 0)
+        {
+            dialogs.Info(Localizer.Get("Links_NoneFound"));
+            return;
+        }
+
+        var dialog = new LinksDialog(new LinksRequest
+        {
+            Title = title,
+            Links = links,
+            PreferredExtensions = CategoryMatcher.SplitPatterns(settings.Current.FileTypes.AutoCaptureExtensions),
+            Categories = [.. categories.GetAll().Select(c => new ChoiceItem(c.Id, c.Id == Category.GeneralId ? Localizer.Get("Category_General") : MainViewModel.CategoryTitle(c)))],
+            FolderForCategory = FolderFor,
+            Queues = [.. queues.GetAll().Select(q => new ChoiceItem(q.Id, MainViewModel.QueueTitle(q)))],
+        });
+        if (dialogs.ShowModal(dialog) != true)
+        {
+            return;
+        }
+
+        var vm = dialog.ViewModel;
+        var queueId = dialog.QueueId ?? DownloadQueue.MainQueueId;
+        foreach (var link in vm.SelectedLinks)
+        {
+            var sameSite = pageUrl is not null && string.Equals(link.Url.Host, pageUrl.Host, StringComparison.OrdinalIgnoreCase);
+            downloads.Add(new DownloadRequest
+            {
+                Url = link.Address,
+                Referrer = request?.Referrer ?? pageUrl?.AbsoluteUri,
+                Cookies = sameSite ? request?.Cookies : null,
+                UserAgent = request?.UserAgent,
+                Description = string.IsNullOrWhiteSpace(link.Description) ? null : link.Description,
+                CategoryId = vm.IsAutomaticCategory ? null : vm.CategoryId,
+                SaveFolder = vm.IsAutomaticCategory ? null : Environment.ExpandEnvironmentVariables(vm.SaveFolder.Trim()),
+                QueueId = queueId,
+            });
+        }
+
+        if (dialog.QueueId is null)
+        {
+            controller.Value.StartQueue(DownloadQueue.MainQueueId);
+        }
+    }
+
+    /// <summary>Links dropped on the window or the drop target: one goes to Add URL, several to the selection dialog.</summary>
+    public async Task AddDroppedAsync(IReadOnlyList<Uri> urls)
+    {
+        ArgumentNullException.ThrowIfNull(urls);
+        if (urls.Count == 1)
+        {
+            await ShowAddUrlAsync(urls[0].AbsoluteUri);
+        }
+        else if (urls.Count > 1)
+        {
+            ShowLinks(Localizer.Get("Links_DroppedTitle"), [.. urls.Select(u => (u, (string?)null))]);
+        }
     }
 
     // ----------------------------------------------------------------- starting, progress, completion

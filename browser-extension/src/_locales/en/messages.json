@@ -1,0 +1,15 @@
+{
+  "extName": { "message": "NovaGet Integration" },
+  "extDescription": { "message": "Sends downloads, links and videos to the NovaGet download manager." },
+  "menuDownloadLink": { "message": "Download with NovaGet" },
+  "menuDownloadAll": { "message": "Download all links with NovaGet" },
+  "menuDownloadVideo": { "message": "Download video with NovaGet" },
+  "popupCaptureAll": { "message": "Capture downloads" },
+  "popupCaptureSite": { "message": "Capture downloads on $HOST$", "placeholders": { "host": { "content": "$1" } } },
+  "popupNoSite": { "message": "Capture downloads on this site" },
+  "popupOpenApp": { "message": "Open NovaGet" },
+  "popupChecking": { "message": "Connecting to NovaGet…" },
+  "popupConnected": { "message": "Connected to NovaGet $VERSION$", "placeholders": { "version": { "content": "$1" } } },
+  "popupDisabled": { "message": "Integration with this browser is turned off in NovaGet's options." },
+  "popupNotConnected": { "message": "NovaGet isn't reachable. Downloads stay in the browser. Is NovaGet installed?" }
+}

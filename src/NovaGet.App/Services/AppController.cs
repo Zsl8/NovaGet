@@ -28,6 +28,7 @@ internal sealed class AppController(
     IQueueManager queueManager,
     QueueUiService queueUi,
     QuotaUiService quotaUi,
+    ClipboardMonitor clipboard,
     IQueueRepository queues,
     ISettingsService settings,
     Func<SchedulerViewModel> schedulerFactory,
@@ -37,6 +38,7 @@ internal sealed class AppController(
     ILogger<AppController> logger) : IAppController
 {
     private SchedulerWindow? _scheduler;
+    private DropTargetWindow? _dropTarget;
 
     public bool IsExiting { get; private set; }
 
@@ -49,6 +51,8 @@ internal sealed class AppController(
         sounds.Initialize();
         queueUi.Initialize();
         quotaUi.Initialize();
+        clipboard.Initialize();
+        ApplyDropTarget();
         if (showMainWindow)
         {
             ShowMainWindow();
@@ -129,6 +133,8 @@ internal sealed class AppController(
         }
 
         tray.Dispose();
+        clipboard.Dispose();
+        _dropTarget?.Close();
         Application.Current.Shutdown();
     });
 
@@ -225,7 +231,28 @@ internal sealed class AppController(
 
     public Task DeleteQueueAsync(long queueId) => queueUi.DeleteAsync(queueId);
 
-    public void ToggleDropTarget() => NotAvailable();
+    public void AddDropped(IReadOnlyList<Uri> links) => OnUiThread(() => _ = downloadUi.AddDroppedAsync(links));
+
+    public void ToggleDropTarget() => OnUiThread(() =>
+    {
+        settings.Update(s => s.General.ShowDropTarget = !s.General.ShowDropTarget);
+        ApplyDropTarget();
+    });
+
+    /// <summary>Shows or hides the drop target to match the setting.</summary>
+    private void ApplyDropTarget()
+    {
+        if (settings.Current.General.ShowDropTarget)
+        {
+            _dropTarget ??= new DropTargetWindow(settings, this, downloadUi.AddDroppedAsync);
+            _dropTarget.Show();
+        }
+        else if (_dropTarget is not null)
+        {
+            _dropTarget.Close();
+            _dropTarget = null;
+        }
+    }
 
     public void CheckForUpdates() => NotAvailable();
 

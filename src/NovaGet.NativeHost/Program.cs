@@ -21,7 +21,7 @@ internal static class Program
         {
             using var stdin = Console.OpenStandardInput();
             using var stdout = Console.OpenStandardOutput();
-            var relay = new NativeMessagingRelay(ConnectAsync);
+            var relay = new NativeMessagingRelay(ConnectAsync, browser: BrowserDetection.Detect());
             await relay.RunAsync(stdin, stdout).ConfigureAwait(false);
             return 0;
         }

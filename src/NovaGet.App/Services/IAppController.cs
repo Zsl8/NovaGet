@@ -61,6 +61,9 @@ public interface IAppController
 
     void ToggleDropTarget();
 
+    /// <summary>Links dropped or pasted: one opens Add URL, several the "Download all links" dialog.</summary>
+    void AddDropped(IReadOnlyList<Uri> links);
+
     void CheckForUpdates();
 
     void ShowHelp(string? topic = null);

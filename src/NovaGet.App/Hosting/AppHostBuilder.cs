@@ -123,6 +123,7 @@ internal static class AppHostBuilder
             TimeProvider.System,
             sp.GetRequiredService<Microsoft.Extensions.Logging.ILogger<NovaGet.Core.Services.DownloadQuotaService>>()));
         builder.Services.AddSingleton<QuotaUiService>();
+        builder.Services.AddSingleton<ClipboardMonitor>();
         builder.Services.AddTransient(sp => new SchedulerViewModel(
             sp.GetRequiredService<NovaGet.Core.Abstractions.IQueueRepository>(),
             sp.GetRequiredService<NovaGet.Core.Services.IDownloadService>(),
@@ -143,6 +144,7 @@ internal static class AppHostBuilder
         builder.Services.AddSingleton<IAppController, AppController>();
         builder.Services.AddSingleton(sp => new Lazy<IAppController>(sp.GetRequiredService<IAppController>));
         builder.Services.AddSingleton<TrayIconService>();
+        builder.Services.AddSingleton<BrowserIntegrationService>();
         builder.Services.AddSingleton<IIpcRequestHandler, IpcRequestRouter>();
         builder.Services.AddHostedService<IpcServerHostedService>();
         builder.Services.AddSingleton<MainViewModel>();

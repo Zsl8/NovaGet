@@ -10,9 +10,12 @@ public sealed class NativeMessagingRelayTests
     {
         public List<string> Types { get; } = [];
 
+        public List<string?> Browsers { get; } = [];
+
         public Task<IpcResponse> HandleAsync(IpcRequest request, CancellationToken cancellationToken)
         {
             Types.Add(request.Type);
+            Browsers.Add(request.Args?.FirstOrDefault());
             var kind = request.Payload?.GetProperty("type").GetString();
             return Task.FromResult(IpcResponse.Success(IpcJson.ToElement(new { reply = kind })));
         }
@@ -67,6 +70,22 @@ public sealed class NativeMessagingRelayTests
         Assert.Equal("download", responses[2].Payload!.Value.GetProperty("reply").GetString());
         Assert.Equal([IpcRequestTypes.Native, IpcRequestTypes.Native], handler.Types);
         Assert.Equal(1, connects);
+    }
+
+    [Fact]
+    public async Task The_calling_browser_goes_with_every_message()
+    {
+        var pipe = "NovaGet.Test." + Guid.NewGuid().ToString("N")[..12];
+        var handler = new RecordingHandler();
+        await using var server = new PipeServer(pipe, handler);
+        server.Start();
+        var relay = new NativeMessagingRelay(ct => PipeClient.TryConnectWithRetryAsync(pipe, TimeSpan.FromSeconds(5), ct), browser: "edge");
+
+        using var input = await FramesAsync("""{"type":"hello"}""", """{"type":"ping"}""");
+        using var output = new MemoryStream();
+        await relay.RunAsync(input, output);
+
+        Assert.Equal(["edge", "edge"], handler.Browsers);
     }
 
     [Fact]

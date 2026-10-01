@@ -19,12 +19,15 @@ public sealed class NativeMessagingRelay
 
     private readonly Func<CancellationToken, Task<PipeClient?>> _connect;
     private readonly ILogger _logger;
+    private readonly string? _browser;
 
     /// <param name="connect">Connects to the app, starting it if needed; returns null when it can't be reached.</param>
-    public NativeMessagingRelay(Func<CancellationToken, Task<PipeClient?>> connect, ILogger? logger = null)
+    /// <param name="browser">The browser that started the host (chrome, edge, firefox, …), passed on with every message.</param>
+    public NativeMessagingRelay(Func<CancellationToken, Task<PipeClient?>> connect, ILogger? logger = null, string? browser = null)
     {
         _connect = connect;
         _logger = logger ?? NullLogger.Instance;
+        _browser = browser;
     }
 
     public async Task RunAsync(Stream input, Stream output, CancellationToken cancellationToken = default)
@@ -78,7 +81,7 @@ public sealed class NativeMessagingRelay
 
     private async Task<(IpcResponse Response, PipeClient? Client)> ForwardAsync(PipeClient? client, JsonElement payload, CancellationToken cancellationToken)
     {
-        var request = new IpcRequest { Type = IpcRequestTypes.Native, Payload = payload };
+        var request = new IpcRequest { Type = IpcRequestTypes.Native, Payload = payload, Args = _browser is null ? null : [_browser] };
         for (var attempt = 0; attempt < 2; attempt++)
         {
             client ??= await _connect(cancellationToken).ConfigureAwait(false);

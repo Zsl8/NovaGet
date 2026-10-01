@@ -749,7 +749,7 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
         var text = string.Join(Environment.NewLine, _selection.Select(i => i.Model.OriginalUrl.Length > 0 ? i.Model.OriginalUrl : i.Model.Url));
         try
         {
-            Clipboard.SetText(text);
+            ClipboardMonitor.SetText(text);
         }
         catch (System.Runtime.InteropServices.COMException)
         {

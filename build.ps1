@@ -116,15 +116,17 @@ Invoke-Step '3. Publish NovaGet.NativeHost' {
 }
 
 Invoke-Step '4. Package browser extension' {
+    # Each flavor = the shared sources (browser-extension/src) + its own manifest, stamped with the app version.
+    $shared = Join-Path $root 'browser-extension/src'
     foreach ($flavor in @('chromium', 'firefox')) {
-        $source = Join-Path $root "browser-extension/$flavor"
-        if (-not (Test-Path (Join-Path $source 'manifest.json'))) {
-            Write-Warning "browser-extension/$flavor has no manifest.json yet; skipping."
-            continue
-        }
+        $manifestPath = Join-Path $root "browser-extension/$flavor/manifest.json"
         $target = Join-Path $extensionOut $flavor
-        Copy-Item $source $target -Recurse
-        Compress-Archive -Path (Join-Path $source '*') -DestinationPath (Join-Path $extensionOut "novaget-$flavor.zip") -Force
+        New-Item -ItemType Directory -Path $target -Force | Out-Null
+        Copy-Item (Join-Path $shared '*') $target -Recurse -Force
+        $manifest = Get-Content $manifestPath -Raw | ConvertFrom-Json
+        $manifest.version = $version
+        $manifest | ConvertTo-Json -Depth 10 | Set-Content -Path (Join-Path $target 'manifest.json') -Encoding utf8NoBOM
+        Compress-Archive -Path (Join-Path $target '*') -DestinationPath (Join-Path $extensionOut "novaget-$flavor.zip") -Force
     }
 }
 

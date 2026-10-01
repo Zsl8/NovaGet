@@ -435,56 +435,19 @@ public partial class MainWindow : Window
         }
     }
 
-    /// <summary>Links, URL text or .url files dropped on the list start "Add URL".</summary>
+    /// <summary>Links, address text or .url files dropped on the list: one opens Add URL, several the links dialog.</summary>
     private void OnListDragOver(object sender, DragEventArgs e)
     {
-        e.Effects = !e.Data.GetDataPresent(DragFormat) && DroppedUrl(e.Data) is not null ? DragDropEffects.Copy : DragDropEffects.None;
+        e.Effects = !e.Data.GetDataPresent(DragFormat) && DroppedLinks.HasLinks(e.Data) ? DragDropEffects.Copy : DragDropEffects.None;
         e.Handled = true;
     }
 
     private void OnListDrop(object sender, DragEventArgs e)
     {
-        if (!e.Data.GetDataPresent(DragFormat) && DroppedUrl(e.Data) is { } url)
+        if (!e.Data.GetDataPresent(DragFormat) && DroppedLinks.From(e.Data) is { Count: > 0 } links)
         {
-            _controller.ShowAddUrl(url);
+            _controller.AddDropped(links);
         }
-    }
-
-    internal static string? DroppedUrl(IDataObject data)
-    {
-        try
-        {
-            if (data.GetData("UniformResourceLocatorW") is MemoryStream stream)
-            {
-                var text = Encoding.Unicode.GetString(stream.ToArray()).TrimEnd('\0');
-                if (CommandLineParser.NormalizeUrlArgument(text) is { } url)
-                {
-                    return url;
-                }
-            }
-
-            if (data.GetData(DataFormats.UnicodeText) is string unicode && CommandLineParser.NormalizeUrlArgument(unicode.Trim()) is { } fromText)
-            {
-                return fromText;
-            }
-
-            if (data.GetData(DataFormats.FileDrop) is string[] { Length: > 0 } files)
-            {
-                foreach (var file in files.Where(f => f.EndsWith(".url", StringComparison.OrdinalIgnoreCase)))
-                {
-                    var line = File.ReadLines(file).FirstOrDefault(l => l.StartsWith("URL=", StringComparison.OrdinalIgnoreCase));
-                    if (line is not null && CommandLineParser.NormalizeUrlArgument(line[4..]) is { } fromShortcut)
-                    {
-                        return fromShortcut;
-                    }
-                }
-            }
-        }
-        catch (Exception ex) when (ex is IOException or System.Runtime.InteropServices.COMException or UnauthorizedAccessException)
-        {
-        }
-
-        return null;
     }
 
     // ----------------------------------------------------------------- categories tree

@@ -7,7 +7,7 @@ using NovaGet.Core.Ipc;
 namespace NovaGet.App.Hosting;
 
 /// <summary>Dispatches requests from second instances and the native host to the app.</summary>
-internal sealed class IpcRequestRouter(IAppController controller, ILogger<IpcRequestRouter> logger) : IIpcRequestHandler
+internal sealed class IpcRequestRouter(IAppController controller, BrowserIntegrationService browser, ILogger<IpcRequestRouter> logger) : IIpcRequestHandler
 {
     public Task<IpcResponse> HandleAsync(IpcRequest request, CancellationToken cancellationToken)
     {
@@ -38,8 +38,7 @@ internal sealed class IpcRequestRouter(IAppController controller, ILogger<IpcReq
                 return Task.FromResult(IpcResponse.Success());
 
             case IpcRequestTypes.Native:
-                // Browser integration is wired up in the browser-integration milestone.
-                return Task.FromResult(IpcResponse.Failure("Browser integration is not available in this build."));
+                return Task.FromResult(browser.Handle(request));
 
             default:
                 logger.LogWarning("Unknown IPC request type {Type}", request.Type);
