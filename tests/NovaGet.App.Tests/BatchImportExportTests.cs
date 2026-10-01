@@ -34,6 +34,7 @@ public sealed class BatchImportExportTests(WpfFixture wpf)
 
         vm.IsNumbers = true;
         vm.Address = "http://example.com/*";
+        vm.WildcardSize = 1;
         vm.IncreaseSizeCommand.Execute(null);
         vm.IncreaseSizeCommand.Execute(null);
         Assert.Equal("http://example.com/001", vm.FirstFile);
