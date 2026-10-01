@@ -76,6 +76,9 @@ public sealed class Download
     public bool OverwriteExisting { get; set; }
 
     /// <summary>A shallow copy (all members are immutable values).</summary>
+    /// <summary>Accept invalid TLS certificates for this download only (Properties, with a warning).</summary>
+    public bool IgnoreCertificateErrors { get; set; }
+
     public Download Clone() => (Download)MemberwiseClone();
 
     /// <summary>Full destination path of the finished file.</summary>

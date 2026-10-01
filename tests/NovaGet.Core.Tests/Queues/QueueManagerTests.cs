@@ -319,15 +319,4 @@ public sealed class QueueManagerTests : IAsyncLifetime
         Assert.Equal(0, await _manager.SynchronizeAsync(_queues.Get(DownloadQueue.SyncQueueId)!));
         await _manager.StopAsync(DownloadQueue.SyncQueueId);
     }
-
-    private sealed class ManualClock(DateTimeOffset start) : TimeProvider
-    {
-        private DateTimeOffset _now = start;
-
-        public override TimeZoneInfo LocalTimeZone => TimeZoneInfo.Utc;
-
-        public override DateTimeOffset GetUtcNow() => _now;
-
-        public void Advance(TimeSpan by) => _now += by;
-    }
 }

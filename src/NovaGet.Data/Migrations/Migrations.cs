@@ -7,9 +7,14 @@ public static class SchemaMigrations
     [
         new(1, "Initial schema", V1InitialSchema),
         new(2, "Overwrite flag", V2OverwriteFlag),
+        new(3, "Ignore certificate errors", V3IgnoreCertificateErrors),
     ];
 
     public static int LatestVersion => All[^1].Version;
+
+    private const string V3IgnoreCertificateErrors = """
+        ALTER TABLE Download ADD COLUMN ignoreCertificateErrors INTEGER NOT NULL DEFAULT 0;
+        """;
 
     private const string V2OverwriteFlag = """
         ALTER TABLE Download ADD COLUMN overwriteExisting INTEGER NOT NULL DEFAULT 0;

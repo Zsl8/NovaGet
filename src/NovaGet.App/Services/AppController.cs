@@ -27,6 +27,7 @@ internal sealed class AppController(
     SettingsPackageService settingsPackage,
     IQueueManager queueManager,
     QueueUiService queueUi,
+    QuotaUiService quotaUi,
     IQueueRepository queues,
     ISettingsService settings,
     Func<SchedulerViewModel> schedulerFactory,
@@ -47,6 +48,7 @@ internal sealed class AppController(
         downloadUi.Initialize();
         sounds.Initialize();
         queueUi.Initialize();
+        quotaUi.Initialize();
         if (showMainWindow)
         {
             ShowMainWindow();
@@ -195,7 +197,7 @@ internal sealed class AppController(
     {
         if (downloads.Find(downloadId) is { } download)
         {
-            dialogs.ShowModal(new Views.Dialogs.PropertiesDialog(download, downloads));
+            dialogs.ShowModal(new Views.Dialogs.PropertiesDialog(download, downloads, settings.Current.Advanced.AllowIgnoringCertificateErrors));
         }
     });
 

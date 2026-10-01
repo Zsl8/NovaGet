@@ -20,7 +20,7 @@ public partial class PropertiesDialog : DialogWindow
     private readonly IDownloadService _downloads;
     private CancellationTokenSource? _verifying;
 
-    public PropertiesDialog(Download download, IDownloadService downloads)
+    public PropertiesDialog(Download download, IDownloadService downloads, bool allowIgnoringCertificateErrors = false)
     {
         InitializeComponent();
         _download = download;
@@ -50,6 +50,11 @@ public partial class PropertiesDialog : DialogWindow
         connections.AddRange(ConnectionSettings.AllowedConnectionCounts.Select(c => c.ToString(CultureInfo.CurrentCulture)));
         ConnectionsBox.ItemsSource = connections;
         ConnectionsBox.SelectedIndex = download.MaxConnections is { } max ? Math.Max(0, Array.IndexOf(ConnectionSettings.AllowedConnectionCounts, max) + 1) : 0;
+
+        // "Ignore certificate errors" only when Options → Advanced allows it (or to turn an existing override off).
+        IgnoreCertBox.IsChecked = download.IgnoreCertificateErrors;
+        IgnoreCertBox.Visibility = allowIgnoringCertificateErrors || download.IgnoreCertificateErrors ? Visibility.Visible : Visibility.Collapsed;
+        IgnoreCertBox.Checked += OnIgnoreCertChecked;
 
         AlgorithmBox.ItemsSource = Checksum.Algorithms;
         AlgorithmBox.SelectedItem = download.ChecksumAlgo ?? Checksum.Sha256;
@@ -164,6 +169,7 @@ public partial class PropertiesDialog : DialogWindow
         edited.MaxConnections = ConnectionsBox.SelectedIndex > 0 ? ConnectionSettings.AllowedConnectionCounts[ConnectionsBox.SelectedIndex - 1] : null;
         edited.ChecksumAlgo = (string)AlgorithmBox.SelectedItem;
         edited.ChecksumExpected = NullIfEmpty(ExpectedBox.Text);
+        edited.IgnoreCertificateErrors = IgnoreCertBox.IsChecked == true;
         _downloads.Save(edited);
 
         if (!string.Equals(Path.GetFullPath(folder), Path.GetFullPath(edited.SavePath), StringComparison.OrdinalIgnoreCase))
@@ -177,6 +183,17 @@ public partial class PropertiesDialog : DialogWindow
         }
 
         Accept();
+    }
+
+    /// <summary>Section 22: the override is offered only with a warning.</summary>
+    private void OnIgnoreCertChecked(object sender, RoutedEventArgs e)
+    {
+        var answer = MessageBox.Show(this, Localizer.Get("Props_IgnoreCertWarning"), Localizer.Get("Props_Title"),
+            MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No);
+        if (answer != MessageBoxResult.Yes)
+        {
+            IgnoreCertBox.IsChecked = false;
+        }
     }
 
     private void OnOpen(object sender, RoutedEventArgs e) => ShellService.OpenFile(_download.FullPath);

@@ -11,7 +11,8 @@ public sealed class DownloadRepository(SqliteDatabase database, ISecretProtector
         SELECT id, url, originalUrl, referrer, fileName, savePath, categoryId, size, downloaded, status,
                resumeCapable, description, userAgent, cookies, authUser, authPass AS AuthPassword,
                maxConnections, speedLimitKBps, queueId, queuePosition, addedAt, lastTryAt, completedAt,
-               lastError, etag, lastModified, isStream, streamManifestJson, checksumAlgo, checksumExpected, overwriteExisting
+               lastError, etag, lastModified, isStream, streamManifestJson, checksumAlgo, checksumExpected, overwriteExisting,
+               ignoreCertificateErrors
         FROM Download
         """;
 
@@ -24,11 +25,11 @@ public sealed class DownloadRepository(SqliteDatabase database, ISecretProtector
             INSERT INTO Download (url, originalUrl, referrer, fileName, savePath, categoryId, size, downloaded, status,
                 resumeCapable, description, userAgent, cookies, authUser, authPass, maxConnections, speedLimitKBps,
                 queueId, queuePosition, addedAt, lastTryAt, completedAt, lastError, etag, lastModified, isStream,
-                streamManifestJson, checksumAlgo, checksumExpected, overwriteExisting)
+                streamManifestJson, checksumAlgo, checksumExpected, overwriteExisting, ignoreCertificateErrors)
             VALUES (@Url, @OriginalUrl, @Referrer, @FileName, @SavePath, @CategoryId, @Size, @Downloaded, @Status,
                 @ResumeCapable, @Description, @UserAgent, @Cookies, @AuthUser, @AuthPass, @MaxConnections, @SpeedLimitKBps,
                 @QueueId, @QueuePosition, @AddedAt, @LastTryAt, @CompletedAt, @LastError, @ETag, @LastModified, @IsStream,
-                @StreamManifestJson, @ChecksumAlgo, @ChecksumExpected, @OverwriteExisting);
+                @StreamManifestJson, @ChecksumAlgo, @ChecksumExpected, @OverwriteExisting, @IgnoreCertificateErrors);
             SELECT last_insert_rowid();
             """,
             ToParameters(download));
@@ -48,7 +49,8 @@ public sealed class DownloadRepository(SqliteDatabase database, ISecretProtector
                 queueId = @QueueId, queuePosition = @QueuePosition, addedAt = @AddedAt, lastTryAt = @LastTryAt,
                 completedAt = @CompletedAt, lastError = @LastError, etag = @ETag, lastModified = @LastModified,
                 isStream = @IsStream, streamManifestJson = @StreamManifestJson, checksumAlgo = @ChecksumAlgo,
-                checksumExpected = @ChecksumExpected, overwriteExisting = @OverwriteExisting
+                checksumExpected = @ChecksumExpected, overwriteExisting = @OverwriteExisting,
+                ignoreCertificateErrors = @IgnoreCertificateErrors
             WHERE id = @Id;
             """,
             ToParameters(download));
@@ -65,6 +67,7 @@ public sealed class DownloadRepository(SqliteDatabase database, ISecretProtector
                 cookies = @Cookies, authUser = @AuthUser, authPass = @AuthPass, maxConnections = @MaxConnections,
                 speedLimitKBps = @SpeedLimitKBps, queueId = @QueueId, queuePosition = @QueuePosition,
                 checksumAlgo = @ChecksumAlgo, checksumExpected = @ChecksumExpected, overwriteExisting = @OverwriteExisting,
+                ignoreCertificateErrors = @IgnoreCertificateErrors,
                 status = CASE WHEN @Status IN (@Paused, @Queued) AND status IN (@Paused, @Queued) THEN @Status ELSE status END
             WHERE id = @Id;
             """,
@@ -89,6 +92,7 @@ public sealed class DownloadRepository(SqliteDatabase database, ISecretProtector
                 download.ChecksumAlgo,
                 download.ChecksumExpected,
                 download.OverwriteExisting,
+                download.IgnoreCertificateErrors,
                 download.Status,
                 Paused = DownloadStatus.Paused,
                 Queued = DownloadStatus.Queued,
@@ -226,6 +230,7 @@ public sealed class DownloadRepository(SqliteDatabase database, ISecretProtector
         d.ChecksumAlgo,
         d.ChecksumExpected,
         d.OverwriteExisting,
+        d.IgnoreCertificateErrors,
     };
 
     private Download Decrypt(Download d)

@@ -25,18 +25,78 @@ internal sealed class QueueUiService(
     WakeTaskService wakeTasks,
     DownloadUiService downloadUi,
     IDialogService dialogs,
+    IDialUpService dialUp,
+    ISettingsService settings,
     ILogger<QueueUiService> logger) : IDisposable
 {
+    private static readonly TimeSpan RedialCheck = TimeSpan.FromSeconds(15);
+    private Timer? _redial;
+    private int _dialing;
+
     public void Initialize()
     {
         manager.QueueStarted += OnQueueStarted;
         manager.QueueStopped += OnQueueStopped;
+        manager.BeforeStart = ConnectBeforeScheduledStart;
+        _redial = new Timer(_ => RedialIfNeeded(), null, RedialCheck, RedialCheck);
     }
 
     public void Dispose()
     {
         manager.QueueStarted -= OnQueueStarted;
         manager.QueueStopped -= OnQueueStopped;
+        manager.BeforeStart = null;
+        _redial?.Dispose();
+    }
+
+    /// <summary>
+    /// "Connect before starting scheduled queues": scheduled and command-line starts arrive off the UI thread and
+    /// may wait for the connection; a queue the user starts by hand doesn't dial (and never blocks the window).
+    /// </summary>
+    private void ConnectBeforeScheduledStart(DownloadQueue queue)
+    {
+        var dialUpSettings = settings.Current.DialUp;
+        if (!dialUpSettings.ConnectBeforeScheduledQueues || string.IsNullOrWhiteSpace(dialUpSettings.ConnectionName)
+            || Application.Current?.Dispatcher.CheckAccess() == true)
+        {
+            return;
+        }
+
+        Dial($"before queue {queue.Name}");
+    }
+
+    /// <summary>"Redial if disconnected" while queues run.</summary>
+    private void RedialIfNeeded()
+    {
+        var dialUpSettings = settings.Current.DialUp;
+        if (!dialUpSettings.RedialIfDisconnected || string.IsNullOrWhiteSpace(dialUpSettings.ConnectionName)
+            || manager.RunningQueueIds.Count == 0 || dialUp.IsConnected(dialUpSettings.ConnectionName))
+        {
+            return;
+        }
+
+        Dial("redial");
+    }
+
+    private void Dial(string reason)
+    {
+        if (Interlocked.Exchange(ref _dialing, 1) == 1)
+        {
+            return;
+        }
+
+        try
+        {
+            if (dialUp.Connect() is { } error)
+            {
+                logger.LogWarning("Dial-up connection failed ({Reason}): {Error}", reason, error);
+                OnUi(() => tray.ShowBalloon(Localizer.Get("Notify_DialFailed"), error, error: true));
+            }
+        }
+        finally
+        {
+            Volatile.Write(ref _dialing, 0);
+        }
     }
 
     /// <summary>Message for a name that can't be used, or null.</summary>

@@ -226,6 +226,7 @@ What do you want to do?</value></data>
   <data name="Msg_LanguageRestart" xml:space="preserve"><value>The new language is used the next time NovaGet starts.</value></data>
   <data name="Msg_NotAvailable" xml:space="preserve"><value>This feature isn't available yet.</value></data>
   <data name="Notify_Complete" xml:space="preserve"><value>Download complete</value></data>
+  <data name="Notify_DialFailed" xml:space="preserve"><value>Dial-up/VPN connection failed</value></data>
   <data name="Notify_Failed" xml:space="preserve"><value>Download failed</value></data>
   <data name="Notify_QueueFinished" xml:space="preserve"><value>Queue finished</value></data>
   <data name="Notify_QueueStarted" xml:space="preserve"><value>Queue started</value></data>
@@ -373,6 +374,7 @@ What do you want to do?</value></data>
   <data name="Options_UseSocks" xml:space="preserve"><value>Use _SOCKS</value></data>
   <data name="Options_VirusChecker" xml:space="preserve"><value>Virus checker</value></data>
   <data name="Options_WildcardNote" xml:space="preserve"><value>* matches any text and ? matches one character.</value></data>
+  <data name="Options_WindowsAuth" xml:space="preserve"><value>Use _Windows authentication (NTLM/Kerberos) for servers that ask for it</value></data>
   <data name="Options_WindowsDefender" xml:space="preserve"><value>Windows _Defender</value></data>
   <data name="Options_WriteBuffer" xml:space="preserve"><value>_Write buffer size:</value></data>
   <data name="Power_CountdownHibernate" xml:space="preserve"><value>The computer will hibernate in {0} seconds.</value></data>
@@ -426,6 +428,12 @@ What do you want to do?</value></data>
   <data name="Props_ConnectionsDefault" xml:space="preserve"><value>Default</value></data>
   <data name="Props_Description" xml:space="preserve"><value>_Description:</value></data>
   <data name="Props_FileType" xml:space="preserve"><value>File type:</value></data>
+  <data name="Props_IgnoreCert" xml:space="preserve"><value>_Ignore certificate errors for this download (not secure)</value></data>
+  <data name="Props_IgnoreCertWarning" xml:space="preserve"><value>NovaGet will accept any certificate from this server, so it can no longer tell whether you are talking to the real server or to someone in between who can read or change the file.
+
+Only do this for servers you trust, such as a device on your own network.
+
+Ignore certificate errors for this download?</value></data>
   <data name="Props_Login" xml:space="preserve"><value>_Login:</value></data>
   <data name="Props_Password" xml:space="preserve"><value>_Password:</value></data>
   <data name="Props_Referrer" xml:space="preserve"><value>_Referrer:</value></data>
@@ -442,6 +450,13 @@ What do you want to do?</value></data>
   <data name="QueueDialog_Title" xml:space="preserve"><value>Create New Queue</value></data>
   <data name="QueuePick_Prompt" xml:space="preserve"><value>Add the download to this _queue:</value></data>
   <data name="QueuePick_Title" xml:space="preserve"><value>Download Later</value></data>
+  <data name="Quota_ReachedTitle" xml:space="preserve"><value>Download limit reached</value></data>
+  <data name="Quota_ResumeAt" xml:space="preserve"><value>Downloads are paused and continue at {0}.</value></data>
+  <data name="Quota_Resumed" xml:space="preserve"><value>A new period has started; downloads continue.</value></data>
+  <data name="Quota_ResumedTitle" xml:space="preserve"><value>Download limit</value></data>
+  <data name="Quota_Warning" xml:space="preserve"><value>You have downloaded {0} in this period, which reaches your download limit.
+
+Stop all downloads until {1}? Choose No to keep downloading for the rest of this period.</value></data>
   <data name="Scheduler_AfterDone" xml:space="preserve"><value>After the queue finishes</value></data>
   <data name="Scheduler_Apply" xml:space="preserve"><value>_Apply</value></data>
   <data name="Scheduler_ApplyChanges" xml:space="preserve"><value>Save the changes to your queues?</value></data>

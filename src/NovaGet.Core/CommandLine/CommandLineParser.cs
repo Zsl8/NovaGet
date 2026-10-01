@@ -2,7 +2,7 @@ namespace NovaGet.Core.CommandLine;
 
 public static class CommandLineParser
 {
-    private static readonly string[] s_urlSchemes = ["http://", "https://", "ftp://", "ftps://"];
+    private static readonly string[] s_urlSchemes = ["http://", "https://", "ftp://", "ftps://", "ftpes://"];
 
     /// <summary>Parses switches case-insensitively. Accepts <c>/x</c>, <c>-x</c> and <c>--x</c> forms.</summary>
     public static CommandLineOptions Parse(IReadOnlyList<string> args)

@@ -40,6 +40,8 @@ public sealed class DownloadEngine : IDownloadEngine, IAsyncDisposable
 
     public SpeedLimits SpeedLimits { get; } = new();
 
+    public TrafficCounter Traffic { get; } = new();
+
     public HostConnectionLimits HostLimits { get; } = new();
 
     public IReadOnlyCollection<long> RunningIds => [.. _jobs.Keys];
@@ -71,7 +73,7 @@ public sealed class DownloadEngine : IDownloadEngine, IAsyncDisposable
             _options(),
             _repository,
             protocol,
-            new JobServices(SpeedLimits, HostLimits),
+            new JobServices(SpeedLimits, HostLimits, Traffic),
             startedByQueue,
             _loggerFactory.CreateLogger($"NovaGet.Download.{downloadId.ToString(CultureInfo.InvariantCulture)}"),
             finished => _jobs.TryRemove(KeyValuePair.Create(finished.Id, finished)));

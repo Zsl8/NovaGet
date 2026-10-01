@@ -44,6 +44,7 @@ internal sealed class DownloadJob
     private readonly List<Task> _running = [];
     private readonly TokenBucket _limiter;
     private readonly SpeedLimits _speedLimits;
+    private readonly TrafficCounter _traffic;
     private readonly bool _startedByQueue;
     private readonly HostConnectionLimits _hostLimits;
     private CancellationToken _workersToken;
@@ -70,6 +71,7 @@ internal sealed class DownloadJob
         _repository = repository;
         _protocol = protocol;
         _speedLimits = services.SpeedLimits;
+        _traffic = services.Traffic;
         _hostLimits = services.HostLimits;
         _startedByQueue = startedByQueue;
         _logger = logger;
@@ -596,7 +598,7 @@ internal sealed class DownloadJob
 
     public void OnBytesReceived(int count)
     {
-        _ = count;
+        _traffic.Add(count);
         Volatile.Write(ref _consecutiveFailures, 0);
     }
 

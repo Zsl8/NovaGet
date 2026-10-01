@@ -6,8 +6,15 @@ using NovaGet.Core.Engine.Naming;
 
 namespace NovaGet.Core.Engine.Http;
 
-/// <summary>HTTP/HTTPS: probing, ranged GETs with If-Range, manual redirects (max 20) and error classification.</summary>
-public sealed class HttpTransferProtocol(IHttpClientProvider clients) : ITransferProtocol
+/// <summary>
+/// HTTP/HTTPS: probing, ranged GETs with If-Range, manual redirects (max 20) and error classification.
+/// Logins (the download's, the address's, a matching Site Login, or the Windows account when "Use Windows
+/// authentication" is on) answer Basic, Digest, NTLM and Negotiate challenges from the original host only.
+/// </summary>
+public sealed class HttpTransferProtocol(
+    IHttpClientProvider clients,
+    ISiteCredentials? siteCredentials = null,
+    Func<bool>? useWindowsAuthentication = null) : ITransferProtocol
 {
     public const int MaxRedirects = 20;
 
@@ -143,7 +150,7 @@ public sealed class HttpTransferProtocol(IHttpClientProvider clients) : ITransfe
             throw new DownloadException(DownloadErrorKind.InvalidAddress, $"Unsupported address: {context.Url}");
         }
 
-        var client = clients.GetClient(context);
+        var client = clients.GetClient(context, CredentialFor(context));
         var uri = context.Url;
         var redirects = 0;
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
@@ -219,11 +226,6 @@ public sealed class HttpTransferProtocol(IHttpClientProvider clients) : ITransfe
                 headers.TryAddWithoutValidation("Cookie", context.Cookies);
             }
 
-            if (context.HasCredentials)
-            {
-                var token = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{context.UserName}:{context.Password}"));
-                headers.Authorization = new AuthenticationHeaderValue("Basic", token);
-            }
         }
 
         if (context.ExtraHeaders is not null)
@@ -233,6 +235,33 @@ public sealed class HttpTransferProtocol(IHttpClientProvider clients) : ITransfe
                 headers.TryAddWithoutValidation(name, value);
             }
         }
+    }
+
+    /// <summary>The login for a request: the download's, the address's (user:password@), a Site Login, or Windows.</summary>
+    internal NetworkCredential? CredentialFor(RequestContext context)
+    {
+        if (context.HasCredentials)
+        {
+            return new NetworkCredential(context.UserName, context.Password ?? string.Empty);
+        }
+
+        var userInfo = context.Url.UserInfo;
+        if (userInfo.Length > 0)
+        {
+            var separator = userInfo.IndexOf(':', StringComparison.Ordinal);
+            var user = Uri.UnescapeDataString(separator < 0 ? userInfo : userInfo[..separator]);
+            if (user.Length > 0)
+            {
+                return new NetworkCredential(user, separator < 0 ? string.Empty : Uri.UnescapeDataString(userInfo[(separator + 1)..]));
+            }
+        }
+
+        if (siteCredentials?.Find(context.Url) is { } saved)
+        {
+            return saved;
+        }
+
+        return useWindowsAuthentication?.Invoke() == true ? CredentialCache.DefaultNetworkCredentials : null;
     }
 
     private static RangeConditionHeaderValue? IfRangeFor(ResourceValidator? validator)

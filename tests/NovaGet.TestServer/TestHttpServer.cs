@@ -105,6 +105,12 @@ public sealed class TestHttpServer : IAsyncDisposable
                 return;
             }
 
+            if (file.RequireAuth is { } auth && !TestAuth.IsAuthorized(context.Request, auth))
+            {
+                TestAuth.Challenge(context.Response, auth.Scheme);
+                return;
+            }
+
             await ServeFileAsync(context, file).ConfigureAwait(false);
         }
         finally

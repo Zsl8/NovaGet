@@ -54,6 +54,9 @@ public interface IQueueManager
     event EventHandler<QueueEventArgs>? QueueStarted;
 
     event EventHandler<QueueEventArgs>? QueueStopped;
+
+    /// <summary>Runs (on the starting thread) before a queue's first file starts, e.g. to connect a VPN.</summary>
+    Action<DownloadQueue>? BeforeStart { get; set; }
 }
 
 public sealed class QueueManager : IQueueManager, IDisposable
@@ -94,6 +97,8 @@ public sealed class QueueManager : IQueueManager, IDisposable
 
     public event EventHandler<QueueEventArgs>? QueueStopped;
 
+    public Action<DownloadQueue>? BeforeStart { get; set; }
+
     /// <summary>Delay before a failed file of a running queue is tried again.</summary>
     public TimeSpan RetryDelay { get; init; } = TickInterval;
 
@@ -133,6 +138,15 @@ public sealed class QueueManager : IQueueManager, IDisposable
         }
 
         _logger.LogInformation("Queue {Queue} started", queue.Name);
+        try
+        {
+            BeforeStart?.Invoke(queue);
+        }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            _logger.LogWarning(ex, "Preparing queue {Queue} failed", queue.Name);
+        }
+
         QueueStarted?.Invoke(this, new QueueEventArgs(queue));
         if (queue.IsSyncQueue)
         {

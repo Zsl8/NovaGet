@@ -41,6 +41,7 @@ public sealed record RequestContext
             UserName = download.AuthUser,
             Password = download.AuthPassword,
             Timeout = timeout,
+            IgnoreCertificateErrors = download.IgnoreCertificateErrors,
         };
     }
 }

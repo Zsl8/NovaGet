@@ -230,6 +230,9 @@ public sealed class ConnectionSettings
     /// <summary>Retry backoff base: 3 s, 6 s, 12 s … capped at 30 s (engine spec §4.5).</summary>
     public int RetryDelaySeconds { get; set; } = 3;
 
+    /// <summary>Answer NTLM/Negotiate (Kerberos) challenges with the Windows account when no login is set.</summary>
+    public bool UseWindowsAuthentication { get; set; }
+
     /// <summary>"Remember speed limit for this server" values from the progress dialog, host → KB/s.</summary>
     public Dictionary<string, int> HostSpeedLimits { get; set; } = new(StringComparer.OrdinalIgnoreCase);
 

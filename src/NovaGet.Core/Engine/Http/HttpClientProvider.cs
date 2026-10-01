@@ -9,8 +9,11 @@ namespace NovaGet.Core.Engine.Http;
 
 public interface IHttpClientProvider
 {
-    /// <summary>A client suitable for the request (shared per proxy/credential profile).</summary>
-    HttpClient GetClient(RequestContext context);
+    /// <summary>
+    /// A client suitable for the request (shared per proxy, certificate and login profile). A <paramref name="credential"/>
+    /// answers authentication challenges from the request's host only.
+    /// </summary>
+    HttpClient GetClient(RequestContext context, NetworkCredential? credential = null);
 }
 
 /// <summary>
@@ -21,7 +24,7 @@ public interface IHttpClientProvider
 /// </summary>
 public sealed class HttpClientProvider : IHttpClientProvider, IDisposable
 {
-    private readonly ConcurrentDictionary<(bool IgnoreCertificateErrors, string Proxy), HttpClient> _clients = new();
+    private readonly ConcurrentDictionary<(bool IgnoreCertificateErrors, string Proxy, string Login), HttpClient> _clients = new();
     private readonly Func<ProxySettings>? _proxySettings;
     private readonly ISecretProtector? _protector;
     private readonly IPacResolver? _pac;
@@ -39,12 +42,29 @@ public sealed class HttpClientProvider : IHttpClientProvider, IDisposable
         _pac = pac;
     }
 
-    public HttpClient GetClient(RequestContext context)
+    public HttpClient GetClient(RequestContext context, NetworkCredential? credential = null)
     {
         ArgumentNullException.ThrowIfNull(context);
         var proxy = _proxySettings?.Invoke();
-        var key = (context.IgnoreCertificateErrors, proxy is null ? string.Empty : ProxyFactory.Fingerprint(proxy));
-        return _clients.GetOrAdd(key, k => CreateClient(k.IgnoreCertificateErrors, proxy));
+        var host = context.Url.Host;
+        var key = (context.IgnoreCertificateErrors, proxy is null ? string.Empty : ProxyFactory.Fingerprint(proxy), LoginKey(host, credential));
+        return _clients.GetOrAdd(key, k => CreateClient(k.IgnoreCertificateErrors, proxy, credential is null ? null : new HostCredentials(host, credential)));
+    }
+
+    private static string LoginKey(string host, NetworkCredential? credential)
+    {
+        if (credential is null)
+        {
+            return string.Empty;
+        }
+
+        if (ReferenceEquals(credential, CredentialCache.DefaultNetworkCredentials))
+        {
+            return "windows|" + host.ToLowerInvariant();
+        }
+
+        var secret = System.Security.Cryptography.SHA256.HashData(Encoding.UTF8.GetBytes(credential.Password ?? string.Empty));
+        return $"{host.ToLowerInvariant()}|{credential.Domain}|{credential.UserName}|{Convert.ToHexString(secret)}";
     }
 
     public void Dispose()
@@ -57,7 +77,7 @@ public sealed class HttpClientProvider : IHttpClientProvider, IDisposable
         _clients.Clear();
     }
 
-    private HttpClient CreateClient(bool ignoreCertificateErrors, ProxySettings? proxy)
+    private HttpClient CreateClient(bool ignoreCertificateErrors, ProxySettings? proxy, ICredentials? credentials)
     {
         var handler = new SocketsHttpHandler
         {
@@ -77,6 +97,12 @@ public sealed class HttpClientProvider : IHttpClientProvider, IDisposable
             ProxyFactory.Configure(handler, proxy, _protector, _pac);
         }
 
+        if (credentials is not null)
+        {
+            handler.Credentials = credentials;
+            handler.PreAuthenticate = true;
+        }
+
         if (ignoreCertificateErrors)
         {
             // Only reachable through the per-download "Ignore certificate errors" option, which warns the user (spec §22).
@@ -86,5 +112,12 @@ public sealed class HttpClientProvider : IHttpClientProvider, IDisposable
         }
 
         return new HttpClient(handler, disposeHandler: true) { Timeout = System.Threading.Timeout.InfiniteTimeSpan };
+    }
+
+    /// <summary>Hands the login only to the host it belongs to (never to a redirect target elsewhere).</summary>
+    private sealed class HostCredentials(string host, NetworkCredential credential) : ICredentials
+    {
+        public NetworkCredential? GetCredential(Uri uri, string authType) =>
+            string.Equals(uri.Host, host, StringComparison.OrdinalIgnoreCase) ? credential : null;
     }
 }

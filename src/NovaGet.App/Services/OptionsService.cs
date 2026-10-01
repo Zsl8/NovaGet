@@ -2,6 +2,7 @@ using System.IO;
 using Microsoft.Extensions.Logging;
 using NovaGet.App.ViewModels.Options;
 using NovaGet.Core.Abstractions;
+using NovaGet.Core.Engine;
 using NovaGet.Core.Engine.Storage;
 using NovaGet.Core.Models;
 using NovaGet.Core.Network;
@@ -24,7 +25,9 @@ public sealed class OptionsService(
     IDownloadService downloads,
     ISecretProtector protector,
     AppPaths paths,
-    ILogger<OptionsService> logger)
+    ILogger<OptionsService> logger,
+    SiteCredentials? siteCredentials = null,
+    NovaGet.Core.Network.IPacResolver? pacResolver = null)
 {
     /// <summary>Raised after options were applied (on the UI thread).</summary>
     public event EventHandler<OptionsApplyResult>? Applied;
@@ -41,6 +44,7 @@ public sealed class OptionsService(
         Categories = categories.GetAll(),
         ServerExceptions = serverExceptions.GetAll(),
         SiteLogins = siteLogins.GetAll(),
+        PacResolver = pacResolver,
     });
 
     /// <summary>The temporary folder can only move while nothing is downloading.</summary>
@@ -62,6 +66,7 @@ public sealed class OptionsService(
         var categoriesChanged = SaveCategories(options);
         SaveServerExceptions(options);
         SaveSiteLogins(options);
+        siteCredentials?.Invalidate();
 
         IReadOnlyList<string> notMoved = [];
         if (!string.Equals(oldTemp, newTemp, StringComparison.OrdinalIgnoreCase))

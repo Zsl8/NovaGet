@@ -28,6 +28,9 @@ public interface IDownloadEngine
     /// <summary>The global limiter shared by all downloads.</summary>
     SpeedLimits SpeedLimits { get; }
 
+    /// <summary>Everything received so far, for Options → Connection → Download limits.</summary>
+    TrafficCounter Traffic { get; }
+
     /// <summary>Connection caps learned this session from servers that refuse extra connections.</summary>
     HostConnectionLimits HostLimits { get; }
 

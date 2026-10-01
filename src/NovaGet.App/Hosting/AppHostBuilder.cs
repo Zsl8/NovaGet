@@ -44,6 +44,11 @@ internal static class AppHostBuilder
         builder.Services.AddNovaGetData(paths.DatabaseFile);
 
         // Download engine (options are re-read from settings whenever a download starts)
+        if (OperatingSystem.IsWindows())
+        {
+            builder.Services.AddSingleton<NovaGet.Core.Network.IPacResolver, WinHttpPacResolver>();
+        }
+
         builder.Services.AddSingleton(sp =>
         {
             var settings = sp.GetRequiredService<ISettingsService>();
@@ -53,7 +58,24 @@ internal static class AppHostBuilder
                 sp.GetService<NovaGet.Core.Network.IPacResolver>());
         });
         builder.Services.AddSingleton<IHttpClientProvider>(sp => sp.GetRequiredService<HttpClientProvider>());
-        builder.Services.AddSingleton<ITransferProtocol, HttpTransferProtocol>();
+        builder.Services.AddSingleton(sp => new SiteCredentials(sp.GetRequiredService<NovaGet.Core.Abstractions.ISiteLoginRepository>()));
+        builder.Services.AddSingleton<ISiteCredentials>(sp => sp.GetRequiredService<SiteCredentials>());
+        builder.Services.AddSingleton<ITransferProtocol>(sp =>
+        {
+            var settings = sp.GetRequiredService<ISettingsService>();
+            return new HttpTransferProtocol(
+                sp.GetRequiredService<IHttpClientProvider>(),
+                sp.GetRequiredService<ISiteCredentials>(),
+                () => settings.Current.Connection.UseWindowsAuthentication);
+        });
+        builder.Services.AddSingleton<ITransferProtocol>(sp =>
+        {
+            var settings = sp.GetRequiredService<ISettingsService>();
+            return new NovaGet.Core.Engine.Ftp.FtpTransferProtocol(
+                sp.GetRequiredService<ISiteCredentials>(),
+                () => settings.Current.Proxy,
+                sp.GetRequiredService<ISecretProtector>());
+        });
         builder.Services.AddSingleton(sp =>
         {
             var settings = sp.GetRequiredService<ISettingsService>();
@@ -92,6 +114,15 @@ internal static class AppHostBuilder
         builder.Services.AddHostedService<QueueLifetimeService>();
         builder.Services.AddSingleton<WakeTaskService>();
         builder.Services.AddSingleton<QueueUiService>();
+        builder.Services.AddSingleton(sp => new NovaGet.Core.Services.DownloadQuotaService(
+            sp.GetRequiredService<ISettingsService>(),
+            sp.GetRequiredService<IDownloadEngine>(),
+            sp.GetRequiredService<NovaGet.Core.Services.IDownloadService>(),
+            sp.GetRequiredService<IQueueManager>(),
+            System.IO.Path.Combine(paths.RoamingDir, "quota.json"),
+            TimeProvider.System,
+            sp.GetRequiredService<Microsoft.Extensions.Logging.ILogger<NovaGet.Core.Services.DownloadQuotaService>>()));
+        builder.Services.AddSingleton<QuotaUiService>();
         builder.Services.AddTransient(sp => new SchedulerViewModel(
             sp.GetRequiredService<NovaGet.Core.Abstractions.IQueueRepository>(),
             sp.GetRequiredService<NovaGet.Core.Services.IDownloadService>(),
@@ -104,7 +135,7 @@ internal static class AppHostBuilder
 
         // App shell
         builder.Services.AddSingleton<IDialogService, DialogService>();
-        builder.Services.AddSingleton<IDialUpService, NoDialUpService>();
+        builder.Services.AddSingleton<IDialUpService, RasDialUpService>();
         builder.Services.AddSingleton<DownloadUiService>();
         builder.Services.AddSingleton<SoundService>();
         builder.Services.AddSingleton<OptionsService>();

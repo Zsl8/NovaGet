@@ -53,8 +53,14 @@ internal sealed class EngineHarness : IAsyncDisposable
     public static async Task<EngineHarness> CreateAsync(Func<EngineOptions, EngineOptions>? configure = null) =>
         new(await TestHttpServer.StartAsync(), configure);
 
+    /// <summary>Protocols besides HTTP (FTP tests); call <see cref="RestartEngine"/> after changing them.</summary>
+    public List<ITransferProtocol> ExtraProtocols { get; } = [];
+
+    /// <summary>Site Logins seen by the HTTP protocol.</summary>
+    public ISiteCredentials? SiteCredentials { get; set; }
+
     public DownloadEngine CreateEngine() =>
-        new(Repository, [new HttpTransferProtocol(_clients)], () => Options);
+        new(Repository, [new HttpTransferProtocol(_clients, SiteCredentials), .. ExtraProtocols], () => Options);
 
     /// <summary>Replaces the engine, as a restarted app would (the old one is simply abandoned).</summary>
     public void RestartEngine() => Engine = CreateEngine();

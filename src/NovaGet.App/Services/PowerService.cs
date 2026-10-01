@@ -115,19 +115,14 @@ public static partial class PowerService
     private static partial bool CloseHandle(IntPtr handle);
 }
 
-/// <summary>Disconnects dial-up/VPN connections ("Hang up modem when done").</summary>
+/// <summary>Dial-up and VPN connections (Options → Dial Up / VPN, "Hang up modem when done").</summary>
 public interface IDialUpService
 {
     /// <summary>Hangs up the configured connection (or every active one). Returns how many were closed.</summary>
     int HangUp();
-}
 
-/// <summary>Placeholder until the Dial Up / VPN options are implemented; logs the request.</summary>
-internal sealed class NoDialUpService : IDialUpService
-{
-    public int HangUp()
-    {
-        Log.Information("Hang up requested; dial-up support is not available in this build");
-        return 0;
-    }
+    bool IsConnected(string entry);
+
+    /// <summary>Connects the configured entry (retrying per the redial options). Returns an error message, or null.</summary>
+    string? Connect();
 }

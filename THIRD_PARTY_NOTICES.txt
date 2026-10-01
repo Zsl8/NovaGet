@@ -17,6 +17,7 @@ Microsoft.Data.Sqlite                       MIT            https://github.com/do
 Microsoft Windows SDK .NET projection       MIT            https://github.com/microsoft/CsWinRT
 CommunityToolkit.Mvvm                       MIT            https://github.com/CommunityToolkit/dotnet
 H.NotifyIcon.Wpf                            MIT            https://github.com/HavenDV/H.NotifyIcon
+FluentFTP                                   MIT            https://github.com/robinrodricks/FluentFTP
 SQLitePCLRaw                                Apache-2.0     https://github.com/ericsink/SQLitePCL.raw
 SQLite                                      Public domain  https://www.sqlite.org/copyright.html
 Dapper                                      Apache-2.0     https://github.com/DapperLib/Dapper
@@ -38,6 +39,7 @@ CommunityToolkit.Mvvm: Copyright (c) .NET Foundation and Contributors
 H.NotifyIcon: Copyright (c) 2022 Konstantin S. (HavenDV); based on
   WPF NotifyIcon, Copyright (c) 2009-2021 Philipp Sumi
 SQLitePCLRaw: Copyright 2014-2021 SourceGear, LLC
+FluentFTP: Copyright (c) 2015 Robin Rodricks and FluentFTP Contributors
 SQLite: The author disclaims copyright to this source code (public domain).
 Dapper: Copyright (c) 2011-2024 Stack Exchange, Inc. and Dapper contributors
 Serilog and Serilog.* packages: Copyright (c) Serilog Contributors

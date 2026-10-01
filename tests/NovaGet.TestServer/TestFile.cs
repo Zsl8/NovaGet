@@ -61,6 +61,9 @@ public sealed class TestFile
     /// <summary>Requests beyond this many concurrent ones get 503 (0 = unlimited).</summary>
     public int MaxConcurrentRequests { get; set; }
 
+    /// <summary>Require a login: <c>Basic</c> or <c>Digest</c> (RFC 7616, MD5, qop=auth) with this user and password.</summary>
+    public (string Scheme, string User, string Password)? RequireAuth { get; set; }
+
     /// <summary>Forces a status code for GET/HEAD (e.g. 403, 404, 500).</summary>
     public int? ForceStatus { get; set; }
 
