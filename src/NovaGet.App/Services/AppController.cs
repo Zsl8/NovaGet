@@ -142,7 +142,17 @@ internal sealed class AppController(
 
     public void StartDownload(long downloadId) => OnUiThread(() => downloadUi.StartDownload(downloadId));
 
-    public void ShowAddBatch(bool fromClipboard) => NotAvailable();
+    public void ShowAddBatch(bool fromClipboard) => OnUiThread(() =>
+    {
+        if (fromClipboard)
+        {
+            downloadUi.ShowAddBatchFromClipboard();
+        }
+        else
+        {
+            downloadUi.ShowAddBatch();
+        }
+    });
 
     public void ShowOptions(string? page = null) => OnUiThread(() =>
     {
@@ -193,9 +203,9 @@ internal sealed class AppController(
 
     public void ShowGrabber(long? projectId = null) => NotAvailable();
 
-    public void ShowImport(bool ef2) => NotAvailable();
+    public void ShowImport(bool ef2) => OnUiThread(() => downloadUi.Import(ef2));
 
-    public void ShowExport(bool ef2, IReadOnlyCollection<long>? ids) => NotAvailable();
+    public void ShowExport(bool ef2, IReadOnlyCollection<long>? ids) => OnUiThread(() => downloadUi.Export(ef2, ids));
 
     public void ShowProgress(long downloadId) => OnUiThread(() => downloadUi.ShowProgress(downloadId));
 

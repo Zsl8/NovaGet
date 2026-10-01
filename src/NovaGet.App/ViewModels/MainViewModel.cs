@@ -812,6 +812,9 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
     private void Faq() => _controller.ShowHelp("faq");
 
     [RelayCommand]
+    private void CommandLineHelp() => _controller.ShowHelp("command-line");
+
+    [RelayCommand]
     private void CheckUpdates() => _controller.CheckForUpdates();
 
     [RelayCommand]

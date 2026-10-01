@@ -92,6 +92,26 @@ Invoke-Step 'Clean output folders' {
     New-Item -ItemType Directory -Path $appOut, $extensionOut, $cache -Force | Out-Null
 }
 
+# The archive to fetch: the pinned url; otherwise the newest release-branch build the publisher lists (assetPattern
+# over the GitHub release API, version in group 1), falling back to url.
+function Resolve-FfmpegUrl($pin, [bool] $pinned) {
+    if ($pinned -or -not $pin.releaseApi -or -not $pin.assetPattern) { return $pin.url }
+    try {
+        $headers = @{ 'User-Agent' = 'NovaGet-build'; 'Accept' = 'application/vnd.github+json' }
+        if ($env:GITHUB_TOKEN) { $headers['Authorization'] = "Bearer $env:GITHUB_TOKEN" }
+        $release = Invoke-RestMethod -Uri $pin.releaseApi -Headers $headers
+        $newest = $release.assets | ForEach-Object {
+            if ($_.name -match $pin.assetPattern) { [pscustomobject] @{ Url = $_.browser_download_url; Version = [version] $Matches[1] } }
+        } | Sort-Object Version -Descending | Select-Object -First 1
+        if ($newest) { return $newest.Url }
+        Write-Warning "No asset matches $($pin.assetPattern); using $($pin.url)"
+    }
+    catch {
+        Write-Warning "The release list could not be read ($($_.Exception.Message)); using $($pin.url)"
+    }
+    return $pin.url
+}
+
 # ffmpeg (LGPL shared build, an external process for HLS/DASH merging). With a pinned sha256 the archive must match
 # it. Without one, the archive is checked against the publisher's checksums file and its hash is printed so it can
 # be pinned; release (v*) builds refuse to run unpinned. Returns the folder holding ffmpeg.exe, or $null.
@@ -105,12 +125,15 @@ function Get-Ffmpeg {
         return $null
     }
     if ($isRelease -and -not $pinned) { throw 'Release builds need a pinned ffmpeg: set sha256 in build/ffmpeg.json.' }
+    $archive = $null
 
-    $archive = Join-Path $cache ([IO.Path]::GetFileName(([Uri] $pin.url).AbsolutePath))
     try {
+        $url = Resolve-FfmpegUrl $pin $pinned
+        $archive = Join-Path $cache ([IO.Path]::GetFileName(([Uri] $url).AbsolutePath))
+        Set-Content -Path (Join-Path $cache 'ffmpeg-url.txt') -Value $url
         if (-not $pinned -or -not (Test-Path $archive)) {
-            Write-Host "    Downloading $($pin.url)"
-            Invoke-WebRequest -Uri $pin.url -OutFile $archive -UseBasicParsing
+            Write-Host "    Downloading $url"
+            Invoke-WebRequest -Uri $url -OutFile $archive -UseBasicParsing
         }
         if ($pinned) {
             $expected = $pin.sha256.ToUpperInvariant()
@@ -209,9 +232,10 @@ if ($ffmpegBin) {
         Get-ChildItem $package -File | Where-Object { $_.Name -match '^(LICENSE|COPYING)' } |
             Select-Object -First 1 | ForEach-Object { Copy-Item $_.FullName (Join-Path $ffmpegOut 'LICENSE.txt') }
         $pin = Get-Content (Join-Path $root 'build/ffmpeg.json') -Raw | ConvertFrom-Json
-        $archive = Join-Path $cache ([IO.Path]::GetFileName(([Uri] $pin.url).AbsolutePath))
+        $url = (Get-Content (Join-Path $cache 'ffmpeg-url.txt') -Raw).Trim()
+        $archive = Join-Path $cache ([IO.Path]::GetFileName(([Uri] $url).AbsolutePath))
         $hash = (Get-FileHash $archive -Algorithm SHA256).Hash
-        Set-Content -Path (Join-Path $ffmpegOut 'VERSION.txt') -Value "$($pin.version)`n$($pin.url)`nSHA-256 $hash"
+        Set-Content -Path (Join-Path $ffmpegOut 'VERSION.txt') -Value "$($pin.version)`n$url`nSHA-256 $hash"
         $size = (Get-ChildItem $ffmpegOut -File | Measure-Object Length -Sum).Sum / 1MB
         Write-Host ("    ffmpeg bundled: {0:N1} MB" -f $size)
     }
@@ -230,7 +254,7 @@ Invoke-Step '6. Copy runtime assets' {
     }
     New-Item -ItemType Directory -Path (Join-Path $appOut 'docs') -Force | Out-Null
     Copy-Item (Join-Path $root 'docs/install-extension.html') (Join-Path $appOut 'docs')
-    Copy-Item (Join-Path $root 'docs/command-line.md') (Join-Path $appOut 'docs') -ErrorAction SilentlyContinue
+    Copy-Item (Join-Path $root 'docs/command-line.html') (Join-Path $appOut 'docs')
 }
 
 if (-not $SkipInstaller) {

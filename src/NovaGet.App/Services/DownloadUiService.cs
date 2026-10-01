@@ -11,6 +11,7 @@ using NovaGet.Core.Engine.Naming;
 using NovaGet.Core.Integration;
 using NovaGet.Core.Engine;
 using NovaGet.Core.Engine.Streams;
+using NovaGet.Core.ImportExport;
 using NovaGet.Core.Models;
 using NovaGet.Core.Paths;
 using NovaGet.Core.Services;
@@ -90,7 +91,7 @@ internal sealed class DownloadUiService(
     /// lets the user choose the quality, then continues like any download (File Info dialog) as a stream download.
     /// An address that turns out not to be a manifest is added as an ordinary file.
     /// </summary>
-    public async Task<long?> AddStreamAsync(DownloadRequest request, string? title, bool interactive)
+    public async Task<long?> AddStreamAsync(DownloadRequest request, string? title, bool interactive, bool quiet = false)
     {
         ArgumentNullException.ThrowIfNull(request);
         var options = EngineOptions.FromSettings(settings.Current, paths);
@@ -123,7 +124,7 @@ internal sealed class DownloadUiService(
 
         if (info is null)
         {
-            return await AddAsync(request, probe: null, interactive);
+            return await AddAsync(request, probe: null, interactive, quiet);
         }
 
         if (info.IsProtected)
@@ -169,14 +170,15 @@ internal sealed class DownloadUiService(
             ResumeCapable = true,
             IsStream = true,
             StreamManifestJson = choice.Selection.ToJson(),
-        }, probe: null, interactive);
+        }, probe: null, interactive, quiet);
     }
 
     /// <summary>
     /// Adds a download: handles duplicates, then shows "Download File Info" (unless disabled or not interactive)
     /// and starts it or puts it in a queue. Returns the new (or existing) download id, or null when cancelled.
     /// </summary>
-    public async Task<long?> AddAsync(DownloadRequest request, ProbeResult? probe, bool interactive)
+    /// <param name="quiet">No progress or completion dialogs either (<c>/n</c>).</param>
+    public async Task<long?> AddAsync(DownloadRequest request, ProbeResult? probe, bool interactive, bool quiet = false)
     {
         if (probe is not null)
         {
@@ -237,7 +239,7 @@ internal sealed class DownloadUiService(
             var added = downloads.Add(request);
             if (request.QueueId is null)
             {
-                StartDownload(added.Id);
+                StartDownload(added.Id, showProgress: !quiet);
             }
 
             return added.Id;
@@ -339,9 +341,13 @@ internal sealed class DownloadUiService(
         return id;
     }
 
-    /// <summary><c>NovaGet.exe /d URL [/p folder] [/f name] [/n] [/a]</c>.</summary>
-    public Task<long?> AddFromCommandLineAsync(CommandLineOptions options)
+    /// <summary>
+    /// <c>NovaGet.exe /d URL [/p folder] [/f name] [/n] [/a] [/q] [/h]</c>: <c>/n</c> adds and starts without any dialog,
+    /// <c>/q</c> exits and <c>/h</c> hangs up after this download completes.
+    /// </summary>
+    public async Task<long?> AddFromCommandLineAsync(CommandLineOptions options)
     {
+        ArgumentNullException.ThrowIfNull(options);
         var request = new DownloadRequest
         {
             Url = options.Url!,
@@ -350,9 +356,21 @@ internal sealed class DownloadUiService(
             QueueId = options.AddToQueueOnly ? DownloadQueue.MainQueueId : null,
         };
         var interactive = !options.Silent && !options.AddToQueueOnly;
-        return Uri.TryCreate(request.Url, UriKind.Absolute, out var url) && StreamManifestLoader.IsManifestAddress(url)
-            ? AddStreamAsync(request, title: null, interactive)
-            : AddAsync(request, probe: null, interactive);
+        var id = Uri.TryCreate(request.Url, UriKind.Absolute, out var url) && StreamManifestLoader.IsManifestAddress(url)
+            ? await AddStreamAsync(request, title: null, interactive, quiet: options.Silent)
+            : await AddAsync(request, probe: null, interactive, quiet: options.Silent);
+        if (id is { } added && (options.ExitWhenDone || options.HangUpWhenDone || options.Silent))
+        {
+            var completion = CompletionFor(added);
+            completion.ExitWhenDone |= options.ExitWhenDone;
+            completion.HangUp |= options.HangUpWhenDone;
+            if (options.Silent)
+            {
+                completion.ShowCompleteDialog = false;
+            }
+        }
+
+        return id;
     }
 
     /// <summary>
@@ -392,13 +410,17 @@ internal sealed class DownloadUiService(
     }
 
     /// <summary>
-    /// The "Download all links" selection dialog (also for several dropped or pasted links). "Download" appends the
-    /// chosen links to the main queue and starts it, so they run a few at a time; "Download Later" only queues them.
-    /// Cookies go only to links on the page's own site.
+    /// The "Download all links" selection dialog (also for several dropped or pasted links, batch downloads and
+    /// imported lists). "Download" appends the chosen links to the main queue and starts it, so they run a few at a
+    /// time; "Download Later" only queues them. Browser cookies go only to links on the page's own site.
     /// </summary>
-    public void ShowLinks(string title, IReadOnlyList<(Uri Url, string? Description)> links, BrowserRequestInfo? request = null, Uri? pageUrl = null)
+    public void ShowLinks(string title, IReadOnlyList<(Uri Url, string? Description)> links, BrowserRequestInfo? request = null, Uri? pageUrl = null) =>
+        ShowLinks(title, [.. links.Select(l => new LinkEntry(l.Url, l.Description))], new LinksOptions { Request = request, PageUrl = pageUrl });
+
+    public void ShowLinks(string title, IReadOnlyList<LinkEntry> links, LinksOptions options)
     {
         ArgumentNullException.ThrowIfNull(links);
+        ArgumentNullException.ThrowIfNull(options);
         if (links.Count == 0)
         {
             dialogs.Info(Localizer.Get("Links_NoneFound"));
@@ -409,6 +431,7 @@ internal sealed class DownloadUiService(
         {
             Title = title,
             Links = links,
+            CheckAll = options.CheckAll,
             PreferredExtensions = CategoryMatcher.SplitPatterns(settings.Current.FileTypes.AutoCaptureExtensions),
             Categories = [.. categories.GetAll().Select(c => new ChoiceItem(c.Id, c.Id == Category.GeneralId ? Localizer.Get("Category_General") : MainViewModel.CategoryTitle(c)))],
             FolderForCategory = FolderFor,
@@ -421,15 +444,21 @@ internal sealed class DownloadUiService(
 
         var vm = dialog.ViewModel;
         var queueId = dialog.QueueId ?? DownloadQueue.MainQueueId;
+        var request = options.Request;
+        var pageUrl = options.PageUrl;
         foreach (var link in vm.SelectedLinks)
         {
+            var entry = link.Entry;
             var sameSite = pageUrl is not null && string.Equals(link.Url.Host, pageUrl.Host, StringComparison.OrdinalIgnoreCase);
             downloads.Add(new DownloadRequest
             {
                 Url = link.Address,
-                Referrer = request?.Referrer ?? pageUrl?.AbsoluteUri,
-                Cookies = sameSite ? request?.Cookies : null,
-                UserAgent = request?.UserAgent,
+                Referrer = entry.Referrer ?? request?.Referrer ?? pageUrl?.AbsoluteUri,
+                Cookies = entry.Cookies ?? (sameSite ? request?.Cookies : null),
+                UserAgent = entry.UserAgent ?? request?.UserAgent,
+                FileName = entry.FileName,
+                AuthUser = options.AuthUser,
+                AuthPassword = options.AuthPassword,
                 Description = string.IsNullOrWhiteSpace(link.Description) ? null : link.Description,
                 CategoryId = vm.IsAutomaticCategory ? null : vm.CategoryId,
                 SaveFolder = vm.IsAutomaticCategory ? null : Environment.ExpandEnvironmentVariables(vm.SaveFolder.Trim()),
@@ -442,6 +471,138 @@ internal sealed class DownloadUiService(
             controller.Value.StartQueue(DownloadQueue.MainQueueId);
         }
     }
+
+    // ----------------------------------------------------------------- batch downloads, import and export
+
+    /// <summary>Tasks → Add batch download: generated addresses go to the selection dialog, all checked.</summary>
+    public void ShowAddBatch()
+    {
+        var clipboard = ClipboardUrl();
+        var dialog = new BatchDialog(clipboard is not null && clipboard.Contains('*', StringComparison.Ordinal) ? clipboard : null);
+        if (dialogs.ShowModal(dialog) != true)
+        {
+            return;
+        }
+
+        var links = dialog.ViewModel.Generator.Generate().Select(url => new LinkEntry(new Uri(url))).ToList();
+        var login = dialog.Login;
+        ShowLinks(Localizer.Get("Batch_Title"), links, new LinksOptions { CheckAll = true, AuthUser = login?.User, AuthPassword = login?.Password });
+    }
+
+    /// <summary>Tasks → Add batch download from clipboard: every http/https/ftp address in the copied text.</summary>
+    public void ShowAddBatchFromClipboard()
+    {
+        string? text = null;
+        try
+        {
+            text = Clipboard.ContainsText() ? Clipboard.GetText() : null;
+        }
+        catch (System.Runtime.InteropServices.ExternalException ex)
+        {
+            logger.LogWarning(ex, "The clipboard could not be read");
+        }
+
+        var urls = LinkExtractor.ExtractUrls(text);
+        if (urls.Count == 0)
+        {
+            dialogs.Info(Localizer.Get("Batch_NoClipboardLinks"));
+            return;
+        }
+
+        ShowLinks(Localizer.Get("Batch_ClipboardTitle"), [.. urls.Select(u => new LinkEntry(u))], new LinksOptions { CheckAll = true });
+    }
+
+    /// <summary>Tasks → Export: the given downloads (or all of them) as an EF2 or text list.</summary>
+    public void Export(bool ef2, IReadOnlyCollection<long>? ids)
+    {
+        var selected = ids is null ? downloads.GetAll() : [.. ids.Select(downloads.Find).OfType<Download>()];
+        var entries = selected.Select(ToExported).OfType<ExportedDownload>().ToList();
+        if (entries.Count == 0)
+        {
+            dialogs.Info(Localizer.Get("Export_Nothing"));
+            return;
+        }
+
+        var path = dialogs.PickSaveFile(
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), ef2 ? "downloads.ef2" : "downloads.txt"),
+            Localizer.Get(ef2 ? "Export_Ef2Filter" : "Export_TextFilter"),
+            Localizer.Get("Export_Title"));
+        if (path is null)
+        {
+            return;
+        }
+
+        try
+        {
+            File.WriteAllText(path, ef2 ? DownloadListFormats.WriteEf2(entries) : DownloadListFormats.WriteText(entries), DownloadListFormats.FileEncoding);
+            logger.LogInformation("Exported {Count} downloads to {Path}", entries.Count, path);
+            dialogs.Info(Localizer.Format("Export_Done", entries.Count, path));
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            dialogs.Error(Localizer.Format("Export_Failed", ex.Message));
+        }
+    }
+
+    /// <summary>Tasks → Import: an EF2 or text list opens the selection dialog with every address checked.</summary>
+    public void Import(bool ef2)
+    {
+        var path = dialogs.PickOpenFile(Localizer.Get(ef2 ? "Export_Ef2Filter" : "Export_TextFilter"), Localizer.Get("Import_Title"));
+        if (path is null)
+        {
+            return;
+        }
+
+        ImportResult result;
+        try
+        {
+            if (new FileInfo(path).Length > DownloadListFormats.MaxFileBytes)
+            {
+                throw new InvalidDataException("The file is too large to be a download list.");
+            }
+
+            var text = DownloadListFormats.Decode(File.ReadAllBytes(path));
+            result = ef2 ? DownloadListFormats.ParseEf2(text) : DownloadListFormats.ParseText(text);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
+        {
+            dialogs.Error(Localizer.Format("Import_Failed", ex.Message));
+            return;
+        }
+
+        logger.LogInformation("Imported {Count} downloads from {Path} ({Skipped} skipped)", result.Downloads.Count, path, result.Skipped);
+        if (result.Downloads.Count == 0)
+        {
+            dialogs.Info(Localizer.Format("Import_NothingFound", Path.GetFileName(path)));
+            return;
+        }
+
+        if (result.Skipped > 0)
+        {
+            dialogs.Info(Localizer.Format("Import_Skipped", result.Skipped));
+        }
+
+        var links = result.Downloads.Select(d => new LinkEntry(d.Url)
+        {
+            FileName = string.IsNullOrWhiteSpace(d.FileName) ? null : FileNameSanitizer.Sanitize(d.FileName),
+            Referrer = d.Referrer,
+            Cookies = d.Cookies,
+            UserAgent = d.UserAgent,
+        }).ToList();
+        ShowLinks(Path.GetFileName(path), links, new LinksOptions { CheckAll = true });
+    }
+
+    /// <summary>A download as an export entry (its original address; streams export their playlist address).</summary>
+    internal static ExportedDownload? ToExported(Download download) =>
+        Uri.TryCreate(string.IsNullOrWhiteSpace(download.OriginalUrl) ? download.Url : download.OriginalUrl, UriKind.Absolute, out var url)
+            ? new ExportedDownload(url)
+            {
+                Referrer = download.Referrer,
+                Cookies = download.Cookies,
+                UserAgent = download.UserAgent,
+                FileName = string.IsNullOrWhiteSpace(download.FileName) ? null : download.FileName,
+            }
+            : null;
 
     /// <summary>Links dropped on the window or the drop target: one goes to Add URL, several to the selection dialog.</summary>
     public async Task AddDroppedAsync(IReadOnlyList<Uri> urls)

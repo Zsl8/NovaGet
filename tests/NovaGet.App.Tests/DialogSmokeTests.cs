@@ -13,7 +13,7 @@ public sealed class DialogSmokeTests(WpfFixture wpf)
     [
         "About", "TellAFriend", "Find", "SpeedLimiter", "Input", "Category", "MessageCheck", "Toolbar", "Columns",
         "AddUrl", "FileInfo", "QueuePick", "Duplicate", "Complete", "Properties", "MoveRename", "PowerCountdown",
-        "ContextMenuItems", "WebPlayerPanel", "ServerException", "SiteLogin", "StreamQuality",
+        "ContextMenuItems", "WebPlayerPanel", "ServerException", "SiteLogin", "StreamQuality", "Batch",
     ];
 
     [Theory]
@@ -54,6 +54,7 @@ public sealed class DialogSmokeTests(WpfFixture wpf)
                 "WebPlayerPanel" => new WebPlayerPanelDialog(new WebPlayerPanelSettings { ExcludedSites = ["*.example.com"] }),
                 "ServerException" => new ServerExceptionDialog("files.example.com", 4),
                 "SiteLogin" => new SiteLoginDialog("*.example.com", "alice", "secret"),
+                "Batch" => new BatchDialog("http://example.com/img*.jpg"),
                 "StreamQuality" => new StreamQualityDialog(new NovaGet.App.ViewModels.StreamQualityViewModel(StreamTests.SampleHls(), "Sample video")),
                 _ => throw new ArgumentOutOfRangeException(nameof(name)),
             };

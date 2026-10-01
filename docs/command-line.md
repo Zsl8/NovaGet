@@ -1,5 +1,7 @@
 # NovaGet command line
 
+<!-- Keep in step with command-line.html (shown by Help → Command line switches). -->
+
 NovaGet accepts the same switches as other popular Windows download managers, so existing scripts keep working.
 
 ```
@@ -9,12 +11,12 @@ NovaGet.exe [/d URL] [/s] [/p local_path] [/f local_file_name] [/q] [/h] [/n] [/
 
 | Switch | Meaning |
 |---|---|
-| `/d URL` | Download the address. `http`, `https`, `ftp`, `ftps` and `novaget://` links are accepted. |
+| `/d URL` | Download the address. `http`, `https`, `ftp`, `ftps` and `novaget://` links are accepted; `.m3u8` and `.mpd` addresses are downloaded as video streams. |
 | `/p local_path` | Folder to save the file in. |
 | `/f local_file_name` | File name to save as. |
-| `/n` | Silent: no questions and no dialogs. |
+| `/n` | Silent: no questions and no dialogs. The download starts at once (with the best quality for streams). |
 | `/q` | Exit NovaGet after this download finishes successfully. |
-| `/h` | Hang up the dial-up/VPN connection after a successful download. |
+| `/h` | Hang up the dial-up/VPN connection after this download finishes successfully. |
 | `/a` | Add the download to the main queue without starting it. |
 | `/s` | Start the main download queue. |
 | `/tray` | Start hidden in the notification area. |
@@ -33,6 +35,7 @@ If NovaGet is already running, the new process forwards its arguments to the run
 ```bat
 NovaGet.exe /d "https://example.com/file.zip" /p "D:\Downloads" /f "renamed.zip" /n
 NovaGet.exe /d "https://example.com/big.iso" /a
+NovaGet.exe /d "https://example.com/setup.exe" /n /q
 NovaGet.exe /s
 NovaGet.exe /startqueue "Night downloads"
 ```

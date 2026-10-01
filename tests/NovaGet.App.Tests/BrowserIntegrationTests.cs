@@ -71,10 +71,10 @@ public sealed class BrowserIntegrationTests(WpfFixture wpf)
                 Title = "Example page",
                 Links =
                 [
-                    (new Uri("https://example.com/files/a.zip"), "Archive"),
-                    (new Uri("https://example.com/files/b.zip"), null),
-                    (new Uri("https://example.com/about.html"), "About"),
-                    (new Uri("https://example.com/"), null),
+                    new LinkEntry(new Uri("https://example.com/files/a.zip"), "Archive"),
+                    new LinkEntry(new Uri("https://example.com/files/b.zip")),
+                    new LinkEntry(new Uri("https://example.com/about.html"), "About"),
+                    new LinkEntry(new Uri("https://example.com/")),
                 ],
                 PreferredExtensions = ["zip", "iso"],
                 Categories = [new ChoiceItem(1, "General")],

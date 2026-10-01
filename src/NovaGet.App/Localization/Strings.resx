@@ -25,6 +25,32 @@
   <data name="Arrange_Status" xml:space="preserve"><value>by s_tatus</value></data>
   <data name="Arrange_TimeLeft" xml:space="preserve"><value>by time _left</value></data>
   <data name="Arrange_TransferRate" xml:space="preserve"><value>by transfer _rate</value></data>
+  <data name="Batch_Address" xml:space="preserve"><value>_Address:</value></data>
+  <data name="Batch_ClipboardTitle" xml:space="preserve"><value>Add batch download from clipboard</value></data>
+  <data name="Batch_Count" xml:space="preserve"><value>{0:N0} files</value></data>
+  <data name="Batch_Decrease" xml:space="preserve"><value>Decrease</value></data>
+  <data name="Batch_Error_BadAddress" xml:space="preserve"><value>The address must be an http, https, ftp or ftps address.</value></data>
+  <data name="Batch_Error_BadLetters" xml:space="preserve"><value>From and To must be single letters (a–z).</value></data>
+  <data name="Batch_Error_BadNumbers" xml:space="preserve"><value>From and To must be whole numbers (0 or more).</value></data>
+  <data name="Batch_Error_BadWildcardSize" xml:space="preserve"><value>The wildcard size must be between 1 and {0}.</value></data>
+  <data name="Batch_Error_MixedCase" xml:space="preserve"><value>From and To must both be lowercase or both uppercase.</value></data>
+  <data name="Batch_Error_NoAsterisk" xml:space="preserve"><value>The address must contain an asterisk (*) where the numbers or letters go.</value></data>
+  <data name="Batch_Error_TooMany" xml:space="preserve"><value>That makes more than {0:N0} addresses.</value></data>
+  <data name="Batch_FirstFile" xml:space="preserve"><value>First file:</value></data>
+  <data name="Batch_From" xml:space="preserve"><value>_From:</value></data>
+  <data name="Batch_Hint" xml:space="preserve"><value>Put an asterisk (*) where the numbers or letters go, e.g. http://www.site.com/images/img*.jpg</value></data>
+  <data name="Batch_Increase" xml:space="preserve"><value>Increase</value></data>
+  <data name="Batch_LastFile" xml:space="preserve"><value>Last file:</value></data>
+  <data name="Batch_Letters" xml:space="preserve"><value>_Letters</value></data>
+  <data name="Batch_Login" xml:space="preserve"><value>Lo_gin:</value></data>
+  <data name="Batch_NoClipboardLinks" xml:space="preserve"><value>The clipboard has no http, https or ftp addresses.</value></data>
+  <data name="Batch_Numbers" xml:space="preserve"><value>_Numbers</value></data>
+  <data name="Batch_Password" xml:space="preserve"><value>_Password:</value></data>
+  <data name="Batch_ReplaceWith" xml:space="preserve"><value>Replace asterisk with:</value></data>
+  <data name="Batch_Title" xml:space="preserve"><value>Add batch download</value></data>
+  <data name="Batch_To" xml:space="preserve"><value>_To:</value></data>
+  <data name="Batch_UseAuth" xml:space="preserve"><value>Use a_uthorization</value></data>
+  <data name="Batch_WildcardSize" xml:space="preserve"><value>_Wildcard size:</value></data>
   <data name="Category_Compressed" xml:space="preserve"><value>Compressed</value></data>
   <data name="Category_Documents" xml:space="preserve"><value>Documents</value></data>
   <data name="Category_General" xml:space="preserve"><value>General</value></data>
@@ -42,6 +68,7 @@
   <data name="Cmd_AddCategory" xml:space="preserve"><value>_Add category...</value></data>
   <data name="Cmd_AddNewDownload" xml:space="preserve"><value>_Add new download...</value></data>
   <data name="Cmd_CheckUpdates" xml:space="preserve"><value>Check for _updates...</value></data>
+  <data name="Cmd_CommandLineHelp" xml:space="preserve"><value>Co_mmand line switches</value></data>
   <data name="Cmd_CopyAddress" xml:space="preserve"><value>_Copy address</value></data>
   <data name="Cmd_CreateQueue" xml:space="preserve"><value>_Create new queue...</value></data>
   <data name="Cmd_CustomizeToolbar" xml:space="preserve"><value>_Customize...</value></data>
@@ -174,6 +201,12 @@ What do you want to do?</value></data>
   <data name="Error_QueueExists" xml:space="preserve"><value>A queue with this name already exists.</value></data>
   <data name="Error_QueueNameChars" xml:space="preserve"><value>Queue names can't contain quotation marks.</value></data>
   <data name="Error_QueueNameLength" xml:space="preserve"><value>Queue names can be at most {0} characters long.</value></data>
+  <data name="Export_Done" xml:space="preserve"><value>{0:N0} downloads were exported to {1}.</value></data>
+  <data name="Export_Ef2Filter" xml:space="preserve"><value>EF2 download lists (*.ef2)|*.ef2|All files (*.*)|*.*</value></data>
+  <data name="Export_Failed" xml:space="preserve"><value>The file could not be written: {0}</value></data>
+  <data name="Export_Nothing" xml:space="preserve"><value>There are no downloads to export.</value></data>
+  <data name="Export_TextFilter" xml:space="preserve"><value>Text files (*.txt)|*.txt|All files (*.*)|*.*</value></data>
+  <data name="Export_Title" xml:space="preserve"><value>Export downloads</value></data>
   <data name="FileInfo_AddCategory" xml:space="preserve"><value>Add a category</value></data>
   <data name="FileInfo_Category" xml:space="preserve"><value>_Category:</value></data>
   <data name="FileInfo_ChooseQueue" xml:space="preserve"><value>Choose the queue</value></data>
@@ -196,6 +229,10 @@ What do you want to do?</value></data>
   <data name="Find_Next" xml:space="preserve"><value>_Find next</value></data>
   <data name="Find_NotFound" xml:space="preserve"><value>Cannot find "{0}".</value></data>
   <data name="Find_Title" xml:space="preserve"><value>Find</value></data>
+  <data name="Import_Failed" xml:space="preserve"><value>The file could not be read: {0}</value></data>
+  <data name="Import_NothingFound" xml:space="preserve"><value>No download addresses were found in {0}.</value></data>
+  <data name="Import_Skipped" xml:space="preserve"><value>{0:N0} entries could not be read and were skipped.</value></data>
+  <data name="Import_Title" xml:space="preserve"><value>Import downloads</value></data>
   <data name="Key_Alt" xml:space="preserve"><value>Alt</value></data>
   <data name="Key_AltShift" xml:space="preserve"><value>Alt+Shift</value></data>
   <data name="Key_Ctrl" xml:space="preserve"><value>Ctrl</value></data>

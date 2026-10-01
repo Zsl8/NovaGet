@@ -10,13 +10,35 @@ using NovaGet.Core.Services;
 
 namespace NovaGet.App.ViewModels;
 
+/// <summary>A link to offer, with what is known about it (a description, or an imported list's details).</summary>
+public sealed record LinkEntry(Uri Url, string? Description = null)
+{
+    /// <summary>File name to save as (EF2 import); null = from the address.</summary>
+    public string? FileName { get; init; }
+
+    public string? Referrer { get; init; }
+
+    public string? Cookies { get; init; }
+
+    public string? UserAgent { get; init; }
+}
+
 /// <summary>A link offered in the "Download all links" dialog.</summary>
 public sealed partial class LinkItemViewModel : ObservableObject
 {
     public LinkItemViewModel(Uri url, string? description)
+        : this(new LinkEntry(url, description))
     {
+    }
+
+    public LinkItemViewModel(LinkEntry entry)
+    {
+        ArgumentNullException.ThrowIfNull(entry);
+        Entry = entry;
+        var url = entry.Url;
+        var description = entry.Description;
         Url = url;
-        var name = Uri.UnescapeDataString(url.AbsolutePath.Split('/')[^1]);
+        var name = string.IsNullOrWhiteSpace(entry.FileName) ? Uri.UnescapeDataString(url.AbsolutePath.Split('/')[^1]) : entry.FileName;
         if (string.IsNullOrWhiteSpace(name))
         {
             // A folder or site address: show the host, which has no file type.
@@ -31,6 +53,8 @@ public sealed partial class LinkItemViewModel : ObservableObject
         }
         Description = description ?? string.Empty;
     }
+
+    public LinkEntry Entry { get; }
 
     public Uri Url { get; }
 
@@ -65,10 +89,13 @@ public sealed record LinksRequest
 {
     public required string Title { get; init; }
 
-    public required IReadOnlyList<(Uri Url, string? Description)> Links { get; init; }
+    public required IReadOnlyList<LinkEntry> Links { get; init; }
 
     /// <summary>Extensions selected at first (Options → File Types).</summary>
     public IReadOnlyList<string> PreferredExtensions { get; init; } = [];
+
+    /// <summary>Start with every link checked (batch downloads, imports, pasted lists).</summary>
+    public bool CheckAll { get; init; }
 
     public required IReadOnlyList<ChoiceItem> Categories { get; init; }
 
@@ -89,9 +116,9 @@ public sealed partial class LinksViewModel : ObservableObject
     {
         ArgumentNullException.ThrowIfNull(request);
         Request = request;
-        foreach (var (url, description) in request.Links)
+        foreach (var entry in request.Links)
         {
-            var item = new LinkItemViewModel(url, description);
+            var item = new LinkItemViewModel(entry);
             item.PropertyChanged += OnItemChanged;
             Items.Add(item);
         }
@@ -99,7 +126,7 @@ public sealed partial class LinksViewModel : ObservableObject
         var preferred = request.PreferredExtensions;
         foreach (var group in Items.GroupBy(i => i.Extension).OrderBy(g => g.Key.Length == 0).ThenBy(g => g.Key, StringComparer.Ordinal))
         {
-            var selected = group.Key.Length > 0 && preferred.Any(p => CategoryMatcher.ExtensionMatches(p, group.Key));
+            var selected = request.CheckAll || (group.Key.Length > 0 && preferred.Any(p => CategoryMatcher.ExtensionMatches(p, group.Key)));
             var filter = new ExtensionFilterViewModel(group.Key, group.Count(), selected);
             filter.PropertyChanged += OnFilterChanged;
             Extensions.Add(filter);
@@ -210,4 +237,20 @@ public sealed partial class LinksViewModel : ObservableObject
 
     private void UpdateCount() =>
         SelectionText = Localizer.Format("Links_Selected", Items.Count(i => i.IsChecked), Items.Count);
+}
+
+/// <summary>How the links reached the dialog: the browser request they came with, a login for all of them, …</summary>
+public sealed record LinksOptions
+{
+    public NovaGet.Core.Integration.BrowserRequestInfo? Request { get; init; }
+
+    /// <summary>The page the links are on (its cookies go only to links on the same site).</summary>
+    public Uri? PageUrl { get; init; }
+
+    public bool CheckAll { get; init; }
+
+    /// <summary>"Use authorization" in Add batch download.</summary>
+    public string? AuthUser { get; init; }
+
+    public string? AuthPassword { get; init; }
 }

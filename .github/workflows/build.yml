@@ -36,6 +36,9 @@ jobs:
 
       - name: Build, test and package
         shell: pwsh
+        env:
+          # Read-only token: lets build.ps1 list the ffmpeg builds without hitting the anonymous API limit.
+          GITHUB_TOKEN: ${{ github.token }}
         run: ./build.ps1
 
       - name: Upload installer

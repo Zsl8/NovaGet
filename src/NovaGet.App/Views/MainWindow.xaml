@@ -154,6 +154,7 @@
       <MenuItem Header="{l:Loc Menu_Help}">
         <MenuItem Header="{l:Loc Cmd_HelpContents}" InputGestureText="F1" Command="{Binding HelpContentsCommand}" />
         <MenuItem Header="{l:Loc Cmd_Faq}" Command="{Binding FaqCommand}" />
+        <MenuItem Header="{l:Loc Cmd_CommandLineHelp}" Command="{Binding CommandLineHelpCommand}" />
         <MenuItem Header="{l:Loc Cmd_CheckUpdates}" Command="{Binding CheckUpdatesCommand}" />
         <Separator />
         <MenuItem Header="{l:Loc Cmd_About}" Command="{Binding AboutCommand}" />

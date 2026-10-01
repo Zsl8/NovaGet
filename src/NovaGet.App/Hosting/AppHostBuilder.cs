@@ -21,7 +21,8 @@ namespace NovaGet.App.Hosting;
 /// <summary>Composition root: every service the app uses is registered here.</summary>
 internal static class AppHostBuilder
 {
-    public static Microsoft.Extensions.Hosting.IHost Build(AppPaths paths, CommandLineOptions startupOptions)
+    /// <param name="overrides">Tests only: replaces services after the defaults are registered.</param>
+    public static Microsoft.Extensions.Hosting.IHost Build(AppPaths paths, CommandLineOptions startupOptions, Action<IServiceCollection>? overrides = null)
     {
         var builder = Host.CreateApplicationBuilder(new HostApplicationBuilderSettings
         {
@@ -155,6 +156,7 @@ internal static class AppHostBuilder
         builder.Services.AddSingleton<MainViewModel>();
         builder.Services.AddSingleton<MainWindow>();
         builder.Services.AddSingleton(sp => new Lazy<MainWindow>(sp.GetRequiredService<MainWindow>));
+        overrides?.Invoke(builder.Services);
 
         return builder.Build();
     }

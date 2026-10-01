@@ -12,11 +12,11 @@ public sealed class AppHost : IDisposable
 {
     private readonly string _root = Path.Combine(Path.GetTempPath(), "novaget-ui-tests", Guid.NewGuid().ToString("N"));
 
-    public AppHost()
+    public AppHost(Action<IServiceCollection>? overrides = null)
     {
         Paths = AppPaths.ForRoot(_root);
         Paths.EnsureCreated();
-        Host = AppHostBuilder.Build(Paths, new CommandLineOptions());
+        Host = AppHostBuilder.Build(Paths, new CommandLineOptions(), overrides);
         Host.Services.GetRequiredService<DatabaseMigrator>().Migrate();
     }
 

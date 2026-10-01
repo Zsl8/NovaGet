@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NovaGet command line</title>
+<style>
+  :root { --bg: #ffffff; --fg: #1f2328; --muted: #57606a; --accent: #1f7a8c; --card: #f6f8fa; --border: #d0d7de; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #0d1117; --fg: #e6edf3; --muted: #9da7b3; --accent: #4cc2d4; --card: #161b22; --border: #30363d; }
+  }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.55 "Segoe UI", system-ui, sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 32px 16px 48px; }
+  h1 { font-size: 26px; margin: 0 0 4px; }
+  h2 { font-size: 19px; margin: 32px 0 8px; }
+  p.lead { color: var(--muted); margin-top: 0; }
+  ol { padding-left: 22px; }
+  li { margin: 6px 0; }
+  code { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; font-size: 13px; word-break: break-all; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; margin: 12px 0; }
+  .note { color: var(--muted); font-size: 13px; }
+  table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+  th, td { text-align: left; vertical-align: top; padding: 6px 10px; border-bottom: 1px solid var(--border); }
+  th { background: var(--card); }
+  pre { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; overflow-x: auto; }
+  pre code { border: 0; padding: 0; background: none; }
+</style>
+</head>
+<body>
+<main>
+  <h1>NovaGet command line</h1>
+  <p class="lead">NovaGet accepts the same switches as other popular Windows download managers, so existing scripts keep working.</p>
+
+  <pre><code>NovaGet.exe [/d URL] [/s] [/p local_path] [/f local_file_name] [/q] [/h] [/n] [/a] [/tray]
+            [/startqueue "name"] [/stopqueue "name"]</code></pre>
+
+  <table>
+    <tr><th>Switch</th><th>Meaning</th></tr>
+    <tr><td><code>/d URL</code></td><td>Download the address. <code>http</code>, <code>https</code>, <code>ftp</code>, <code>ftps</code> and <code>novaget://</code> links are accepted; <code>.m3u8</code> and <code>.mpd</code> addresses are downloaded as video streams.</td></tr>
+    <tr><td><code>/p local_path</code></td><td>Folder to save the file in.</td></tr>
+    <tr><td><code>/f local_file_name</code></td><td>File name to save as.</td></tr>
+    <tr><td><code>/n</code></td><td>Silent: no questions and no dialogs. The download starts at once (with the best quality for streams).</td></tr>
+    <tr><td><code>/q</code></td><td>Exit NovaGet after this download finishes successfully.</td></tr>
+    <tr><td><code>/h</code></td><td>Hang up the dial-up/VPN connection after this download finishes successfully.</td></tr>
+    <tr><td><code>/a</code></td><td>Add the download to the main queue without starting it.</td></tr>
+    <tr><td><code>/s</code></td><td>Start the main download queue.</td></tr>
+    <tr><td><code>/tray</code></td><td>Start hidden in the notification area.</td></tr>
+    <tr><td><code>/startqueue "name"</code></td><td>Start the named queue.</td></tr>
+    <tr><td><code>/stopqueue "name"</code></td><td>Stop the named queue.</td></tr>
+    <tr><td><code>/exit</code></td><td>Ask a running NovaGet to exit (used by the installer).</td></tr>
+    <tr><td><code>/cleanup</code></td><td>Remove scheduled wake tasks and other run-time registrations, then exit (used by the uninstaller).</td></tr>
+  </table>
+
+  <p>Switches are case-insensitive and may start with <code>/</code>, <code>-</code> or <code>--</code>.</p>
+  <p>If NovaGet is already running, the new process forwards its arguments to the running instance over the
+    <code>\\.\pipe\NovaGet.Main</code> named pipe and exits.</p>
+
+  <h2>Examples</h2>
+  <pre><code>NovaGet.exe /d "https://example.com/file.zip" /p "D:\Downloads" /f "renamed.zip" /n
+NovaGet.exe /d "https://example.com/big.iso" /a
+NovaGet.exe /d "https://example.com/setup.exe" /n /q
+NovaGet.exe /s
+NovaGet.exe /startqueue "Night downloads"</code></pre>
+</main>
+</body>
+</html>

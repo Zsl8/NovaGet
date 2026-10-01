@@ -39,6 +39,11 @@ public sealed partial class LocalizationKeyTests
             used.Add("Category_" + name); // built-in category titles are looked up by name
         }
 
+        foreach (var error in Enum.GetNames<NovaGet.Core.ImportExport.BatchError>())
+        {
+            used.Add("Batch_Error_" + error); // batch errors are looked up by name
+        }
+
         Assert.NotEmpty(used);
         var missing = used.Where(k => !keys.Contains(k)).OrderBy(k => k).ToList();
         Assert.True(missing.Count == 0, "Missing string keys: " + string.Join(", ", missing));

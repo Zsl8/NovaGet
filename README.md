@@ -92,7 +92,7 @@ Files on disk: settings and the database live in `%APPDATA%\NovaGet`, temp files
 | 8 | FTP/FTPS, proxies, logins, quotas, dial-up | Done |
 | 9 | Browser integration | Done |
 | 10 | Video and streams | Done |
-| 11 | Batch, import/export, command line | Planned |
+| 11 | Batch, import/export, command line | Done |
 | 12 | Site grabber | Planned |
 | 13 | Polish: icons, sounds, localization, themes, accessibility | Planned |
 | 14 | Installer final | Planned |
