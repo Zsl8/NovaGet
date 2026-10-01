@@ -53,7 +53,7 @@ flowchart LR
 
     subgraph APP["NovaGet.exe (WPF)"]
         UI["Views + ViewModels<br/>(main window, dialogs, tray)"]
-        CORE["NovaGet.Core<br/>engine, queues, scheduler,<br/>settings, IPC"]
+        CORE["NovaGet.Core<br/>engine, streams, queues, scheduler,<br/>site grabber, settings, IPC"]
         DATA["NovaGet.Data<br/>SQLite repositories,<br/>migrations"]
         UI --> CORE
         CORE --> DATA
@@ -67,11 +67,11 @@ flowchart LR
 
 | Project | Role |
 |---|---|
-| `src/NovaGet.Core` | Download engine, models, settings, IPC (pipe + native messaging framing), command-line parsing. No UI; cross-platform so it can be tested anywhere. |
+| `src/NovaGet.Core` | Download engine (files over HTTP/FTP, HLS/DASH streams), queues and scheduler, site grabber (AngleSharp crawler), import/export, settings, IPC (pipe + native messaging framing), command-line parsing. No UI; cross-platform so it can be tested anywhere. |
 | `src/NovaGet.Data` | SQLite persistence (Microsoft.Data.Sqlite + Dapper), schema migrations with `schema_version`, DPAPI-protected secrets. |
 | `src/NovaGet.App` | WPF shell (`NovaGet.exe`): single instance, tray, windows and dialogs, composition root. |
 | `src/NovaGet.NativeHost` | Native messaging host: relays browser messages to the running app, starting it if needed. |
-| `browser-extension/` | Chromium and Firefox MV3 extensions. |
+| `browser-extension/` | Chromium and Firefox MV3 extensions (shared `src/`, per-browser manifests, Node and Playwright tests in `test/`). |
 | `installer/` | Inno Setup script and native-host manifest templates. |
 | `tests/` | xUnit tests (engine, data, settings, IPC), Windows-only WPF smoke tests, and a local HTTP test server. |
 
@@ -93,7 +93,7 @@ Files on disk: settings and the database live in `%APPDATA%\NovaGet`, temp files
 | 9 | Browser integration | Done |
 | 10 | Video and streams | Done |
 | 11 | Batch, import/export, command line | Done |
-| 12 | Site grabber | Planned |
+| 12 | Site grabber | Done |
 | 13 | Polish: icons, sounds, localization, themes, accessibility | Planned |
 | 14 | Installer final | Planned |
 | 15 | QA pass, v1.0.0 | Planned |

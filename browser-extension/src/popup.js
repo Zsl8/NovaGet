@@ -7,14 +7,26 @@ for (const element of document.querySelectorAll('[data-i18n]')) {
   element.textContent = api.i18n.getMessage(element.dataset.i18n);
 }
 
-async function currentHost() {
+async function currentTab() {
   const [tab] = await api.tabs.query({ active: true, currentWindow: true });
+  return tab;
+}
+
+async function currentHost() {
+  const tab = await currentTab();
   try {
     const url = new URL(tab && tab.url);
     return /^(https?|ftps?):$/.test(url.protocol) ? url.hostname : null;
   } catch {
     return null;
   }
+}
+
+/** NovaGet asked for this site's login (Site Grabber → "Log in via browser…"). */
+function loginWanted(settings, host) {
+  const wanted = (settings && Array.isArray(settings.loginRequests)) ? settings.loginRequests : [];
+  const bare = (h) => String(h || '').toLowerCase().replace(/^www\./, '');
+  return Boolean(host) && wanted.some((w) => bare(w) === bare(host) || bare(host).endsWith(`.${bare(w)}`));
 }
 
 async function init() {
@@ -41,6 +53,17 @@ async function init() {
   const status = $('status');
   status.textContent = api.i18n.getMessage('popupChecking');
   const reply = await api.runtime.sendMessage({ kind: 'status' });
+  if (reply && reply.connected && loginWanted(reply.settings, host)) {
+    const button = $('sendLogin');
+    button.hidden = false;
+    button.addEventListener('click', async () => {
+      const tab = await currentTab();
+      const sent = await api.runtime.sendMessage({ kind: 'sendLogin', url: tab && tab.url });
+      button.disabled = true;
+      button.textContent = api.i18n.getMessage(sent && sent.ok ? 'popupLoginSent' : 'popupLoginFailed');
+    });
+  }
+
   if (reply && reply.connected) {
     status.className = 'status ok';
     status.textContent = reply.settings && !reply.settings.enabled

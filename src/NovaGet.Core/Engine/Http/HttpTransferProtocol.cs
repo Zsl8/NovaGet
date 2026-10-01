@@ -132,6 +132,8 @@ public sealed class HttpTransferProtocol(
                 FinalUri = finalUri,
                 ETag = response.Headers.ETag?.ToString(),
                 LastModified = response.Content.Headers.LastModified,
+                ContentType = response.Content.Headers.ContentType?.ToString(),
+                ContentDisposition = response.Content.Headers.ContentDisposition?.ToString(),
             };
         }
         catch

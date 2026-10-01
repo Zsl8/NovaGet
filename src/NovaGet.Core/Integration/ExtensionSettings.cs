@@ -48,6 +48,9 @@ public sealed record ExtensionSettings
     /// <summary>Changes whenever any of the above changes, so the extension can tell a refresh apart cheaply.</summary>
     public string Revision { get; init; } = string.Empty;
 
+    /// <summary>Sites whose login NovaGet is waiting for (the popup then offers "Send this site's login to NovaGet").</summary>
+    public IReadOnlyList<string> LoginRequests { get; init; } = [];
+
     public static ExtensionSettings From(AppSettings settings, string? browser)
     {
         ArgumentNullException.ThrowIfNull(settings);

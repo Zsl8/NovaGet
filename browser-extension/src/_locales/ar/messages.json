@@ -22,5 +22,8 @@
   "panelStreamDash": {"message": "فيديو متدفق (DASH) — اختر الجودة في NovaGet"},
   "panelAudio": {"message": "صوت"},
   "panelSent": {"message": "أُرسل إلى NovaGet"},
-  "panelFailed": {"message": "تعذّر الوصول إلى NovaGet"}
+  "panelFailed": {"message": "تعذّر الوصول إلى NovaGet"},
+  "popupSendLogin": {"message": "إرسال تسجيل الدخول لهذا الموقع إلى NovaGet"},
+  "popupLoginSent": {"message": "أُرسل تسجيل الدخول إلى NovaGet"},
+  "popupLoginFailed": {"message": "لا يوجد تسجيل دخول لإرساله لهذا الموقع"}
 }

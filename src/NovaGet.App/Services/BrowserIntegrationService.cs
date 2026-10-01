@@ -17,6 +17,7 @@ internal sealed class BrowserIntegrationService(
     ISettingsService settings,
     Lazy<IAppController> controller,
     DownloadUiService downloadUi,
+    BrowserLoginService logins,
     ILogger<BrowserIntegrationService> logger)
 {
     public const string Disabled = "disabled";
@@ -37,7 +38,7 @@ internal sealed class BrowserIntegrationService(
             return IpcResponse.Failure(error ?? "Invalid message.");
         }
 
-        var current = ExtensionSettings.From(settings.Current, browser);
+        var current = ExtensionSettings.From(settings.Current, browser) with { LoginRequests = logins.PendingHosts };
         switch (message)
         {
             case BrowserSimpleMessage { Type: BrowserMessageTypes.Hello or BrowserMessageTypes.GetSettings }:
@@ -50,6 +51,9 @@ internal sealed class BrowserIntegrationService(
             case BrowserSimpleMessage { Type: BrowserMessageTypes.OpenOptions }:
                 OnUi(() => controller.Value.ShowOptions("General"));
                 return IpcResponse.Success();
+            case BrowserCookies cookies:
+                // Only a site NovaGet asked for (Site Grabber → Log in via browser…); never stored otherwise.
+                return logins.Deliver(cookies.Url, cookies.Cookies) ? IpcResponse.Success() : IpcResponse.Failure("No login was requested for this site.");
         }
 
         if (!current.Enabled)

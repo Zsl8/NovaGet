@@ -22,5 +22,8 @@
   "panelStreamDash": {"message": "Streaming video (DASH) — choose the quality in NovaGet"},
   "panelAudio": {"message": "Audio"},
   "panelSent": {"message": "Sent to NovaGet"},
-  "panelFailed": {"message": "NovaGet isn't reachable"}
+  "panelFailed": {"message": "NovaGet isn't reachable"},
+  "popupSendLogin": {"message": "Send this site's login to NovaGet"},
+  "popupLoginSent": {"message": "Login sent to NovaGet"},
+  "popupLoginFailed": {"message": "No login to send for this site"}
 }

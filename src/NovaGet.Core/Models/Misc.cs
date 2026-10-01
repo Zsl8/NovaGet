@@ -61,4 +61,17 @@ public sealed class GrabberResult
     public GrabberResultStatus Status { get; set; }
 
     public string? LocalPath { get; set; }
+
+    /// <summary>The page the file was found on.</summary>
+    public string? PageUrl { get; set; }
+
+    /// <summary>The download made from it, if any.</summary>
+    public long? DownloadId { get; set; }
+
+    /// <summary>Validators of the downloaded copy, for "only new or changed files" on the next run.</summary>
+    public string? ETag { get; set; }
+
+    public DateTime? LastModified { get; set; }
+
+    public DateTime? FoundAt { get; set; }
 }

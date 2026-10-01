@@ -97,3 +97,31 @@ public interface IServerExceptionRepository
 
     void Delete(long id);
 }
+
+/// <summary>Site grabber projects and the files they found.</summary>
+public interface IGrabberRepository
+{
+    IReadOnlyList<GrabberProject> GetProjects();
+
+    GrabberProject? GetProject(long id);
+
+    long InsertProject(GrabberProject project);
+
+    void UpdateProject(GrabberProject project);
+
+    /// <summary>Deletes the project and its results (its downloads stay).</summary>
+    void DeleteProject(long id);
+
+    IReadOnlyList<GrabberResult> GetResults(long projectId);
+
+    GrabberResult? FindResult(long projectId, string url);
+
+    /// <summary>Inserts or updates by (project, url); returns the id.</summary>
+    long SaveResult(GrabberResult result);
+
+    /// <summary>A grabbed file's download finished: remember it and its validators.</summary>
+    void MarkDownloaded(long downloadId, long size, string? etag, DateTime? lastModified, string? localPath);
+
+    /// <summary>Downloads made by a project (for its node in the categories tree).</summary>
+    IReadOnlyList<long> GetDownloadIds(long projectId);
+}

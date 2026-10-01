@@ -494,6 +494,15 @@ public partial class MainWindow : Window
             case TreeNodeKind.Queues:
                 Add("Cmd_CreateQueue", _vm.CreateQueueCommand);
                 break;
+            case TreeNodeKind.GrabberProjects:
+                Add("Cmd_RunGrabber", _vm.GrabberCommand);
+                break;
+            case TreeNodeKind.GrabberProject:
+                Add("Cmd_GrabberRunAgain", _vm.RunGrabberProjectCommand);
+                Add("Cmd_GrabberEdit", _vm.EditGrabberProjectCommand);
+                menu.Items.Add(new Separator());
+                Add("Cmd_GrabberDelete", _vm.DeleteGrabberProjectCommand);
+                break;
             case TreeNodeKind.Queue:
                 Add("Cmd_QueueStart", _vm.QueueStartCommand);
                 Add("Cmd_QueueStop", _vm.QueueStopCommand);

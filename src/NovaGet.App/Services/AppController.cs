@@ -35,6 +35,8 @@ internal sealed class AppController(
     IDownloadService downloads,
     IDialogService dialogs,
     AppPaths paths,
+    GrabberUiService grabber,
+    NovaGet.Core.Grabber.GrabberDownloadTracker grabberTracker,
     ILogger<AppController> logger) : IAppController
 {
     private SchedulerWindow? _scheduler;
@@ -46,6 +48,7 @@ internal sealed class AppController(
 
     public void Initialize(bool showMainWindow)
     {
+        _ = grabberTracker; // records grabbed files' finished downloads from now on
         tray.Initialize(this);
         downloadUi.Initialize();
         sounds.Initialize();
@@ -201,7 +204,30 @@ internal sealed class AppController(
         _scheduler.Show();
     });
 
-    public void ShowGrabber(long? projectId = null) => NotAvailable();
+    public void ShowGrabber(long? projectId = null) => OnUiThread(() =>
+    {
+        if (projectId is { } id)
+        {
+            grabber.Run(id);
+        }
+        else
+        {
+            grabber.ShowNew();
+        }
+    });
+
+    public void EditGrabberProject(long projectId) => OnUiThread(() => grabber.Edit(projectId));
+
+    public void DeleteGrabberProject(long projectId) => OnUiThread(() => grabber.Delete(projectId));
+
+    public void ShowGrabberProjects() => OnUiThread(() =>
+    {
+        ShowMainWindow();
+        if (mainWindow.Value.DataContext is MainViewModel main)
+        {
+            main.SelectGrabberProjects();
+        }
+    });
 
     public void ShowImport(bool ef2) => OnUiThread(() => downloadUi.Import(ef2));
 

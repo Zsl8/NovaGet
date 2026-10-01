@@ -17,6 +17,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IQueueRepository, QueueRepository>();
         services.AddSingleton<ISiteLoginRepository, SiteLoginRepository>();
         services.AddSingleton<IServerExceptionRepository, ServerExceptionRepository>();
+        services.AddSingleton<IGrabberRepository, GrabberRepository>();
         return services;
     }
 }

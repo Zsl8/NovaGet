@@ -28,7 +28,15 @@ public interface IAppController
 
     void ShowScheduler(long? queueId = null);
 
+    /// <summary>Run site grabber (a new project), or run a saved project again.</summary>
     void ShowGrabber(long? projectId = null);
+
+    void EditGrabberProject(long projectId);
+
+    void DeleteGrabberProject(long projectId);
+
+    /// <summary>Tasks → Grabber projects…: the projects in the categories tree.</summary>
+    void ShowGrabberProjects();
 
     void ShowImport(bool ef2);
 

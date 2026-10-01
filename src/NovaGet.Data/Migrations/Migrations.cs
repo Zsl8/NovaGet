@@ -8,9 +8,19 @@ public static class SchemaMigrations
         new(1, "Initial schema", V1InitialSchema),
         new(2, "Overwrite flag", V2OverwriteFlag),
         new(3, "Ignore certificate errors", V3IgnoreCertificateErrors),
+        new(4, "Grabber result details", V4GrabberResultDetails),
     ];
 
     public static int LatestVersion => All[^1].Version;
+
+    private const string V4GrabberResultDetails = """
+        ALTER TABLE GrabberResult ADD COLUMN pageUrl TEXT NULL;
+        ALTER TABLE GrabberResult ADD COLUMN downloadId INTEGER NULL;
+        ALTER TABLE GrabberResult ADD COLUMN etag TEXT NULL;
+        ALTER TABLE GrabberResult ADD COLUMN lastModified TEXT NULL;
+        ALTER TABLE GrabberResult ADD COLUMN foundAt TEXT NULL;
+        CREATE INDEX IX_GrabberResult_Download ON GrabberResult(downloadId);
+        """;
 
     private const string V3IgnoreCertificateErrors = """
         ALTER TABLE Download ADD COLUMN ignoreCertificateErrors INTEGER NOT NULL DEFAULT 0;

@@ -65,6 +65,9 @@ public sealed partial class TreeNodeViewModel : ObservableObject
     /// <summary>This category and every sub-category below it.</summary>
     public HashSet<long> CategoryIds { get; } = [];
 
+    /// <summary>Grabber nodes: the downloads the project(s) made.</summary>
+    public HashSet<long> DownloadIds { get; } = [];
+
     public TreeNodeViewModel? Parent { get; set; }
 
     public ObservableCollection<TreeNodeViewModel> Children { get; } = [];
@@ -84,7 +87,7 @@ public sealed partial class TreeNodeViewModel : ObservableObject
                 return item.QueueId == QueueId;
             case TreeNodeKind.GrabberProjects:
             case TreeNodeKind.GrabberProject:
-                return false;
+                return DownloadIds.Contains(item.Id);
         }
 
         if (Scope == ListScope.Unfinished && item.IsCompleted)

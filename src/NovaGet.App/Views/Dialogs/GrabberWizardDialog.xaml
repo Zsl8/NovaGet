@@ -1,0 +1,142 @@
+<v:DialogWindow x:Class="NovaGet.App.Views.Dialogs.GrabberWizardDialog"
+                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:v="clr-namespace:NovaGet.App.Views"
+                xmlns:l="clr-namespace:NovaGet.App.Localization"
+                xmlns:c="clr-namespace:NovaGet.App.Converters"
+                Title="{l:Loc Grabber_WizardTitle}">
+  <v:DialogWindow.Resources>
+    <BooleanToVisibilityConverter x:Key="Visible" />
+    <c:StepVisibilityConverter x:Key="StepVisible" />
+    <Style TargetType="CheckBox">
+      <Setter Property="Margin" Value="0,4,0,0" />
+    </Style>
+    <Style TargetType="TextBlock" x:Key="Note">
+      <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
+      <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+  </v:DialogWindow.Resources>
+  <DockPanel Width="560" Margin="14">
+    <TextBlock DockPanel.Dock="Top" Text="{Binding StepTitle}" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,12" />
+
+    <DockPanel DockPanel.Dock="Bottom" Margin="0,14,0,0" LastChildFill="False">
+      <Button DockPanel.Dock="Right" Content="{l:Loc Common_Cancel}" MinWidth="80" Margin="8,0,0,0" IsCancel="True" />
+      <Button DockPanel.Dock="Right" x:Name="FinishButton" Content="{l:Loc Grabber_Finish}" MinWidth="80" Margin="8,0,0,0" Click="OnFinish"
+              IsDefault="{Binding IsLastStep}" />
+      <Button DockPanel.Dock="Right" Content="{l:Loc Grabber_Next}" MinWidth="80" Margin="8,0,0,0" Click="OnNext"
+              IsEnabled="{Binding IsNotLastStep}" IsDefault="{Binding IsNotLastStep}" />
+      <Button DockPanel.Dock="Right" Content="{l:Loc Grabber_Back}" MinWidth="80" Click="OnBack" IsEnabled="{Binding CanGoBack}" />
+    </DockPanel>
+
+    <Grid MinHeight="330">
+      <!-- 1. Project template and start page -->
+      <StackPanel Visibility="{Binding Step, Converter={StaticResource StepVisible}, ConverterParameter=0}">
+        <Label Content="{l:Loc Grabber_Template}" Target="{Binding ElementName=TemplateBox}" Padding="0" />
+        <ComboBox x:Name="TemplateBox" Margin="0,4,0,0" ItemsSource="{Binding Templates}" DisplayMemberPath="Title" SelectedValuePath="Id"
+                  SelectedValue="{Binding TemplateId}" />
+        <Label Content="{l:Loc Grabber_StartUrl}" Target="{Binding ElementName=StartBox}" Padding="0" Margin="0,10,0,0" />
+        <TextBox x:Name="StartBox" Margin="0,4,0,0" Text="{Binding StartUrl, UpdateSourceTrigger=PropertyChanged}" FlowDirection="LeftToRight" />
+        <Label Content="{l:Loc Grabber_ProjectName}" Target="{Binding ElementName=NameBox}" Padding="0" Margin="0,10,0,0" />
+        <TextBox x:Name="NameBox" Margin="0,4,0,0" Text="{Binding ProjectName, UpdateSourceTrigger=PropertyChanged}" />
+        <CheckBox Content="{l:Loc Grabber_UseAuth}" IsChecked="{Binding UseAuthorization}" Margin="0,12,0,0" />
+        <StackPanel Margin="20,6,0,0" IsEnabled="{Binding UseAuthorization}">
+          <StackPanel Orientation="Horizontal">
+            <Label Content="{l:Loc Batch_Login}" Target="{Binding ElementName=UserBox}" Padding="0,0,6,0" VerticalAlignment="Center" />
+            <TextBox x:Name="UserBox" Width="150" Text="{Binding UserName, UpdateSourceTrigger=PropertyChanged}" />
+            <Label Content="{l:Loc Batch_Password}" Target="{Binding ElementName=PasswordBox}" Padding="14,0,6,0" VerticalAlignment="Center" />
+            <PasswordBox x:Name="PasswordBox" Width="150" />
+          </StackPanel>
+          <TextBlock Style="{StaticResource Note}" Text="{l:Loc Grabber_LoginHint}" Margin="0,8,0,0" />
+          <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+            <Button Content="{l:Loc Grabber_LoginViaBrowser}" Padding="10,2" Click="OnLoginViaBrowser" />
+            <TextBlock Text="{Binding LoginStatus}" Margin="10,0,0,0" VerticalAlignment="Center" TextWrapping="Wrap" MaxWidth="330" />
+          </StackPanel>
+        </StackPanel>
+      </StackPanel>
+
+      <!-- 2. Save location and categories -->
+      <StackPanel Visibility="{Binding Step, Converter={StaticResource StepVisible}, ConverterParameter=1}">
+        <Label Content="{l:Loc Grabber_SaveFolder}" Target="{Binding ElementName=FolderBox}" Padding="0" />
+        <DockPanel Margin="0,4,0,0">
+          <Button DockPanel.Dock="Right" Content="{l:Loc Common_Browse}" MinWidth="32" Margin="6,0,0,0" Click="OnBrowse" />
+          <TextBox x:Name="FolderBox" Text="{Binding SaveFolder, UpdateSourceTrigger=PropertyChanged}" />
+        </DockPanel>
+        <CheckBox Content="{l:Loc Grabber_SaveByCategory}" IsChecked="{Binding SaveByCategory}" Margin="0,12,0,0" />
+        <CheckBox Content="{l:Loc Grabber_ConvertLinks}" IsChecked="{Binding ConvertLinks}" />
+        <TextBlock Style="{StaticResource Note}" Text="{l:Loc Grabber_ConvertLinksHint}" Margin="20,4,0,0" />
+      </StackPanel>
+
+      <!-- 3. Exploration -->
+      <Grid Visibility="{Binding Step, Converter={StaticResource StepVisible}, ConverterParameter=2}">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="16" />
+          <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <StackPanel>
+          <StackPanel Orientation="Horizontal">
+            <Label Content="{l:Loc Grabber_Depth}" Target="{Binding ElementName=DepthBox}" Padding="0,0,6,0" VerticalAlignment="Center" />
+            <TextBox x:Name="DepthBox" Width="44" Text="{Binding Depth, UpdateSourceTrigger=PropertyChanged}" />
+          </StackPanel>
+          <CheckBox Content="{l:Loc Grabber_StayOnSite}" IsChecked="{Binding StayOnSite}" Margin="0,10,0,0" />
+          <CheckBox Content="{l:Loc Grabber_Subdomains}" IsChecked="{Binding ExploreSubdomains}" Margin="20,4,0,0" IsEnabled="{Binding StayOnSite}" />
+          <StackPanel Orientation="Horizontal" Margin="20,4,0,0" IsEnabled="{Binding StayOnSite}">
+            <CheckBox Content="{l:Loc Grabber_FollowExternal}" IsChecked="{Binding FollowExternalLinks}" VerticalAlignment="Center" Margin="0" />
+            <TextBox Width="36" Margin="6,0,0,0" Text="{Binding ExternalDepth, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding FollowExternalLinks}"
+                     AutomationProperties.Name="{l:Loc Grabber_FollowExternal}" />
+          </StackPanel>
+          <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+            <Label Content="{l:Loc Grabber_MaxPages}" Target="{Binding ElementName=PagesBox}" Padding="0,0,6,0" VerticalAlignment="Center" />
+            <TextBox x:Name="PagesBox" Width="64" Text="{Binding MaxPages, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock Style="{StaticResource Note}" Text="{l:Loc Grabber_Unlimited}" Margin="6,0,0,0" VerticalAlignment="Center" />
+          </StackPanel>
+          <CheckBox Content="{l:Loc Grabber_ObeyRobots}" IsChecked="{Binding ObeyRobots}" Margin="0,10,0,0" />
+          <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+            <Label Content="{l:Loc Grabber_Delay}" Target="{Binding ElementName=DelayBox}" Padding="0,0,6,0" VerticalAlignment="Center" />
+            <TextBox x:Name="DelayBox" Width="64" Text="{Binding DelayMs, UpdateSourceTrigger=PropertyChanged}" />
+          </StackPanel>
+          <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+            <Label Content="{l:Loc Grabber_Parallel}" Target="{Binding ElementName=ParallelBox}" Padding="0,0,6,0" VerticalAlignment="Center" />
+            <TextBox x:Name="ParallelBox" Width="44" Text="{Binding MaxParallel, UpdateSourceTrigger=PropertyChanged}" />
+          </StackPanel>
+        </StackPanel>
+        <StackPanel Grid.Column="2">
+          <Label Content="{l:Loc Grabber_Include}" Target="{Binding ElementName=IncludeBox}" Padding="0" />
+          <TextBox x:Name="IncludeBox" Height="90" Margin="0,4,0,0" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" FlowDirection="LeftToRight"
+                   Text="{Binding IncludeFilters, UpdateSourceTrigger=PropertyChanged}" />
+          <Label Content="{l:Loc Grabber_Exclude}" Target="{Binding ElementName=ExcludeBox}" Padding="0" Margin="0,10,0,0" />
+          <TextBox x:Name="ExcludeBox" Height="90" Margin="0,4,0,0" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" FlowDirection="LeftToRight"
+                   Text="{Binding ExcludeFilters, UpdateSourceTrigger=PropertyChanged}" />
+          <TextBlock Style="{StaticResource Note}" Text="{l:Loc Grabber_FilterHint}" Margin="0,4,0,0" />
+        </StackPanel>
+      </Grid>
+
+      <!-- 4. Files to download -->
+      <StackPanel Visibility="{Binding Step, Converter={StaticResource StepVisible}, ConverterParameter=3}">
+        <TextBlock Text="{l:Loc Grabber_FileTypes}" />
+        <ItemsControl ItemsSource="{Binding FileTypes}" Margin="0,4,0,0">
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <WrapPanel />
+            </ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <CheckBox Content="{Binding Label}" IsChecked="{Binding IsChecked}" ToolTip="{Binding Extensions}" Width="130" />
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <Label Content="{l:Loc Grabber_CustomTypes}" Target="{Binding ElementName=CustomBox}" Padding="0" Margin="0,10,0,0" />
+        <TextBox x:Name="CustomBox" Margin="0,4,0,0" Text="{Binding CustomExtensions, UpdateSourceTrigger=PropertyChanged}" FlowDirection="LeftToRight" />
+        <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
+          <Label Content="{l:Loc Grabber_MinSize}" Target="{Binding ElementName=MinBox}" Padding="0,0,6,0" VerticalAlignment="Center" />
+          <TextBox x:Name="MinBox" Width="70" Text="{Binding MinSizeKB, UpdateSourceTrigger=PropertyChanged}" />
+          <Label Content="{l:Loc Grabber_MaxSize}" Target="{Binding ElementName=MaxBox}" Padding="16,0,6,0" VerticalAlignment="Center" />
+          <TextBox x:Name="MaxBox" Width="70" Text="{Binding MaxSizeKB, UpdateSourceTrigger=PropertyChanged}" />
+          <TextBlock Style="{StaticResource Note}" Text="{l:Loc Grabber_SizeHint}" Margin="8,0,0,0" VerticalAlignment="Center" />
+        </StackPanel>
+        <CheckBox Content="{l:Loc Grabber_OnlyMatching}" IsChecked="{Binding OnlyMatching}" Margin="0,12,0,0" />
+      </StackPanel>
+    </Grid>
+  </DockPanel>
+</v:DialogWindow>

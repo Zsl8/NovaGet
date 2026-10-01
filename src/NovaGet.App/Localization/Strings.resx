@@ -84,7 +84,10 @@
   <data name="Cmd_Faq" xml:space="preserve"><value>_Frequently asked questions</value></data>
   <data name="Cmd_Find" xml:space="preserve"><value>_Find...</value></data>
   <data name="Cmd_FindNext" xml:space="preserve"><value>Find _next</value></data>
+  <data name="Cmd_GrabberDelete" xml:space="preserve"><value>_Delete project</value></data>
+  <data name="Cmd_GrabberEdit" xml:space="preserve"><value>_Edit project…</value></data>
   <data name="Cmd_GrabberProjects" xml:space="preserve"><value>Grabber _projects...</value></data>
+  <data name="Cmd_GrabberRunAgain" xml:space="preserve"><value>_Run again (new and changed files)</value></data>
   <data name="Cmd_HelpContents" xml:space="preserve"><value>_Contents</value></data>
   <data name="Cmd_HideCategories" xml:space="preserve"><value>Hide _categories</value></data>
   <data name="Cmd_HideLabels" xml:space="preserve"><value>_Hide text labels</value></data>
@@ -229,6 +232,87 @@ What do you want to do?</value></data>
   <data name="Find_Next" xml:space="preserve"><value>_Find next</value></data>
   <data name="Find_NotFound" xml:space="preserve"><value>Cannot find "{0}".</value></data>
   <data name="Find_Title" xml:space="preserve"><value>Find</value></data>
+  <data name="Grabber_AddToQueue" xml:space="preserve"><value>Add selected to _queue…</value></data>
+  <data name="Grabber_Back" xml:space="preserve"><value>&lt; _Back</value></data>
+  <data name="Grabber_ColPage" xml:space="preserve"><value>Page found on</value></data>
+  <data name="Grabber_ColSize" xml:space="preserve"><value>Size</value></data>
+  <data name="Grabber_ColStatus" xml:space="preserve"><value>Status</value></data>
+  <data name="Grabber_ColType" xml:space="preserve"><value>Type</value></data>
+  <data name="Grabber_ColUrl" xml:space="preserve"><value>URL</value></data>
+  <data name="Grabber_ConfirmDelete" xml:space="preserve"><value>Delete the grabber project "{0}"? Files it downloaded stay where they are.</value></data>
+  <data name="Grabber_ConvertLinks" xml:space="preserve"><value>_Convert links for offline browsing</value></data>
+  <data name="Grabber_ConvertLinksHint" xml:space="preserve"><value>Pages are saved too, with their links rewritten to the local copies, so the site can be browsed offline.</value></data>
+  <data name="Grabber_Counters" xml:space="preserve"><value>Pages explored: {0:N0} · Files found: {1:N0} · Downloaded: {2:N0}</value></data>
+  <data name="Grabber_CustomTypes" xml:space="preserve"><value>Other _extensions (space separated, wildcards allowed):</value></data>
+  <data name="Grabber_Delay" xml:space="preserve"><value>_Delay between requests (ms):</value></data>
+  <data name="Grabber_Depth" xml:space="preserve"><value>Exploration _depth:</value></data>
+  <data name="Grabber_Done" xml:space="preserve"><value>Exploring finished.</value></data>
+  <data name="Grabber_DownloadSelected" xml:space="preserve"><value>_Download selected</value></data>
+  <data name="Grabber_Error_Exploration" xml:space="preserve"><value>Check the exploration settings: depth 0–20, pages 0 or more, delay up to 600000 ms, 1–16 page loads at a time.</value></data>
+  <data name="Grabber_Error_FileTypes" xml:space="preserve"><value>Choose at least one file type.</value></data>
+  <data name="Grabber_Error_Name" xml:space="preserve"><value>Enter a project name.</value></data>
+  <data name="Grabber_Error_Size" xml:space="preserve"><value>The minimum size can't be larger than the maximum size.</value></data>
+  <data name="Grabber_Error_StartUrl" xml:space="preserve"><value>Enter the start page's address (http or https).</value></data>
+  <data name="Grabber_Exclude" xml:space="preserve"><value>E_xclude addresses (one wildcard per line):</value></data>
+  <data name="Grabber_Exploring" xml:space="preserve"><value>Exploring…</value></data>
+  <data name="Grabber_Failed" xml:space="preserve"><value>Exploring failed: {0}</value></data>
+  <data name="Grabber_FileTypes" xml:space="preserve"><value>Files to download:</value></data>
+  <data name="Grabber_FilterHint" xml:space="preserve"><value>For example */gallery/* or *logout*. Text without * matches anywhere in the address.</value></data>
+  <data name="Grabber_Finish" xml:space="preserve"><value>_Finish</value></data>
+  <data name="Grabber_FollowExternal" xml:space="preserve"><value>_Follow links to other sites up to depth</value></data>
+  <data name="Grabber_Include" xml:space="preserve"><value>_Include only addresses (one wildcard per line):</value></data>
+  <data name="Grabber_LoginHint" xml:space="preserve"><value>For a login form, use "Log in via browser…": log in on the page that opens, then click the NovaGet button in the browser's toolbar and choose "Send this site's login to NovaGet".</value></data>
+  <data name="Grabber_LoginReceived" xml:space="preserve"><value>Login received from the browser.</value></data>
+  <data name="Grabber_LoginViaBrowser" xml:space="preserve"><value>Log in via _browser…</value></data>
+  <data name="Grabber_LoginWaiting" xml:space="preserve"><value>Waiting for the login from the browser…</value></data>
+  <data name="Grabber_MaxPages" xml:space="preserve"><value>_Max pages:</value></data>
+  <data name="Grabber_MaxSize" xml:space="preserve"><value>Ma_x size (KB):</value></data>
+  <data name="Grabber_MinSize" xml:space="preserve"><value>Mi_n size (KB):</value></data>
+  <data name="Grabber_Next" xml:space="preserve"><value>_Next &gt;</value></data>
+  <data name="Grabber_ObeyRobots" xml:space="preserve"><value>Obey _robots.txt</value></data>
+  <data name="Grabber_OnlyMatching" xml:space="preserve"><value>Download _only files matching these types</value></data>
+  <data name="Grabber_Parallel" xml:space="preserve"><value>Max _simultaneous page loads:</value></data>
+  <data name="Grabber_Pause" xml:space="preserve"><value>_Pause</value></data>
+  <data name="Grabber_Paused" xml:space="preserve"><value>Paused.</value></data>
+  <data name="Grabber_ProjectName" xml:space="preserve"><value>Project _name:</value></data>
+  <data name="Grabber_ResultsTitle" xml:space="preserve"><value>Files found</value></data>
+  <data name="Grabber_ResultsWindowTitle" xml:space="preserve"><value>Site Grabber – {0}</value></data>
+  <data name="Grabber_Resume" xml:space="preserve"><value>_Resume</value></data>
+  <data name="Grabber_SaveByCategory" xml:space="preserve"><value>Save each file _type into its category folder</value></data>
+  <data name="Grabber_SaveFolder" xml:space="preserve"><value>_Save files to:</value></data>
+  <data name="Grabber_SizeHint" xml:space="preserve"><value>(0 = no limit)</value></data>
+  <data name="Grabber_StartUrl" xml:space="preserve"><value>_Start page:</value></data>
+  <data name="Grabber_State_Changed" xml:space="preserve"><value>Changed</value></data>
+  <data name="Grabber_State_Downloaded" xml:space="preserve"><value>Downloaded</value></data>
+  <data name="Grabber_State_New" xml:space="preserve"><value>New</value></data>
+  <data name="Grabber_State_Queued" xml:space="preserve"><value>Queued</value></data>
+  <data name="Grabber_State_Unchanged" xml:space="preserve"><value>Unchanged</value></data>
+  <data name="Grabber_StayOnSite" xml:space="preserve"><value>Stay on the start page's s_ite</value></data>
+  <data name="Grabber_Step1" xml:space="preserve"><value>Project template and start page</value></data>
+  <data name="Grabber_Step2" xml:space="preserve"><value>Save location and categories</value></data>
+  <data name="Grabber_Step3" xml:space="preserve"><value>Exploration</value></data>
+  <data name="Grabber_Step4" xml:space="preserve"><value>Files to download</value></data>
+  <data name="Grabber_StepTitle" xml:space="preserve"><value>Step {0} of {1}: {2}</value></data>
+  <data name="Grabber_StopExploring" xml:space="preserve"><value>_Stop exploring</value></data>
+  <data name="Grabber_Stopped" xml:space="preserve"><value>Exploring stopped.</value></data>
+  <data name="Grabber_Subdomains" xml:space="preserve"><value>Explore su_bdomains</value></data>
+  <data name="Grabber_Template" xml:space="preserve"><value>Project _template:</value></data>
+  <data name="Grabber_Template_Audio" xml:space="preserve"><value>All audio from a web site</value></data>
+  <data name="Grabber_Template_Custom" xml:space="preserve"><value>Custom settings</value></data>
+  <data name="Grabber_Template_FileTypes" xml:space="preserve"><value>All files of specified types</value></data>
+  <data name="Grabber_Template_Images" xml:space="preserve"><value>Download all images from a web site</value></data>
+  <data name="Grabber_Template_OfflineSite" xml:space="preserve"><value>Complete web site for offline browsing</value></data>
+  <data name="Grabber_Template_Video" xml:space="preserve"><value>All video from a web site</value></data>
+  <data name="Grabber_Type_All" xml:space="preserve"><value>All files</value></data>
+  <data name="Grabber_Type_Audio" xml:space="preserve"><value>Audio</value></data>
+  <data name="Grabber_Type_Compressed" xml:space="preserve"><value>Compressed</value></data>
+  <data name="Grabber_Type_Documents" xml:space="preserve"><value>Documents</value></data>
+  <data name="Grabber_Type_Images" xml:space="preserve"><value>Images</value></data>
+  <data name="Grabber_Type_Programs" xml:space="preserve"><value>Programs</value></data>
+  <data name="Grabber_Type_Video" xml:space="preserve"><value>Video</value></data>
+  <data name="Grabber_Unlimited" xml:space="preserve"><value>(0 = unlimited)</value></data>
+  <data name="Grabber_UseAuth" xml:space="preserve"><value>Use _authorization</value></data>
+  <data name="Grabber_WizardTitle" xml:space="preserve"><value>Site Grabber</value></data>
   <data name="Import_Failed" xml:space="preserve"><value>The file could not be read: {0}</value></data>
   <data name="Import_NothingFound" xml:space="preserve"><value>No download addresses were found in {0}.</value></data>
   <data name="Import_Skipped" xml:space="preserve"><value>{0:N0} entries could not be read and were skipped.</value></data>

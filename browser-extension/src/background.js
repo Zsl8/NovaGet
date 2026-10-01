@@ -551,6 +551,15 @@ api.runtime.onMessage.addListener((message, sender, sendResponse) => {
     case 'openOptions':
       send({ type: 'openOptions' });
       return false;
+    case 'sendLogin':
+      // Only from the popup (no tab): the user chose to hand this site's cookies to NovaGet's Site Grabber.
+      if (sender.tab || !isSupportedUrl(message.url)) return false;
+      (async () => {
+        const cookies = await cookiesFor(message.url);
+        const reply = cookies ? await send({ type: 'cookies', url: message.url, cookies }) : { ok: false };
+        sendResponse({ ok: Boolean(reply.ok) });
+      })();
+      return true;
     default:
       return false;
   }

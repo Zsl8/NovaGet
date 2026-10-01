@@ -50,6 +50,12 @@ public sealed class TransferResponse : IAsyncDisposable
 
     public DateTimeOffset? LastModified { get; init; }
 
+    /// <summary>HTTP Content-Type, when the protocol has one.</summary>
+    public string? ContentType { get; init; }
+
+    /// <summary>HTTP Content-Disposition, when sent.</summary>
+    public string? ContentDisposition { get; init; }
+
     public async ValueTask DisposeAsync()
     {
         await Body.DisposeAsync().ConfigureAwait(false);

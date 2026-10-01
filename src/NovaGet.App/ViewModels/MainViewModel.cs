@@ -57,6 +57,8 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     private string _statusLimiter = string.Empty;
 
+    private readonly IGrabberRepository _grabber;
+
     public MainViewModel(
         IDownloadService downloads,
         IDownloadEngine engine,
@@ -65,8 +67,10 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
         ISettingsService settings,
         IDialogService dialogs,
         IAppController controller,
-        AppPaths paths)
+        AppPaths paths,
+        IGrabberRepository grabber)
     {
+        _grabber = grabber;
         _downloads = downloads;
         _engine = engine;
         _categories = categories;
@@ -407,7 +411,20 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
         Tree.Add(all);
         Tree.Add(RootCategoryNode(TreeNodeKind.Unfinished, "Tree_Unfinished", "unfinished", ListScope.Unfinished, categories));
         Tree.Add(RootCategoryNode(TreeNodeKind.Finished, "Tree_Finished", "finished", ListScope.Finished, categories));
-        Tree.Add(new TreeNodeViewModel(TreeNodeKind.GrabberProjects, Localizer.Get("Tree_GrabberProjects"), "grabber-project"));
+        var grabberRoot = new TreeNodeViewModel(TreeNodeKind.GrabberProjects, Localizer.Get("Tree_GrabberProjects"), "grabber-project");
+        foreach (var project in _grabber.GetProjects())
+        {
+            var node = new TreeNodeViewModel(TreeNodeKind.GrabberProject, project.Name, "grabber-project")
+            {
+                GrabberProjectId = project.Id,
+                Parent = grabberRoot,
+            };
+            node.DownloadIds.UnionWith(_grabber.GetDownloadIds(project.Id));
+            grabberRoot.DownloadIds.UnionWith(node.DownloadIds);
+            grabberRoot.Children.Add(node);
+        }
+
+        Tree.Add(grabberRoot);
 
         var queueRoot = new TreeNodeViewModel(TreeNodeKind.Queues, Localizer.Get("Tree_Queues"), "queues") { IsExpanded = true };
         foreach (var queue in queues)
@@ -423,7 +440,8 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
         Tree.Add(queueRoot);
 
         var match = previous is null ? null : Flatten(Tree).FirstOrDefault(n =>
-            n.Kind == previous.Kind && n.CategoryId == previous.CategoryId && n.QueueId == previous.QueueId && n.Scope == previous.Scope);
+            n.Kind == previous.Kind && n.CategoryId == previous.CategoryId && n.QueueId == previous.QueueId && n.Scope == previous.Scope
+            && n.GrabberProjectId == previous.GrabberProjectId);
         var selected = match ?? all;
         selected.IsSelected = true;
         SelectedNode = selected;
@@ -800,7 +818,29 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
     private void Import(bool ef2) => _controller.ShowImport(ef2);
 
     [RelayCommand]
-    private void GrabberProjects() => _controller.ShowGrabber();
+    private void GrabberProjects() => _controller.ShowGrabberProjects();
+
+    /// <summary>Selects (and expands) the "Grabber projects" node.</summary>
+    public void SelectGrabberProjects()
+    {
+        if (Tree.FirstOrDefault(n => n.Kind == TreeNodeKind.GrabberProjects) is { } node)
+        {
+            node.IsExpanded = true;
+            node.IsSelected = true;
+            SelectedNode = node;
+        }
+    }
+
+    private static bool IsGrabberProject(TreeNodeViewModel? node) => node?.GrabberProjectId is not null;
+
+    [RelayCommand(CanExecute = nameof(IsGrabberProject))]
+    private void RunGrabberProject(TreeNodeViewModel? node) => _controller.ShowGrabber(node!.GrabberProjectId);
+
+    [RelayCommand(CanExecute = nameof(IsGrabberProject))]
+    private void EditGrabberProject(TreeNodeViewModel? node) => _controller.EditGrabberProject(node!.GrabberProjectId!.Value);
+
+    [RelayCommand(CanExecute = nameof(IsGrabberProject))]
+    private void DeleteGrabberProject(TreeNodeViewModel? node) => _controller.DeleteGrabberProject(node!.GrabberProjectId!.Value);
 
     [RelayCommand]
     private void Exit() => _controller.RequestExit();

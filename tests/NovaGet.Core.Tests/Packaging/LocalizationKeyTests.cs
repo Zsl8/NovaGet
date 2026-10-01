@@ -44,6 +44,13 @@ public sealed partial class LocalizationKeyTests
             used.Add("Batch_Error_" + error); // batch errors are looked up by name
         }
 
+        // Site Grabber texts looked up by name.
+        used.UnionWith(Enum.GetNames<NovaGet.Core.Grabber.GrabberTemplate>().Select(t => "Grabber_Template_" + t));
+        used.UnionWith(Enum.GetNames<NovaGet.Core.Grabber.GrabberItemState>().Select(t => "Grabber_State_" + t));
+        used.UnionWith(new[] { "Images", "Video", "Audio", "Documents", "Compressed", "Programs", "All" }.Select(t => "Grabber_Type_" + t));
+        used.UnionWith(Enumerable.Range(1, 4).Select(n => $"Grabber_Step{n}"));
+        used.UnionWith(["Grabber_Done", "Grabber_Stopped", "Grabber_Pause", "Grabber_Resume"]);
+
         Assert.NotEmpty(used);
         var missing = used.Where(k => !keys.Contains(k)).OrderBy(k => k).ToList();
         Assert.True(missing.Count == 0, "Missing string keys: " + string.Join(", ", missing));

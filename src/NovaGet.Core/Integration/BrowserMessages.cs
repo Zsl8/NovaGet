@@ -26,6 +26,9 @@ public static class BrowserMessageTypes
 
     /// <summary>The video panel's "Settings" item: Options → General (web player panel).</summary>
     public const string OpenOptions = "openOptions";
+
+    /// <summary>The popup's "Send this site's login to NovaGet" (Site Grabber → Log in via browser…).</summary>
+    public const string Cookies = "cookies";
 }
 
 /// <summary>A validated message from the extension.</summary>
@@ -55,6 +58,9 @@ public sealed record BrowserLink(Uri Url, string? Text, string? Kind);
 
 public sealed record BrowserLinks(Uri? PageUrl, string? PageTitle, BrowserRequestInfo Request, IReadOnlyList<BrowserLink> Links)
     : BrowserMessage(BrowserMessageTypes.Links);
+
+/// <summary>A site's cookies, sent by the user from the popup for a pending Site Grabber login.</summary>
+public sealed record BrowserCookies(Uri Url, string Cookies) : BrowserMessage(BrowserMessageTypes.Cookies);
 
 public sealed record BrowserMediaItem(Uri Url, string? Mime, string? Label, long Size, int Width, int Height, bool IsManifest);
 
@@ -102,6 +108,7 @@ public static class BrowserMessageValidator
                 BrowserMessageTypes.Download => Download(message),
                 BrowserMessageTypes.Links => Links(message),
                 BrowserMessageTypes.Media => Media(message),
+                BrowserMessageTypes.Cookies => new BrowserCookies(Url(message, "url", required: true)!, String(message, "cookies", MaxCookieLength, required: true)!),
                 _ => throw new FormatException($"Unknown message type '{type}'."),
             };
         }

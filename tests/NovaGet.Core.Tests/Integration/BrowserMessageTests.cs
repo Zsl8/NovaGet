@@ -42,10 +42,22 @@ public sealed class BrowserMessageTests
     [InlineData("""["download"]""")]
     [InlineData("""{"type":"links","links":"nope"}""")]
     [InlineData("""{"type":"media"}""")]
+    [InlineData("""{"type":"cookies","url":"https://e.com/"}""")]
+    [InlineData("""{"type":"cookies","url":"file:///C:/x","cookies":"a=b"}""")]
     public void Bad_messages_are_rejected(string json)
     {
         Assert.Null(Validate(json, out var error));
         Assert.False(string.IsNullOrEmpty(error));
+    }
+
+    [Fact]
+    public void Cookies_for_a_requested_login_are_parsed()
+    {
+        var cookies = Assert.IsType<BrowserCookies>(Validate("""{"type":"cookies","url":"https://shop.example.com/account","cookies":"sid=1; theme=dark"}""", out _));
+
+        Assert.Equal("https://shop.example.com/account", cookies.Url.AbsoluteUri);
+        Assert.Equal("sid=1; theme=dark", cookies.Cookies);
+        Assert.IsType<BrowserSimpleMessage>(Validate("""{"type":"openOptions"}""", out _));
     }
 
     [Fact]

@@ -13,6 +13,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
     <PackageReference Include="System.Security.Cryptography.ProtectedData" />
     <PackageReference Include="FluentFTP" />
+    <PackageReference Include="AngleSharp" />
   </ItemGroup>
 
   <ItemGroup>

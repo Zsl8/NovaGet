@@ -180,6 +180,19 @@ test('the list survives the background being restarted', async () => {
   assert.deepEqual(plain(reply.items.map((i) => i.url)), ['https://files.example.com/movie.mp4']);
 });
 
+test('the popup sends a site login only for an address, never from a page', async () => {
+  const fake = load();
+  const fromPopup = await new Promise((resolve) => fake.listeners.message({ kind: 'sendLogin', url: 'https://shop.example.com/' }, {}, resolve));
+  assert.equal(fromPopup.ok, true);
+  const sent = fake.sent.native.find((m) => m.type === 'cookies');
+  assert.equal(sent.url, 'https://shop.example.com/');
+  assert.equal(sent.cookies, 'sid=abc');
+
+  const fromPage = fake.listeners.message({ kind: 'sendLogin', url: 'https://shop.example.com/' }, { tab: { id: 7 } }, () => {});
+  assert.equal(fromPage, false);
+  assert.equal(fake.sent.native.filter((m) => m.type === 'cookies').length, 1);
+});
+
 (async () => {
   let failed = 0;
   for (const [name, fn] of tests) {

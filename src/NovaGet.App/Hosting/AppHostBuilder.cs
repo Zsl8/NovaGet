@@ -151,6 +151,11 @@ internal static class AppHostBuilder
         builder.Services.AddSingleton(sp => new Lazy<IAppController>(sp.GetRequiredService<IAppController>));
         builder.Services.AddSingleton<TrayIconService>();
         builder.Services.AddSingleton<BrowserIntegrationService>();
+        builder.Services.AddSingleton<BrowserLoginService>();
+        builder.Services.AddSingleton<GrabberUiService>();
+        builder.Services.AddSingleton(sp => new NovaGet.Core.Grabber.GrabberDownloadTracker(
+            sp.GetRequiredService<NovaGet.Core.Services.IDownloadService>(),
+            sp.GetRequiredService<NovaGet.Core.Abstractions.IGrabberRepository>()));
         builder.Services.AddSingleton<IIpcRequestHandler, IpcRequestRouter>();
         builder.Services.AddHostedService<IpcServerHostedService>();
         builder.Services.AddSingleton<MainViewModel>();
