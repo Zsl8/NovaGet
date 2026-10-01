@@ -42,7 +42,14 @@ internal static class AppHostBuilder
         builder.Services.AddNovaGetData(paths.DatabaseFile);
 
         // Download engine (options are re-read from settings whenever a download starts)
-        builder.Services.AddSingleton<HttpClientProvider>();
+        builder.Services.AddSingleton(sp =>
+        {
+            var settings = sp.GetRequiredService<ISettingsService>();
+            return new HttpClientProvider(
+                () => settings.Current.Proxy,
+                sp.GetRequiredService<ISecretProtector>(),
+                sp.GetService<NovaGet.Core.Network.IPacResolver>());
+        });
         builder.Services.AddSingleton<IHttpClientProvider>(sp => sp.GetRequiredService<HttpClientProvider>());
         builder.Services.AddSingleton<ITransferProtocol, HttpTransferProtocol>();
         builder.Services.AddSingleton(sp =>
@@ -71,6 +78,9 @@ internal static class AppHostBuilder
         builder.Services.AddSingleton<IDialogService, DialogService>();
         builder.Services.AddSingleton<IDialUpService, NoDialUpService>();
         builder.Services.AddSingleton<DownloadUiService>();
+        builder.Services.AddSingleton<SoundService>();
+        builder.Services.AddSingleton<OptionsService>();
+        builder.Services.AddSingleton<NovaGet.Core.Services.SettingsPackageService>();
         builder.Services.AddSingleton<IAppController, AppController>();
         builder.Services.AddSingleton(sp => new Lazy<IAppController>(sp.GetRequiredService<IAppController>));
         builder.Services.AddSingleton<TrayIconService>();

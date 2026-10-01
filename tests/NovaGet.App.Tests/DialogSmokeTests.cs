@@ -13,6 +13,7 @@ public sealed class DialogSmokeTests(WpfFixture wpf)
     [
         "About", "TellAFriend", "Find", "SpeedLimiter", "Input", "Category", "MessageCheck", "Toolbar", "Columns",
         "AddUrl", "FileInfo", "QueuePick", "Duplicate", "Complete", "Properties", "MoveRename", "PowerCountdown",
+        "ContextMenuItems", "WebPlayerPanel", "ServerException", "SiteLogin",
     ];
 
     [Theory]
@@ -49,6 +50,10 @@ public sealed class DialogSmokeTests(WpfFixture wpf)
                 "Properties" => new PropertiesDialog(SampleDownload(), new NullDownloads()),
                 "MoveRename" => new MoveRenameDialog(SampleDownload(), new NullDownloads()),
                 "PowerCountdown" => new PowerCountdownDialog(NovaGet.Core.Models.PowerAction.Sleep),
+                "ContextMenuItems" => new ContextMenuItemsDialog(new ContextMenuSettings()),
+                "WebPlayerPanel" => new WebPlayerPanelDialog(new WebPlayerPanelSettings { ExcludedSites = ["*.example.com"] }),
+                "ServerException" => new ServerExceptionDialog("files.example.com", 4),
+                "SiteLogin" => new SiteLoginDialog("*.example.com", "alice", "secret"),
                 _ => throw new ArgumentOutOfRangeException(nameof(name)),
             };
             dialog.WindowStartupLocation = WindowStartupLocation.Manual;

@@ -1,6 +1,9 @@
 using System.Collections.Concurrent;
 using System.Net;
 using System.Text;
+using NovaGet.Core.Network;
+using NovaGet.Core.Security;
+using NovaGet.Core.Settings;
 
 namespace NovaGet.Core.Engine.Http;
 
@@ -13,16 +16,35 @@ public interface IHttpClientProvider
 /// <summary>
 /// Owns the <see cref="SocketsHttpHandler"/>s. Redirects, decompression and cookies are off (the engine handles
 /// them explicitly), connections are pooled so a finished segment's keep-alive socket serves the next split,
-/// and header bytes are decoded as Latin-1 so UTF-8 file names can be recovered later.
+/// and header bytes are decoded as Latin-1 so UTF-8 file names can be recovered later. Clients are rebuilt when
+/// the proxy settings change; the old ones stay alive for requests still using them until the provider is disposed.
 /// </summary>
 public sealed class HttpClientProvider : IHttpClientProvider, IDisposable
 {
-    private readonly ConcurrentDictionary<bool, HttpClient> _clients = new();
+    private readonly ConcurrentDictionary<(bool IgnoreCertificateErrors, string Proxy), HttpClient> _clients = new();
+    private readonly Func<ProxySettings>? _proxySettings;
+    private readonly ISecretProtector? _protector;
+    private readonly IPacResolver? _pac;
+
+    /// <summary>Uses the system proxy settings.</summary>
+    public HttpClientProvider()
+    {
+    }
+
+    /// <summary>Uses Options → Proxy/Socks, re-read for every request.</summary>
+    public HttpClientProvider(Func<ProxySettings> proxySettings, ISecretProtector protector, IPacResolver? pac = null)
+    {
+        _proxySettings = proxySettings;
+        _protector = protector;
+        _pac = pac;
+    }
 
     public HttpClient GetClient(RequestContext context)
     {
         ArgumentNullException.ThrowIfNull(context);
-        return _clients.GetOrAdd(context.IgnoreCertificateErrors, CreateClient);
+        var proxy = _proxySettings?.Invoke();
+        var key = (context.IgnoreCertificateErrors, proxy is null ? string.Empty : ProxyFactory.Fingerprint(proxy));
+        return _clients.GetOrAdd(key, k => CreateClient(k.IgnoreCertificateErrors, proxy));
     }
 
     public void Dispose()
@@ -35,7 +57,7 @@ public sealed class HttpClientProvider : IHttpClientProvider, IDisposable
         _clients.Clear();
     }
 
-    private static HttpClient CreateClient(bool ignoreCertificateErrors)
+    private HttpClient CreateClient(bool ignoreCertificateErrors, ProxySettings? proxy)
     {
         var handler = new SocketsHttpHandler
         {
@@ -49,6 +71,11 @@ public sealed class HttpClientProvider : IHttpClientProvider, IDisposable
             ResponseHeaderEncodingSelector = static (_, _) => Encoding.Latin1,
             UseProxy = true,
         };
+
+        if (proxy is not null && _protector is not null)
+        {
+            ProxyFactory.Configure(handler, proxy, _protector, _pac);
+        }
 
         if (ignoreCertificateErrors)
         {

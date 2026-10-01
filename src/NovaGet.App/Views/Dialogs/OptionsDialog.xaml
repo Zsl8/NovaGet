@@ -1,0 +1,586 @@
+<v:DialogWindow x:Class="NovaGet.App.Views.Dialogs.OptionsDialog"
+                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:v="clr-namespace:NovaGet.App.Views"
+                xmlns:l="clr-namespace:NovaGet.App.Localization"
+                xmlns:c="clr-namespace:NovaGet.App.Converters"
+                Title="{l:Loc Options_Title}" SizeToContent="Manual" Width="620" Height="560" MinWidth="560" MinHeight="480"
+                ResizeMode="CanResizeWithGrip">
+  <v:DialogWindow.Resources>
+    <c:InverseBoolConverter x:Key="Not" />
+    <c:NotNullConverter x:Key="NotNull" />
+    <Style TargetType="CheckBox">
+      <Setter Property="Margin" Value="0,3" />
+    </Style>
+    <Style TargetType="RadioButton">
+      <Setter Property="Margin" Value="0,3" />
+    </Style>
+    <Style TargetType="TextBox">
+      <Setter Property="Height" Value="23" />
+      <Setter Property="VerticalContentAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="NumberBox" TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+      <Setter Property="Width" Value="64" />
+      <Setter Property="HorizontalContentAlignment" Value="Right" />
+    </Style>
+    <Style TargetType="PasswordBox">
+      <Setter Property="Height" Value="23" />
+      <Setter Property="VerticalContentAlignment" Value="Center" />
+    </Style>
+    <Style TargetType="ComboBox">
+      <Setter Property="Height" Value="23" />
+    </Style>
+    <Style TargetType="GroupBox">
+      <Setter Property="Margin" Value="0,8,0,0" />
+      <Setter Property="Padding" Value="6,4" />
+    </Style>
+    <Style x:Key="SideButton" TargetType="Button">
+      <Setter Property="MinWidth" Value="80" />
+      <Setter Property="Margin" Value="0,0,0,6" />
+      <Setter Property="Padding" Value="6,1" />
+    </Style>
+    <Style x:Key="BrowseButton" TargetType="Button">
+      <Setter Property="Width" Value="28" />
+      <Setter Property="Margin" Value="6,0,0,0" />
+      <Setter Property="Content" Value="…" />
+    </Style>
+    <Style x:Key="Page" TargetType="ScrollViewer">
+      <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
+      <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
+      <Setter Property="Padding" Value="10,8" />
+      <Setter Property="Focusable" Value="False" />
+    </Style>
+    <Style x:Key="Note" TargetType="TextBlock">
+      <Setter Property="TextWrapping" Value="Wrap" />
+      <Setter Property="Margin" Value="0,4,0,0" />
+      <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
+    </Style>
+  </v:DialogWindow.Resources>
+
+  <DockPanel Margin="10">
+    <DockPanel DockPanel.Dock="Bottom" Margin="0,10,0,0" LastChildFill="False">
+      <Button DockPanel.Dock="Left" Content="{l:Loc Common_Help}" MinWidth="80" Click="OnHelp" />
+      <Button DockPanel.Dock="Right" Content="{l:Loc Common_Cancel}" MinWidth="80" Margin="8,0,0,0" IsCancel="True" />
+      <Button DockPanel.Dock="Right" Content="{l:Loc Common_OK}" MinWidth="80" IsDefault="True" Click="OnOk" />
+    </DockPanel>
+
+    <TabControl x:Name="Tabs">
+      <!-- 9.1 General -->
+      <TabItem Header="{l:Loc Options_TabGeneral}">
+        <ScrollViewer Style="{StaticResource Page}">
+          <StackPanel>
+            <CheckBox Content="{l:Loc Options_LaunchOnStartup}" IsChecked="{Binding LaunchOnStartup}" />
+            <GroupBox Header="{l:Loc Options_BrowserIntegration}">
+              <StackPanel>
+                <TextBlock Text="{l:Loc Options_CaptureFrom}" Margin="0,0,0,4" />
+                <ItemsControl ItemsSource="{Binding Browsers}" Focusable="False">
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                      <DockPanel Margin="0,1">
+                        <Button DockPanel.Dock="Right" Content="{l:Loc Options_InstallExtension}" Padding="8,1" Click="OnInstallExtension"
+                                AutomationProperties.Name="{Binding Name}" />
+                        <TextBlock DockPanel.Dock="Right" Text="{Binding Status}" Margin="8,0" VerticalAlignment="Center"
+                                   Foreground="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
+                        <CheckBox Content="{Binding Name}" IsChecked="{Binding IsIntegrated}" VerticalAlignment="Center" />
+                      </DockPanel>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <CheckBox Content="{l:Loc Options_AdvancedIntegration}" IsChecked="{Binding Settings.General.UseAdvancedBrowserIntegration}" Margin="0,6,0,0" />
+              </StackPanel>
+            </GroupBox>
+            <GroupBox Header="{l:Loc Options_Keys}">
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="Auto" />
+                  <ColumnDefinition Width="140" />
+                  <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                  <RowDefinition Height="Auto" />
+                  <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Label Content="{l:Loc Options_PreventCapture}" Target="{Binding ElementName=PreventKeyBox}" Padding="0,0,10,0" VerticalAlignment="Center" />
+                <ComboBox x:Name="PreventKeyBox" Grid.Column="1" ItemsSource="{Binding CaptureKeys}" DisplayMemberPath="Text" SelectedValuePath="Value"
+                          SelectedValue="{Binding Settings.General.PreventCaptureKey}" />
+                <Label Grid.Row="1" Content="{l:Loc Options_ForceCapture}" Target="{Binding ElementName=ForceKeyBox}" Padding="0,0,10,0" VerticalAlignment="Center" Margin="0,6,0,0" />
+                <ComboBox x:Name="ForceKeyBox" Grid.Row="1" Grid.Column="1" ItemsSource="{Binding CaptureKeys}" DisplayMemberPath="Text" SelectedValuePath="Value"
+                          SelectedValue="{Binding Settings.General.ForceCaptureKey}" Margin="0,6,0,0" />
+                <TextBlock Grid.Row="1" Grid.Column="2" Text="{l:Loc Options_PlusClick}" VerticalAlignment="Center" Margin="6,6,0,0" />
+              </Grid>
+            </GroupBox>
+            <WrapPanel Margin="0,8,0,0">
+              <Button Content="{l:Loc Options_EditContextMenu}" Padding="8,2" Margin="0,0,8,0" Click="OnEditContextMenu" />
+              <Button Content="{l:Loc Options_EditWebPanel}" Padding="8,2" Click="OnEditWebPanel" />
+            </WrapPanel>
+            <GroupBox Header="{l:Loc Options_Themes}">
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="Auto" />
+                  <ColumnDefinition Width="200" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                  <RowDefinition Height="Auto" />
+                  <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Label Content="{l:Loc Options_ToolbarSkin}" Target="{Binding ElementName=SkinBox}" Padding="0,0,10,0" VerticalAlignment="Center" />
+                <ComboBox x:Name="SkinBox" Grid.Column="1" ItemsSource="{Binding Skins}" DisplayMemberPath="Text" SelectedValuePath="Value"
+                          SelectedValue="{Binding Settings.General.ToolbarSkin}" />
+                <Label Grid.Row="1" Content="{l:Loc Options_Language}" Target="{Binding ElementName=LanguageBox}" Padding="0,0,10,0" VerticalAlignment="Center" Margin="0,6,0,0" />
+                <ComboBox x:Name="LanguageBox" Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Languages}" DisplayMemberPath="Text" SelectedValuePath="Value"
+                          SelectedValue="{Binding Settings.General.Language}" Margin="0,6,0,0" />
+              </Grid>
+            </GroupBox>
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
+
+      <!-- 9.2 File Types -->
+      <TabItem Header="{l:Loc Options_TabFileTypes}">
+        <ScrollViewer Style="{StaticResource Page}">
+          <StackPanel>
+            <Label Content="{l:Loc Options_AutoStartTypes}" Target="{Binding ElementName=TypesBox}" Padding="0,0,0,4" />
+            <DockPanel>
+              <Button DockPanel.Dock="Right" Content="{l:Loc Options_Default}" VerticalAlignment="Top" Style="{StaticResource SideButton}" Margin="6,0,0,0"
+                      Command="{Binding ResetExtensionsCommand}" />
+              <TextBox x:Name="TypesBox" Text="{Binding AutoCaptureExtensions, UpdateSourceTrigger=PropertyChanged}" Height="84" TextWrapping="Wrap"
+                       VerticalContentAlignment="Top" VerticalScrollBarVisibility="Auto" />
+            </DockPanel>
+            <Label Content="{l:Loc Options_ExcludedSites}" Target="{Binding ElementName=SitesList}" Padding="0,10,0,4" />
+            <DockPanel Height="100">
+              <StackPanel DockPanel.Dock="Right" Margin="6,0,0,0">
+                <Button Content="{l:Loc Common_Add}" Style="{StaticResource SideButton}" Click="OnAddPattern" Tag="sites" />
+                <Button Content="{l:Loc Common_Edit}" Style="{StaticResource SideButton}" Click="OnEditPattern" Tag="sites"
+                        IsEnabled="{Binding SelectedItem, ElementName=SitesList, Converter={StaticResource NotNull}}" />
+                <Button Content="{l:Loc Common_Delete}" Style="{StaticResource SideButton}" Click="OnDeletePattern" Tag="sites"
+                        IsEnabled="{Binding SelectedItem, ElementName=SitesList, Converter={StaticResource NotNull}}" />
+              </StackPanel>
+              <ListBox x:Name="SitesList" ItemsSource="{Binding ExcludedSites}" MouseDoubleClick="OnEditPattern" Tag="sites" />
+            </DockPanel>
+            <Label Content="{l:Loc Options_ExcludedAddresses}" Target="{Binding ElementName=AddressesList}" Padding="0,10,0,4" />
+            <DockPanel Height="100">
+              <StackPanel DockPanel.Dock="Right" Margin="6,0,0,0">
+                <Button Content="{l:Loc Common_Add}" Style="{StaticResource SideButton}" Click="OnAddPattern" Tag="addresses" />
+                <Button Content="{l:Loc Common_Edit}" Style="{StaticResource SideButton}" Click="OnEditPattern" Tag="addresses"
+                        IsEnabled="{Binding SelectedItem, ElementName=AddressesList, Converter={StaticResource NotNull}}" />
+                <Button Content="{l:Loc Common_Delete}" Style="{StaticResource SideButton}" Click="OnDeletePattern" Tag="addresses"
+                        IsEnabled="{Binding SelectedItem, ElementName=AddressesList, Converter={StaticResource NotNull}}" />
+              </StackPanel>
+              <ListBox x:Name="AddressesList" ItemsSource="{Binding ExcludedAddresses}" MouseDoubleClick="OnEditPattern" Tag="addresses" />
+            </DockPanel>
+            <TextBlock Text="{l:Loc Options_WildcardNote}" Style="{StaticResource Note}" />
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
+
+      <!-- 9.3 Save To -->
+      <TabItem Header="{l:Loc Options_TabSaveTo}">
+        <ScrollViewer Style="{StaticResource Page}">
+          <StackPanel>
+            <GroupBox Header="{l:Loc Options_CategoryFolders}" Margin="0">
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="Auto" />
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                  <RowDefinition Height="Auto" />
+                  <RowDefinition Height="Auto" />
+                  <RowDefinition Height="Auto" />
+                  <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Label Content="{l:Loc Options_Category}" Target="{Binding ElementName=CategoryBox}" Padding="0,0,10,0" VerticalAlignment="Center" />
+                <ComboBox x:Name="CategoryBox" Grid.Column="1" ItemsSource="{Binding Categories}" SelectedItem="{Binding SelectedCategory}" DisplayMemberPath="Title" />
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="6,0,0,0">
+                  <Button Content="{l:Loc Common_Add}" Padding="8,1" Click="OnAddCategory" />
+                  <Button Content="{l:Loc Common_Edit}" Padding="8,1" Margin="4,0,0,0" Click="OnEditCategory"
+                          IsEnabled="{Binding SelectedCategory, Converter={StaticResource NotNull}}" />
+                  <Button Content="{l:Loc Common_Delete}" Padding="8,1" Margin="4,0,0,0" Click="OnDeleteCategory"
+                          IsEnabled="{Binding SelectedCategory.IsBuiltIn, Converter={StaticResource Not}, FallbackValue=False}" />
+                </StackPanel>
+                <Label Grid.Row="1" Grid.ColumnSpan="3" Content="{l:Loc Options_CategoryFolder}" Target="{Binding ElementName=CategoryFolderBox}" Padding="0,8,0,4" />
+                <DockPanel Grid.Row="2" Grid.ColumnSpan="3" IsEnabled="{Binding UseSameDirectory, Converter={StaticResource Not}}">
+                  <Button DockPanel.Dock="Right" Style="{StaticResource BrowseButton}" Click="OnBrowseCategoryFolder"
+                          AutomationProperties.Name="{l:Loc Common_Browse}" />
+                  <TextBox x:Name="CategoryFolderBox" Text="{Binding SelectedCategory.Folder, UpdateSourceTrigger=PropertyChanged}" />
+                </DockPanel>
+                <DockPanel Grid.Row="3" Grid.ColumnSpan="3" Margin="0,8,0,0">
+                  <Label Content="{l:Loc Options_Extensions}" Target="{Binding ElementName=CategoryExtBox}" Padding="0,0,10,0" VerticalAlignment="Center" />
+                  <TextBox x:Name="CategoryExtBox" Text="{Binding SelectedCategory.Extensions, UpdateSourceTrigger=PropertyChanged}" />
+                </DockPanel>
+              </Grid>
+            </GroupBox>
+            <CheckBox Content="{l:Loc Options_SameDirectory}" IsChecked="{Binding UseSameDirectory}" Margin="0,10,0,4" />
+            <DockPanel IsEnabled="{Binding UseSameDirectory}">
+              <Button DockPanel.Dock="Right" Style="{StaticResource BrowseButton}" Click="OnBrowseSameFolder" AutomationProperties.Name="{l:Loc Common_Browse}" />
+              <TextBox Text="{Binding SameDirectory, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{l:Loc Options_SameDirectory}" />
+            </DockPanel>
+            <GroupBox Header="{l:Loc Options_TempDirectory}" Margin="0,12,0,0">
+              <StackPanel>
+                <DockPanel>
+                  <Button DockPanel.Dock="Right" Style="{StaticResource BrowseButton}" Click="OnBrowseTempFolder" AutomationProperties.Name="{l:Loc Common_Browse}" />
+                  <TextBox Text="{Binding TempDirectory, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{l:Loc Options_TempDirectory}" />
+                </DockPanel>
+                <TextBlock Text="{l:Loc Options_TempNote}" Style="{StaticResource Note}" />
+              </StackPanel>
+            </GroupBox>
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
+
+      <!-- 9.4 Downloads -->
+      <TabItem Header="{l:Loc Options_TabDownloads}">
+        <ScrollViewer Style="{StaticResource Page}">
+          <StackPanel>
+            <CheckBox Content="{l:Loc Options_ShowStartDialog}" IsChecked="{Binding Settings.Downloads.ShowStartDialog}" />
+            <CheckBox Content="{l:Loc Options_ShowCompleteDialog}" IsChecked="{Binding Settings.Downloads.ShowCompleteDialog}" />
+            <CheckBox Content="{l:Loc Options_StartImmediately}" IsChecked="{Binding Settings.Downloads.StartImmediatelyWhileShowingInfoDialog}" />
+            <CheckBox Content="{l:Loc Options_ShowProgressDialog}" IsChecked="{Binding Settings.Downloads.ShowProgressDialog}" />
+            <CheckBox Content="{l:Loc Options_ProgressMinimized}" IsChecked="{Binding Settings.Downloads.StartProgressDialogMinimized}" Margin="20,3,0,3" />
+            <CheckBox Content="{l:Loc Options_QueuePanel}" IsChecked="{Binding Settings.Downloads.ShowQueueSelectionOnDownloadLater}" />
+            <Grid Margin="0,6,0,0">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+              </Grid.ColumnDefinitions>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+              </Grid.RowDefinitions>
+              <Label Content="{l:Loc Options_Duplicate}" Target="{Binding ElementName=DuplicateBox}" Padding="0,0,10,0" VerticalAlignment="Center" />
+              <ComboBox x:Name="DuplicateBox" Grid.Column="1" ItemsSource="{Binding DuplicateActions}" DisplayMemberPath="Text" SelectedValuePath="Value"
+                        SelectedValue="{Binding Settings.Downloads.DuplicateAction}" />
+              <Label Grid.Row="1" Content="{l:Loc Options_DoubleClick}" Target="{Binding ElementName=DoubleClickBox}" Padding="0,0,10,0" VerticalAlignment="Center" Margin="0,6,0,0" />
+              <ComboBox x:Name="DoubleClickBox" Grid.Row="1" Grid.Column="1" ItemsSource="{Binding DoubleClickActions}" DisplayMemberPath="Text" SelectedValuePath="Value"
+                        SelectedValue="{Binding Settings.Downloads.CompletedDoubleClick}" Margin="0,6,0,0" />
+            </Grid>
+            <GroupBox Header="{l:Loc Options_VirusChecker}">
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="Auto" />
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                  <RowDefinition Height="Auto" />
+                  <RowDefinition Height="Auto" />
+                  <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <CheckBox x:Name="ScanBox" Grid.ColumnSpan="2" Content="{l:Loc Options_ScanFiles}" IsChecked="{Binding Settings.Downloads.VirusScan.Enabled}" />
+                <Button Grid.Column="2" Content="{l:Loc Options_WindowsDefender}" Padding="8,1" Command="{Binding UseWindowsDefenderCommand}" />
+                <Label Grid.Row="1" Content="{l:Loc Options_ScanProgram}" Target="{Binding ElementName=ScanProgramBox}" Padding="0,0,10,0" VerticalAlignment="Center" Margin="0,6,0,0" />
+                <TextBox x:Name="ScanProgramBox" Grid.Row="1" Grid.Column="1" Text="{Binding VirusProgram, UpdateSourceTrigger=PropertyChanged}" Margin="0,6,0,0"
+                         IsEnabled="{Binding IsChecked, ElementName=ScanBox}" />
+                <Button Grid.Row="1" Grid.Column="2" Style="{StaticResource BrowseButton}" Margin="6,6,0,0" Click="OnBrowseScanner"
+                        IsEnabled="{Binding IsChecked, ElementName=ScanBox}" AutomationProperties.Name="{l:Loc Common_Browse}" />
+                <Label Grid.Row="2" Content="{l:Loc Options_ScanArguments}" Target="{Binding ElementName=ScanArgsBox}" Padding="0,0,10,0" VerticalAlignment="Center" Margin="0,6,0,0" />
+                <TextBox x:Name="ScanArgsBox" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding VirusArguments, UpdateSourceTrigger=PropertyChanged}" Margin="0,6,0,0"
+                         IsEnabled="{Binding IsChecked, ElementName=ScanBox}" />
+              </Grid>
+            </GroupBox>
+            <DockPanel Margin="0,8,0,0">
+              <CheckBox x:Name="UserAgentCheck" Content="{l:Loc Options_CustomUserAgent}" IsChecked="{Binding Settings.Downloads.UseCustomUserAgent}" VerticalAlignment="Center" />
+              <TextBox Text="{Binding Settings.Downloads.CustomUserAgent}" Margin="10,0,0,0" IsEnabled="{Binding IsChecked, ElementName=UserAgentCheck}"
+                       AutomationProperties.Name="{l:Loc Options_CustomUserAgent}" />
+            </DockPanel>
+            <CheckBox Content="{l:Loc Options_KeepServerDate}" IsChecked="{Binding Settings.Downloads.KeepServerFileDate}" Margin="0,6,0,3" />
+            <CheckBox Content="{l:Loc Options_MarkOfTheWeb}" IsChecked="{Binding Settings.Downloads.MarkAsDownloadedFromInternet}" />
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
+
+      <!-- 9.5 Connection -->
+      <TabItem Header="{l:Loc Options_TabConnection}">
+        <ScrollViewer Style="{StaticResource Page}">
+          <StackPanel>
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="240" />
+              </Grid.ColumnDefinitions>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+              </Grid.RowDefinitions>
+              <Label Content="{l:Loc Options_ConnectionType}" Target="{Binding ElementName=ConnTypeBox}" Padding="0,0,10,0" VerticalAlignment="Center" />
+              <ComboBox x:Name="ConnTypeBox" Grid.Column="1" ItemsSource="{Binding ConnectionTypes}" DisplayMemberPath="Text" SelectedValuePath="Value"
+                        SelectedValue="{Binding ConnectionType}" />
+              <Label Grid.Row="1" Content="{l:Loc Options_MaxConnections}" Target="{Binding ElementName=MaxConnBox}" Padding="0,0,10,0" VerticalAlignment="Center" Margin="0,6,0,0" />
+              <ComboBox x:Name="MaxConnBox" Grid.Row="1" Grid.Column="1" Width="80" HorizontalAlignment="Left" ItemsSource="{Binding ConnectionCounts}"
+                        SelectedItem="{Binding MaxConnections}" Margin="0,6,0,0" />
+            </Grid>
+            <GroupBox Header="{l:Loc Options_Exceptions}">
+              <DockPanel Height="110">
+                <StackPanel DockPanel.Dock="Right" Margin="6,0,0,0">
+                  <Button Content="{l:Loc Common_Add}" Style="{StaticResource SideButton}" Click="OnAddServerException" />
+                  <Button Content="{l:Loc Common_Edit}" Style="{StaticResource SideButton}" Click="OnEditServerException"
+                          IsEnabled="{Binding SelectedItem, ElementName=ExceptionsList, Converter={StaticResource NotNull}}" />
+                  <Button Content="{l:Loc Common_Delete}" Style="{StaticResource SideButton}" Click="OnDeleteServerException"
+                          IsEnabled="{Binding SelectedItem, ElementName=ExceptionsList, Converter={StaticResource NotNull}}" />
+                </StackPanel>
+                <ListView x:Name="ExceptionsList" ItemsSource="{Binding ServerExceptions}" MouseDoubleClick="OnEditServerException"
+                          AutomationProperties.Name="{l:Loc Options_Exceptions}">
+                  <ListView.View>
+                    <GridView>
+                      <GridViewColumn Header="{l:Loc Options_Server}" DisplayMemberBinding="{Binding Host}" Width="260" />
+                      <GridViewColumn Header="{l:Loc Options_MaxConnectionsColumn}" DisplayMemberBinding="{Binding MaxConnections}" Width="110" />
+                    </GridView>
+                  </ListView.View>
+                </ListView>
+              </DockPanel>
+            </GroupBox>
+            <GroupBox Header="{l:Loc Options_DownloadLimits}">
+              <StackPanel>
+                <WrapPanel>
+                  <CheckBox x:Name="QuotaCheck" Content="{l:Loc Options_QuotaPrefix}" IsChecked="{Binding Settings.Connection.DownloadLimit.Enabled}" VerticalAlignment="Center" />
+                  <TextBox Style="{StaticResource NumberBox}" Margin="6,0" Text="{Binding Settings.Connection.DownloadLimit.MaxMegabytes, ValidatesOnExceptions=True}"
+                           IsEnabled="{Binding IsChecked, ElementName=QuotaCheck}" AutomationProperties.Name="{l:Loc Options_QuotaMegabytes}" />
+                  <TextBlock Text="{l:Loc Options_QuotaMiddle}" VerticalAlignment="Center" />
+                  <TextBox Style="{StaticResource NumberBox}" Margin="6,0" Text="{Binding Settings.Connection.DownloadLimit.PeriodHours, ValidatesOnExceptions=True}"
+                           IsEnabled="{Binding IsChecked, ElementName=QuotaCheck}" AutomationProperties.Name="{l:Loc Options_QuotaHours}" />
+                  <TextBlock Text="{l:Loc Options_QuotaSuffix}" VerticalAlignment="Center" />
+                </WrapPanel>
+                <CheckBox Content="{l:Loc Options_QuotaWarn}" IsChecked="{Binding Settings.Connection.DownloadLimit.WarnBeforeStopping}" Margin="20,6,0,0"
+                          IsEnabled="{Binding IsChecked, ElementName=QuotaCheck}" />
+              </StackPanel>
+            </GroupBox>
+            <WrapPanel Margin="0,10,0,0">
+              <Label Content="{l:Loc Options_Timeout}" Target="{Binding ElementName=TimeoutBox}" Padding="0,0,6,0" VerticalAlignment="Center" />
+              <TextBox x:Name="TimeoutBox" Style="{StaticResource NumberBox}" Text="{Binding Settings.Connection.TimeoutSeconds, ValidatesOnExceptions=True}" />
+              <Label Content="{l:Loc Options_Retries}" Target="{Binding ElementName=RetriesBox}" Padding="16,0,6,0" VerticalAlignment="Center" />
+              <TextBox x:Name="RetriesBox" Style="{StaticResource NumberBox}" Text="{Binding Settings.Connection.MaxRetries, ValidatesOnExceptions=True}" />
+              <Label Content="{l:Loc Options_RetryDelay}" Target="{Binding ElementName=RetryDelayBox}" Padding="16,0,6,0" VerticalAlignment="Center" />
+              <TextBox x:Name="RetryDelayBox" Style="{StaticResource NumberBox}" Text="{Binding Settings.Connection.RetryDelaySeconds, ValidatesOnExceptions=True}" />
+            </WrapPanel>
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
+
+      <!-- 9.6 Proxy/Socks -->
+      <TabItem Header="{l:Loc Options_TabProxy}">
+        <ScrollViewer Style="{StaticResource Page}">
+          <StackPanel>
+            <RadioButton Content="{l:Loc Options_NoProxy}" IsChecked="{Binding IsNoProxy}" GroupName="ProxyMode" />
+            <RadioButton Content="{l:Loc Options_SystemProxy}" IsChecked="{Binding IsSystemProxy}" GroupName="ProxyMode" />
+            <RadioButton Content="{l:Loc Options_ManualProxy}" IsChecked="{Binding IsManualProxy}" GroupName="ProxyMode" />
+            <DockPanel>
+              <RadioButton Content="{l:Loc Options_PacProxy}" IsChecked="{Binding IsPacProxy}" GroupName="ProxyMode" VerticalAlignment="Center" />
+              <TextBox Text="{Binding Settings.Proxy.PacUrl}" Margin="10,0,0,0" IsEnabled="{Binding IsPacProxy}" AutomationProperties.Name="{l:Loc Options_PacProxy}" />
+            </DockPanel>
+            <GroupBox Header="{l:Loc Options_ManualConfig}" IsEnabled="{Binding IsManualProxy}">
+              <StackPanel>
+                <Grid>
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="60" />
+                    <ColumnDefinition Width="90" />
+                    <ColumnDefinition Width="90" />
+                  </Grid.ColumnDefinitions>
+                  <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                  </Grid.RowDefinitions>
+                  <TextBlock Grid.Column="1" Text="{l:Loc Options_ProxyHost}" Margin="0,0,0,2" />
+                  <TextBlock Grid.Column="2" Text="{l:Loc Options_ProxyPort}" Margin="4,0,0,2" />
+                  <TextBlock Grid.Column="3" Text="{l:Loc Options_ProxyUser}" Margin="4,0,0,2" />
+                  <TextBlock Grid.Column="4" Text="{l:Loc Options_ProxyPassword}" Margin="4,0,0,2" />
+
+                  <TextBlock Grid.Row="1" Text="HTTP" VerticalAlignment="Center" Margin="0,0,8,0" />
+                  <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Settings.Proxy.Http.Host}" AutomationProperties.Name="HTTP" />
+                  <TextBox Grid.Row="1" Grid.Column="2" Margin="4,0,0,0" Text="{Binding Settings.Proxy.Http.Port, ValidatesOnExceptions=True}" AutomationProperties.Name="{l:Loc Options_ProxyPort}" />
+                  <TextBox Grid.Row="1" Grid.Column="3" Margin="4,0,0,0" Text="{Binding Settings.Proxy.Http.User}" AutomationProperties.Name="{l:Loc Options_ProxyUser}" />
+                  <PasswordBox x:Name="HttpPasswordBox" Grid.Row="1" Grid.Column="4" Margin="4,0,0,0" AutomationProperties.Name="{l:Loc Options_ProxyPassword}" />
+
+                  <TextBlock Grid.Row="2" Text="HTTPS" VerticalAlignment="Center" Margin="0,4,8,0" />
+                  <TextBox Grid.Row="2" Grid.Column="1" Margin="0,4,0,0" Text="{Binding Settings.Proxy.Https.Host}" AutomationProperties.Name="HTTPS"
+                           IsEnabled="{Binding IsChecked, ElementName=SameProxyCheck, Converter={StaticResource Not}}" />
+                  <TextBox Grid.Row="2" Grid.Column="2" Margin="4,4,0,0" Text="{Binding Settings.Proxy.Https.Port, ValidatesOnExceptions=True}" AutomationProperties.Name="{l:Loc Options_ProxyPort}"
+                           IsEnabled="{Binding IsChecked, ElementName=SameProxyCheck, Converter={StaticResource Not}}" />
+                  <TextBox Grid.Row="2" Grid.Column="3" Margin="4,4,0,0" Text="{Binding Settings.Proxy.Https.User}" AutomationProperties.Name="{l:Loc Options_ProxyUser}"
+                           IsEnabled="{Binding IsChecked, ElementName=SameProxyCheck, Converter={StaticResource Not}}" />
+                  <PasswordBox x:Name="HttpsPasswordBox" Grid.Row="2" Grid.Column="4" Margin="4,4,0,0" AutomationProperties.Name="{l:Loc Options_ProxyPassword}"
+                               IsEnabled="{Binding IsChecked, ElementName=SameProxyCheck, Converter={StaticResource Not}}" />
+
+                  <TextBlock Grid.Row="3" Text="FTP" VerticalAlignment="Center" Margin="0,4,8,0" />
+                  <TextBox Grid.Row="3" Grid.Column="1" Margin="0,4,0,0" Text="{Binding Settings.Proxy.Ftp.Host}" AutomationProperties.Name="FTP"
+                           IsEnabled="{Binding IsChecked, ElementName=SameProxyCheck, Converter={StaticResource Not}}" />
+                  <TextBox Grid.Row="3" Grid.Column="2" Margin="4,4,0,0" Text="{Binding Settings.Proxy.Ftp.Port, ValidatesOnExceptions=True}" AutomationProperties.Name="{l:Loc Options_ProxyPort}"
+                           IsEnabled="{Binding IsChecked, ElementName=SameProxyCheck, Converter={StaticResource Not}}" />
+                  <TextBox Grid.Row="3" Grid.Column="3" Margin="4,4,0,0" Text="{Binding Settings.Proxy.Ftp.User}" AutomationProperties.Name="{l:Loc Options_ProxyUser}"
+                           IsEnabled="{Binding IsChecked, ElementName=SameProxyCheck, Converter={StaticResource Not}}" />
+                  <PasswordBox x:Name="FtpPasswordBox" Grid.Row="3" Grid.Column="4" Margin="4,4,0,0" AutomationProperties.Name="{l:Loc Options_ProxyPassword}"
+                               IsEnabled="{Binding IsChecked, ElementName=SameProxyCheck, Converter={StaticResource Not}}" />
+                </Grid>
+                <CheckBox x:Name="SameProxyCheck" Content="{l:Loc Options_SameProxy}" IsChecked="{Binding Settings.Proxy.UseSameProxyForAllProtocols}" Margin="0,6,0,0" />
+                <Separator Margin="0,6" />
+                <WrapPanel>
+                  <CheckBox x:Name="SocksCheck" Content="{l:Loc Options_UseSocks}" IsChecked="{Binding Settings.Proxy.Socks.Enabled}" VerticalAlignment="Center" />
+                  <ComboBox Width="90" Margin="10,0,0,0" ItemsSource="{Binding SocksVersions}" DisplayMemberPath="Text" SelectedValuePath="Value"
+                            SelectedValue="{Binding Settings.Proxy.Socks.Version}" IsEnabled="{Binding IsChecked, ElementName=SocksCheck}"
+                            AutomationProperties.Name="{l:Loc Options_SocksVersion}" />
+                </WrapPanel>
+                <Grid Margin="0,6,0,0" IsEnabled="{Binding IsChecked, ElementName=SocksCheck}">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="60" />
+                    <ColumnDefinition Width="90" />
+                    <ColumnDefinition Width="90" />
+                  </Grid.ColumnDefinitions>
+                  <TextBox Text="{Binding Settings.Proxy.Socks.Host}" AutomationProperties.Name="{l:Loc Options_SocksHost}" />
+                  <TextBox Grid.Column="1" Margin="4,0,0,0" Text="{Binding Settings.Proxy.Socks.Port, ValidatesOnExceptions=True}" AutomationProperties.Name="{l:Loc Options_ProxyPort}" />
+                  <TextBox Grid.Column="2" Margin="4,0,0,0" Text="{Binding Settings.Proxy.Socks.User}" AutomationProperties.Name="{l:Loc Options_ProxyUser}" />
+                  <PasswordBox x:Name="SocksPasswordBox" Grid.Column="3" Margin="4,0,0,0" AutomationProperties.Name="{l:Loc Options_ProxyPassword}" />
+                </Grid>
+                <CheckBox Content="{l:Loc Options_SocksDns}" IsChecked="{Binding Settings.Proxy.Socks.ResolveDnsThroughSocks}" Margin="0,6,0,0"
+                          IsEnabled="{Binding IsChecked, ElementName=SocksCheck}" />
+              </StackPanel>
+            </GroupBox>
+            <Label Content="{l:Loc Options_Bypass}" Target="{Binding ElementName=BypassBox}" Padding="0,8,0,4" />
+            <TextBox x:Name="BypassBox" Text="{Binding Settings.Proxy.BypassList}" IsEnabled="{Binding IsNoProxy, Converter={StaticResource Not}}" />
+            <DockPanel Margin="0,10,0,0">
+              <Label Content="{l:Loc Options_TestUrl}" Target="{Binding ElementName=TestUrlBox}" Padding="0,0,8,0" VerticalAlignment="Center" />
+              <Button DockPanel.Dock="Right" Content="{l:Loc Options_Test}" MinWidth="70" Margin="6,0,0,0" Command="{Binding TestProxyCommand}" />
+              <TextBox x:Name="TestUrlBox" Text="{Binding ProxyTestUrl, UpdateSourceTrigger=PropertyChanged}" />
+            </DockPanel>
+            <TextBlock Text="{Binding ProxyTestResult}" TextWrapping="Wrap" Margin="0,6,0,0" />
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
+
+      <!-- 9.7 Site Logins -->
+      <TabItem Header="{l:Loc Options_TabSiteLogins}">
+        <DockPanel Margin="10,8">
+          <TextBlock DockPanel.Dock="Bottom" Text="{l:Loc Options_LoginsNote}" Style="{StaticResource Note}" />
+          <StackPanel DockPanel.Dock="Right" Margin="6,0,0,0">
+            <Button Content="{l:Loc Common_Add}" Style="{StaticResource SideButton}" Click="OnAddLogin" />
+            <Button Content="{l:Loc Common_Edit}" Style="{StaticResource SideButton}" Click="OnEditLogin"
+                    IsEnabled="{Binding SelectedItem, ElementName=LoginsList, Converter={StaticResource NotNull}}" />
+            <Button Content="{l:Loc Common_Delete}" Style="{StaticResource SideButton}" Click="OnDeleteLogin"
+                    IsEnabled="{Binding SelectedItem, ElementName=LoginsList, Converter={StaticResource NotNull}}" />
+          </StackPanel>
+          <ListView x:Name="LoginsList" ItemsSource="{Binding SiteLogins}" MouseDoubleClick="OnEditLogin" AutomationProperties.Name="{l:Loc Options_TabSiteLogins}">
+            <ListView.View>
+              <GridView>
+                <GridViewColumn Header="{l:Loc Options_LoginSite}" DisplayMemberBinding="{Binding UrlPattern}" Width="220" />
+                <GridViewColumn Header="{l:Loc Options_ProxyUser}" DisplayMemberBinding="{Binding User}" Width="120" />
+                <GridViewColumn Header="{l:Loc Options_ProxyPassword}" DisplayMemberBinding="{Binding MaskedPassword}" Width="100" />
+              </GridView>
+            </ListView.View>
+          </ListView>
+        </DockPanel>
+      </TabItem>
+
+      <!-- 9.8 Dial Up / VPN -->
+      <TabItem Header="{l:Loc Options_TabDialUp}">
+        <ScrollViewer Style="{StaticResource Page}">
+          <StackPanel>
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="260" />
+              </Grid.ColumnDefinitions>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+              </Grid.RowDefinitions>
+              <Label Content="{l:Loc Options_DialConnection}" Target="{Binding ElementName=RasBox}" Padding="0,0,10,0" VerticalAlignment="Center" />
+              <ComboBox x:Name="RasBox" Grid.Column="1" ItemsSource="{Binding RasEntries}" DisplayMemberPath="Text" SelectedValuePath="Value"
+                        SelectedValue="{Binding Settings.DialUp.ConnectionName}" />
+              <Label Grid.Row="1" Content="{l:Loc Options_ProxyUser}" Target="{Binding ElementName=DialUserBox}" Padding="0,0,10,0" VerticalAlignment="Center" Margin="0,6,0,0" />
+              <TextBox x:Name="DialUserBox" Grid.Row="1" Grid.Column="1" Text="{Binding Settings.DialUp.User}" Margin="0,6,0,0" />
+              <Label Grid.Row="2" Content="{l:Loc Options_ProxyPassword}" Target="{Binding ElementName=DialPasswordBox}" Padding="0,0,10,0" VerticalAlignment="Center" Margin="0,6,0,0" />
+              <PasswordBox x:Name="DialPasswordBox" Grid.Row="2" Grid.Column="1" Margin="0,6,0,0" />
+            </Grid>
+            <WrapPanel Margin="0,10,0,0">
+              <CheckBox x:Name="RedialCheck" Content="{l:Loc Options_Redial}" IsChecked="{Binding Settings.DialUp.RedialIfDisconnected}" VerticalAlignment="Center" />
+              <Label Content="{l:Loc Options_RedialAttempts}" Target="{Binding ElementName=AttemptsBox}" Padding="16,0,6,0" VerticalAlignment="Center" />
+              <TextBox x:Name="AttemptsBox" Style="{StaticResource NumberBox}" Text="{Binding Settings.DialUp.RedialAttempts, ValidatesOnExceptions=True}"
+                       IsEnabled="{Binding IsChecked, ElementName=RedialCheck}" />
+              <Label Content="{l:Loc Options_RedialDelay}" Target="{Binding ElementName=RedialDelayBox}" Padding="16,0,6,0" VerticalAlignment="Center" />
+              <TextBox x:Name="RedialDelayBox" Style="{StaticResource NumberBox}" Text="{Binding Settings.DialUp.RedialDelaySeconds, ValidatesOnExceptions=True}"
+                       IsEnabled="{Binding IsChecked, ElementName=RedialCheck}" />
+            </WrapPanel>
+            <CheckBox Content="{l:Loc Options_ConnectBeforeQueues}" IsChecked="{Binding Settings.DialUp.ConnectBeforeScheduledQueues}" Margin="0,8,0,3" />
+            <TextBlock Text="{l:Loc Options_DialUpNote}" Style="{StaticResource Note}" />
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
+
+      <!-- 9.9 Sounds -->
+      <TabItem Header="{l:Loc Options_TabSounds}">
+        <ScrollViewer Style="{StaticResource Page}">
+          <StackPanel>
+            <TextBlock Text="{l:Loc Options_SoundsIntro}" TextWrapping="Wrap" Margin="0,0,0,6" />
+            <ItemsControl ItemsSource="{Binding Sounds}" Focusable="False">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <Grid Margin="0,3">
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="190" />
+                      <ColumnDefinition Width="*" />
+                      <ColumnDefinition Width="Auto" />
+                      <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <CheckBox Content="{Binding Name}" IsChecked="{Binding Enabled}" VerticalAlignment="Center" />
+                    <TextBox Grid.Column="1" Text="{Binding Path, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding Name}" />
+                    <Button Grid.Column="2" Style="{StaticResource BrowseButton}" Click="OnBrowseSound" AutomationProperties.Name="{l:Loc Common_Browse}" />
+                    <Button Grid.Column="3" Content="▶" Width="28" Margin="4,0,0,0" Click="OnPlaySound" AutomationProperties.Name="{l:Loc Options_PlaySound}"
+                            ToolTip="{l:Loc Options_PlaySound}" />
+                  </Grid>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
+
+      <!-- 9.10 Advanced -->
+      <TabItem Header="{l:Loc Options_TabAdvanced}">
+        <ScrollViewer Style="{StaticResource Page}">
+          <StackPanel>
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+              </Grid.ColumnDefinitions>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+              </Grid.RowDefinitions>
+              <Label Content="{l:Loc Options_MinSegment}" Target="{Binding ElementName=MinSegmentBox}" Padding="0,0,10,0" VerticalAlignment="Center" />
+              <TextBox x:Name="MinSegmentBox" Grid.Column="1" Style="{StaticResource NumberBox}" Text="{Binding Settings.Advanced.MinSegmentSizeKB, ValidatesOnExceptions=True}" />
+              <TextBlock Grid.Column="2" Text="KB" VerticalAlignment="Center" Margin="6,0,0,0" />
+              <Label Grid.Row="1" Content="{l:Loc Options_WriteBuffer}" Target="{Binding ElementName=WriteBufferBox}" Padding="0,0,10,0" VerticalAlignment="Center" Margin="0,6,0,0" />
+              <TextBox x:Name="WriteBufferBox" Grid.Row="1" Grid.Column="1" Style="{StaticResource NumberBox}" Margin="0,6,0,0"
+                       Text="{Binding Settings.Advanced.WriteBufferSizeKB, ValidatesOnExceptions=True}" />
+              <TextBlock Grid.Row="1" Grid.Column="2" Text="KB" VerticalAlignment="Center" Margin="6,6,0,0" />
+            </Grid>
+            <CheckBox Content="{l:Loc Options_Preallocate}" IsChecked="{Binding Settings.Advanced.PreallocateDiskSpace}" Margin="0,8,0,3" />
+            <CheckBox Content="{l:Loc Options_KeepTemp}" IsChecked="{Binding Settings.Advanced.KeepTempFilesAfterCancel}" />
+            <CheckBox Content="{l:Loc Options_AllowIgnoreCert}" IsChecked="{Binding Settings.Advanced.AllowIgnoringCertificateErrors}" />
+            <CheckBox Content="{l:Loc Options_CheckUpdates}" IsChecked="{Binding Settings.Advanced.CheckForUpdatesWeekly}" />
+            <GroupBox Header="{l:Loc Options_Other}">
+              <StackPanel>
+                <CheckBox Content="{l:Loc Options_TrayGraph}" IsChecked="{Binding Settings.General.ShowTraySpeedGraph}" />
+                <CheckBox Content="{l:Loc Options_CloseToTray}" IsChecked="{Binding Settings.General.CloseButtonHidesToTray}" />
+                <CheckBox Content="{l:Loc Options_PreventSleep}" IsChecked="{Binding Settings.General.PreventSleepWhileDownloading}" />
+              </StackPanel>
+            </GroupBox>
+            <WrapPanel Margin="0,12,0,0">
+              <Button Content="{l:Loc Options_OpenSettingsFolder}" Padding="8,2" Margin="0,0,6,6" Click="OnOpenSettingsFolder" />
+              <Button Content="{l:Loc Options_ExportSettings}" Padding="8,2" Margin="0,0,6,6" Click="OnExportSettings" />
+              <Button Content="{l:Loc Options_ImportSettings}" Padding="8,2" Margin="0,0,6,6" Click="OnImportSettings" />
+              <Button Content="{l:Loc Options_ResetAll}" Padding="8,2" Margin="0,0,6,6" Click="OnResetAll" />
+            </WrapPanel>
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
+    </TabControl>
+  </DockPanel>
+</v:DialogWindow>

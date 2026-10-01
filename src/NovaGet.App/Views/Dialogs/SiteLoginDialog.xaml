@@ -1,0 +1,31 @@
+<v:DialogWindow x:Class="NovaGet.App.Views.Dialogs.SiteLoginDialog"
+                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:v="clr-namespace:NovaGet.App.Views"
+                xmlns:l="clr-namespace:NovaGet.App.Localization"
+                Title="{l:Loc SiteLoginDialog_Title}" FocusManager.FocusedElement="{Binding ElementName=SiteBox}">
+  <StackPanel Margin="16" Width="380">
+    <Label Content="{l:Loc SiteLoginDialog_Site}" Target="{Binding ElementName=SiteBox}" Padding="0,0,0,4" />
+    <TextBox x:Name="SiteBox" Height="23" VerticalContentAlignment="Center" />
+    <TextBlock Text="{l:Loc SiteLoginDialog_SiteNote}" TextWrapping="Wrap" Margin="0,4,0,0" Foreground="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
+    <Grid Margin="0,10,0,0">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="*" />
+      </Grid.ColumnDefinitions>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+      </Grid.RowDefinitions>
+      <Label Content="{l:Loc Options_ProxyUser}" Target="{Binding ElementName=UserBox}" Padding="0,0,10,0" VerticalAlignment="Center" />
+      <TextBox x:Name="UserBox" Grid.Column="1" Height="23" VerticalContentAlignment="Center" />
+      <Label Grid.Row="1" Content="{l:Loc Options_ProxyPassword}" Target="{Binding ElementName=PasswordBox}" Padding="0,0,10,0" VerticalAlignment="Center" Margin="0,6,0,0" />
+      <PasswordBox x:Name="PasswordBox" Grid.Row="1" Grid.Column="1" Height="23" VerticalContentAlignment="Center" Margin="0,6,0,0" />
+    </Grid>
+    <TextBlock x:Name="ErrorText" Foreground="Firebrick" Margin="0,8,0,0" TextWrapping="Wrap" Visibility="Collapsed" />
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
+      <Button Content="{l:Loc Common_OK}" MinWidth="80" IsDefault="True" Click="OnOk" />
+      <Button Content="{l:Loc Common_Cancel}" MinWidth="80" Margin="8,0,0,0" IsCancel="True" />
+    </StackPanel>
+  </StackPanel>
+</v:DialogWindow>

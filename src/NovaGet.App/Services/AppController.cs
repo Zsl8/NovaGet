@@ -3,7 +3,10 @@ using System.Windows;
 using System.Windows.Threading;
 using Microsoft.Extensions.Logging;
 using NovaGet.App.Localization;
+using NovaGet.App.ViewModels;
+using NovaGet.App.ViewModels.Options;
 using NovaGet.App.Views;
+using NovaGet.App.Views.Dialogs;
 using NovaGet.Core.CommandLine;
 using NovaGet.Core.Services;
 using NovaGet.Core.Paths;
@@ -14,6 +17,9 @@ internal sealed class AppController(
     Lazy<MainWindow> mainWindow,
     TrayIconService tray,
     DownloadUiService downloadUi,
+    SoundService sounds,
+    OptionsService options,
+    SettingsPackageService settingsPackage,
     IDownloadService downloads,
     IDialogService dialogs,
     AppPaths paths,
@@ -27,6 +33,7 @@ internal sealed class AppController(
     {
         tray.Initialize(this);
         downloadUi.Initialize();
+        sounds.Initialize();
         if (showMainWindow)
         {
             ShowMainWindow();
@@ -102,7 +109,24 @@ internal sealed class AppController(
 
     public void ShowAddBatch(bool fromClipboard) => NotAvailable();
 
-    public void ShowOptions(string? page = null) => NotAvailable();
+    public void ShowOptions(string? page = null) => OnUiThread(() =>
+    {
+        var start = Enum.TryParse<OptionsPage>(page, ignoreCase: true, out var parsed) ? parsed : OptionsPage.General;
+        if (dialogs.ActiveWindow is OptionsDialog open)
+        {
+            open.SelectPage(start);
+            open.Activate();
+            return;
+        }
+
+        dialogs.ShowModal(new OptionsDialog(options, settingsPackage, sounds, dialogs, paths, ShowHelp, start));
+
+        // Categories may have been added, renamed or removed (also by Import / Reset).
+        if (mainWindow.IsValueCreated && mainWindow.Value.DataContext is MainViewModel main)
+        {
+            main.BuildTree();
+        }
+    });
 
     public void ShowScheduler(long? queueId = null) => NotAvailable();
 

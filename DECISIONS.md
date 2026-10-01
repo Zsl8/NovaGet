@@ -90,3 +90,19 @@ Choices the specification left open, or where it had to be interpreted. Newest e
 | D62 | Editing the address in Properties replaces both the current and the original address. | The usual reason is an expired link; restarts must use the new one. |
 | D63 | Power actions: 30-second countdown with Cancel and "Do it now"; "Force processes to terminate" maps to `EWX_FORCE`, otherwise `EWX_FORCEIFHUNG`. Hang-up goes through `IDialUpService` (implemented with Dial Up/VPN). | §8.3 and §16. |
 | D64 | Minimizing a progress dialog hides it (double-click the download to bring it back); the taskbar button shows the progress. | §8.3 "minimize sends it to the tray". |
+
+## Milestone 6 — Options dialog
+
+| # | Decision | Why |
+|---|---|---|
+| D65 | Options edits a copy: settings, categories, server exceptions and site logins are staged and saved together on OK; Cancel discards everything. | One predictable commit point; Cancel really cancels. |
+| D66 | OK copies only what the dialog edits (`OptionsApplier`). Window layout, address history, recent folders, the speed limiter, remembered per-server limits and the tray toggles (clipboard, drop target) are kept from the live settings. | The tray and IPC can change those while the dialog is open; OK must not roll them back. |
+| D67 | Export writes `{ format: "novaget-settings", version, settings, categories, serverExceptions }` without passwords (they are encrypted for one Windows account). Import accepts that or a bare settings.json, merges categories by name and exceptions by host, and keeps a saved password when the user name matches. Site logins are not exported. Export, Import and Reset act on the saved settings right away; Import and Reset reload the dialog. | Passwords never leave the machine, and settings move between PCs without breaking existing logins. |
+| D68 | "Launch on startup" shows the real registry state. Turning it off removes the HKCU `Run` value; an all-users (HKLM) value from an elevated install is disabled through Explorer's `StartupApproved\Run`, as Task Manager does. | A standard user cannot delete HKLM values, and the checkbox must not lie. |
+| D69 | The temporary folder can only change while nothing downloads; unfinished downloads' `<temp>\<id>` folders are moved (copied across volumes). | Paused downloads keep their data. |
+| D70 | Proxy: "No proxy" disables proxies, "System" uses the Windows settings, Manual uses per-scheme HTTP proxies with the bypass list (`*`/`?` wildcards, `<local>`). When "Use SOCKS" is on in Manual mode, SOCKS carries all traffic. SOCKS4 with "Resolve DNS through SOCKS" becomes SOCKS4a; SOCKS5 always lets the proxy resolve names (that is how .NET implements it). PAC scripts are evaluated by a platform resolver (added with the other network work in M8); without one, PAC falls back to the system settings. HTTP clients are rebuilt when proxy settings change. | Section 9.6. Clients keep pooled connections, so they are cached per proxy configuration. |
+| D71 | "Install extension…" opens the bundled install guide at that browser's section (no store listing exists yet). | No network call, and it works offline. |
+| D72 | Dial-up/VPN entries come from the `rasphone.pbk` phonebooks (INI files) rather than `RasEnumEntries`. | Same list, no P/Invoke, testable. |
+| D73 | The default sounds are synthesized by `tools/make-sounds.py` and ship in `assets/sounds`. | Original, license-free audio. |
+| D74 | A new UI language applies at the next start (the dialog says so). The toolbar skin list has only the default skin until the theme work in M13. | Live re-localization of every open window isn't worth the complexity. |
+| D75 | File-type, site and web-panel options are saved now and used by browser integration (M9); download limits and dial-up by M8; virus scan and Mark of the Web by M13. | Each option is consumed in the milestone that builds its feature. |
