@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NovaGet help</title>
+<style>
+  :root { --bg: #ffffff; --fg: #1f2328; --muted: #57606a; --accent: #1f7a8c; --card: #f6f8fa; --border: #d0d7de; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #0d1117; --fg: #e6edf3; --muted: #9da7b3; --accent: #4cc2d4; --card: #161b22; --border: #30363d; }
+  }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.55 "Segoe UI", system-ui, sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 32px 16px 48px; }
+  h1 { font-size: 26px; margin: 0 0 4px; }
+  h2 { font-size: 19px; margin: 32px 0 8px; }
+  h3 { font-size: 16px; margin: 20px 0 6px; }
+  p.lead { color: var(--muted); margin-top: 0; }
+  a { color: var(--accent); }
+  ol, ul { padding-left: 22px; }
+  li { margin: 4px 0; }
+  code, kbd { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; font-size: 13px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; margin: 12px 0; }
+  .note { color: var(--muted); font-size: 13px; }
+  table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+  th, td { text-align: left; vertical-align: top; padding: 6px 10px; border-bottom: 1px solid var(--border); }
+  th { background: var(--card); }
+  nav ul { columns: 2; list-style: none; padding: 0; }
+  @media (max-width: 520px) { nav ul { columns: 1; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>NovaGet help</h1>
+  <p class="lead">NovaGet is a free download manager for Windows. It splits downloads into several connections, resumes
+    broken ones, runs them in queues on a schedule, and takes downloads and videos from your browser.</p>
+
+  <nav class="card">
+    <ul>
+      <li><a href="#start">Getting started</a></li>
+      <li><a href="#window">The main window</a></li>
+      <li><a href="#adding">Adding downloads</a></li>
+      <li><a href="#dialogs">While a file downloads</a></li>
+      <li><a href="#queues">Queues and the scheduler</a></li>
+      <li><a href="#video">Videos and streams</a></li>
+      <li><a href="#grabber">Site grabber</a></li>
+      <li><a href="#options">Options</a></li>
+      <li><a href="#keys">Keyboard shortcuts</a></li>
+      <li><a href="#privacy">Privacy and safety</a></li>
+      <li><a href="#files">Where NovaGet keeps things</a></li>
+      <li><a href="faq.html">Frequently asked questions</a></li>
+    </ul>
+  </nav>
+
+  <h2 id="start">Getting started</h2>
+  <ol>
+    <li>Install NovaGet; it starts in the notification area (the arrow icon near the clock).</li>
+    <li>Add the browser extension: <a href="install-extension.html">step-by-step guide</a>. Its button shows
+      <b>Connected</b> when it can reach NovaGet.</li>
+    <li>Click a link to a file in your browser, or press <kbd>Ctrl</kbd>+<kbd>N</kbd> in NovaGet and paste an address.
+      The <b>Download File Info</b> dialog shows the size and where the file will go; click <b>Start Download</b>.</li>
+  </ol>
+
+  <h2 id="window">The main window</h2>
+  <ul>
+    <li><b>Categories</b> (left): All Downloads, Unfinished and Finished, the file categories (Compressed, Documents,
+      Music, Programs, Video), Grabber projects and Queues. Click one to filter the list; drag downloads onto a
+      category or queue to move them.</li>
+    <li><b>Download list</b> (right): file name, queue position, size, status, time left, transfer rate, last try and
+      description. More columns (Save To, Referrer, Added, Connections) are in View → Show/Hide columns. Click a
+      header to sort; drag headers to reorder.</li>
+    <li><b>Toolbar</b>: Add URL, Resume, Stop, Stop All, Delete, Delete Completed, Options, Scheduler, Start Queue,
+      Stop Queue, Grabber, Tell a Friend. View → Toolbar changes the button size, hides labels, reorders buttons
+      (Customize…) and switches the toolbar theme.</li>
+    <li><b>Status bar</b>: number of downloads, active ones, total speed and the speed limiter (click it to turn the
+      limiter on or off).</li>
+    <li>Right-click a download for Open, Open with, Open folder, Move/Rename, Redownload, Refresh download address,
+      Add to queue, Copy address and Properties.</li>
+  </ul>
+
+  <h2 id="adding">Adding downloads</h2>
+  <table>
+    <tr><th>Way</th><th>How</th></tr>
+    <tr><td>Browser</td><td>With the extension, clicking a download link hands it to NovaGet (with the page and cookies, so
+      logged-in downloads work). Right-click: <b>Download with NovaGet</b>, <b>Download all links with NovaGet</b>,
+      <b>Download video with NovaGet</b>.</td></tr>
+    <tr><td>Add URL</td><td>Tasks → Add new download (<kbd>Ctrl</kbd>+<kbd>N</kbd>). An address on the clipboard is filled in.</td></tr>
+    <tr><td>Clipboard</td><td>Turn on <b>Monitor clipboard</b> in the tray menu: copied download addresses are offered automatically.</td></tr>
+    <tr><td>Drop target</td><td>View → Show drop target puts a small window on the desktop; drop links or <code>.url</code> files on it.</td></tr>
+    <tr><td>Batch</td><td>Tasks → Add batch download: an address with <code>*</code> where numbers or letters change, e.g.
+      <code>https://example.com/img*.jpg</code> from 001 to 120.</td></tr>
+    <tr><td>Import</td><td>Tasks → Import reads EF2 lists from other download managers or plain text lists of addresses.</td></tr>
+    <tr><td>Command line</td><td><code>NovaGet.exe /d URL</code> and more: see <a href="command-line.html">command line switches</a>.</td></tr>
+  </table>
+
+  <h2 id="dialogs">While a file downloads</h2>
+  <ul>
+    <li>The <b>progress dialog</b> shows the speed, time left and one bar per connection. Its tabs set a speed limit for
+      this download and what to do when it finishes (hang up, exit NovaGet, shut down the computer).</li>
+    <li><b>Pause</b> keeps everything received so far; <b>Resume</b> continues from there, even after a crash or a
+      restart, when the server supports resuming.</li>
+    <li>If a link expires, use <b>Refresh download address</b>: NovaGet opens the page the file came from; click the link
+      there again and the download continues.</li>
+    <li><b>Properties</b> (<kbd>Alt</kbd>+<kbd>Enter</kbd>) changes the folder, address, login and connection count, and
+      checks a checksum (MD5, SHA-1, SHA-256) against the value the website publishes.</li>
+    <li>When a download completes, the <b>Download complete</b> dialog (or a notification) offers Open and Open folder.
+      Nothing is opened unless you click.</li>
+  </ul>
+
+  <h2 id="queues">Queues and the scheduler</h2>
+  <p>Downloads → Scheduler manages queues. Each queue has a schedule (every day on chosen days, or once), a start and
+    stop time, how many files download at once, retries per file, and what to do when it finishes (open a file, hang
+    up, exit, shut down, sleep or hibernate). <b>Wake the computer to start the queue</b> creates a Windows task that
+    wakes the PC from sleep. The <b>Synchronization queue</b> checks its files on the server and downloads the ones that
+    changed.</p>
+  <p>Downloads → Speed limiter caps the total speed (optionally for scheduled queues only). Options → Connection →
+    Download limits pauses everything after a set amount per period.</p>
+
+  <h2 id="video">Videos and streams</h2>
+  <p>On pages with a video player, the extension shows a <b>Download this video</b> panel. NovaGet lists the available
+    qualities (and audio languages for DASH), downloads the pieces and joins them with FFmpeg into one file. Live
+    streams are saved as far as they are available. Protected streams (DRM) are refused with
+    “This stream is protected and cannot be downloaded.”</p>
+
+  <h2 id="grabber">Site grabber</h2>
+  <p>Tasks → Run site grabber explores a website and downloads the files you choose: all images, all videos or audio,
+    files of chosen types, or a complete copy for offline browsing. Steps: start page (and a login if needed), save
+    folder, how deep and how far to explore, and which files to keep. Results appear as they are found; projects are
+    kept under <b>Grabber projects</b> and can run again to fetch only new or changed files.</p>
+
+  <h2 id="options">Options</h2>
+  <table>
+    <tr><th>Tab</th><th>What it holds</th></tr>
+    <tr><td>General</td><td>Start with Windows, browsers to take downloads from, keys to skip or force capturing, color theme, toolbar skin, language.</td></tr>
+    <tr><td>File Types</td><td>Extensions NovaGet takes from the browser; sites and addresses it leaves alone.</td></tr>
+    <tr><td>Save To</td><td>A folder per category, and the folder for unfinished downloads.</td></tr>
+    <tr><td>Downloads</td><td>Which dialogs appear, duplicate links, double-click action, server dates, Mark of the Web, virus scanner, user agent.</td></tr>
+    <tr><td>Connection</td><td>Connection type, connections per download, per-server limits, retries and timeouts, Windows authentication, download limits.</td></tr>
+    <tr><td>Proxy/Socks</td><td>No proxy, Windows settings, a PAC script or manual HTTP/HTTPS/FTP and SOCKS 4/5 proxies; FTP passive mode.</td></tr>
+    <tr><td>Site Logins</td><td>Saved user names and passwords for sites and FTP servers (encrypted for your Windows account).</td></tr>
+    <tr><td>Dial Up/VPN</td><td>Connect before queues start, redial, hang up when done.</td></tr>
+    <tr><td>Sounds</td><td>Sounds for download added, complete, failed, and queue started or stopped.</td></tr>
+    <tr><td>Advanced</td><td>Write buffer, segment size, disk pre-allocation, the close button, tray speed graph, update check, preventing sleep, settings export, import and reset.</td></tr>
+  </table>
+
+  <h2 id="keys">Keyboard shortcuts</h2>
+  <table>
+    <tr><th>Keys</th><th>Action</th></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>N</kbd></td><td>Add a new download</td></tr>
+    <tr><td><kbd>Enter</kbd></td><td>Open a finished file, or the progress dialog of an unfinished one</td></tr>
+    <tr><td><kbd>Space</kbd></td><td>Pause or resume the selected download</td></tr>
+    <tr><td><kbd>Del</kbd> / <kbd>Shift</kbd>+<kbd>Del</kbd></td><td>Remove from the list / remove and delete the file</td></tr>
+    <tr><td><kbd>Alt</kbd>+<kbd>Enter</kbd></td><td>Properties</td></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>M</kbd></td><td>Move/Rename</td></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>F</kbd> / <kbd>F3</kbd></td><td>Find / find next</td></tr>
+    <tr><td><kbd>F1</kbd></td><td>This help</td></tr>
+    <tr><td><kbd>Alt</kbd>+<kbd>F4</kbd></td><td>Exit NovaGet (the window's close button only hides it to the notification area)</td></tr>
+  </table>
+  <p class="note">Every menu and dialog can be used with the keyboard: <kbd>Alt</kbd> plus the underlined letter.</p>
+
+  <h2 id="privacy">Privacy and safety</h2>
+  <ul>
+    <li>No ads, no telemetry. The only connections NovaGet makes besides your downloads are the weekly update check,
+      which Options → Advanced can turn off.</li>
+    <li>Downloaded files are never run automatically. They carry the Windows “downloaded from the Internet” mark, so
+      SmartScreen and Office's Protected View still look at them, and an antivirus can scan each finished file
+      (Options → Downloads).</li>
+    <li>Certificates are always checked; ignoring certificate errors is a per-download choice with a warning.</li>
+    <li>Passwords and cookies are stored encrypted for your Windows account.</li>
+  </ul>
+
+  <h2 id="files">Where NovaGet keeps things</h2>
+  <ul>
+    <li>Settings and the download list: <code>%APPDATA%\NovaGet</code></li>
+    <li>Unfinished downloads and logs: <code>%LOCALAPPDATA%\NovaGet</code></li>
+    <li>Portable mode: put an empty <code>portable.flag</code> file next to <code>NovaGet.exe</code> and everything is kept
+      in its <code>Data</code> folder.</li>
+  </ul>
+  <p class="note">Uninstalling asks whether to remove your download list and settings; by default they are kept.</p>
+</main>
+</body>
+</html>

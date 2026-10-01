@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NovaGet FAQ</title>
+<style>
+  :root { --bg: #ffffff; --fg: #1f2328; --muted: #57606a; --accent: #1f7a8c; --card: #f6f8fa; --border: #d0d7de; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #0d1117; --fg: #e6edf3; --muted: #9da7b3; --accent: #4cc2d4; --card: #161b22; --border: #30363d; }
+  }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.55 "Segoe UI", system-ui, sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 32px 16px 48px; }
+  h1 { font-size: 26px; margin: 0 0 4px; }
+  h2 { font-size: 17px; margin: 28px 0 6px; }
+  p.lead { color: var(--muted); margin-top: 0; }
+  a { color: var(--accent); }
+  ul { padding-left: 22px; }
+  li { margin: 4px 0; }
+  code, kbd { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; font-size: 13px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Frequently asked questions</h1>
+  <p class="lead">Back to <a href="index.html">NovaGet help</a>.</p>
+
+  <h2>My browser downloads a file itself instead of giving it to NovaGet.</h2>
+  <ul>
+    <li>Check that the extension is installed and its button says <b>Connected</b> (<a href="install-extension.html">setup guide</a>).</li>
+    <li>The file type must be in Options → File Types, and the site or address must not be in its exceptions.</li>
+    <li>The browser must be ticked in Options → General → Capture downloads from these browsers.</li>
+    <li>Holding <kbd>Alt</kbd> while clicking leaves the download to the browser; <kbd>Alt</kbd>+<kbd>Ctrl</kbd> forces NovaGet to take it.</li>
+    <li>Some sites start downloads from scripts; right-click the link and choose <b>Download with NovaGet</b>.</li>
+  </ul>
+
+  <h2>The status says “Resume capability: No”.</h2>
+  <p>The server doesn't accept requests for parts of a file. NovaGet then uses one connection, and a broken
+    download has to start over. Nothing in NovaGet can change that; some mirrors of the same file do support it.</p>
+
+  <h2>A download stopped with an error about an expired link.</h2>
+  <p>Many sites hand out addresses that work for a short time. Right-click the download, choose
+    <b>Refresh download address</b>, and click the file's link on the page that opens. The download continues with the
+    new address and keeps what it already has.</p>
+
+  <h2>How do I make downloads faster?</h2>
+  <ul>
+    <li>Options → Connection → Connection type: pick yours; more connections help on fast lines.</li>
+    <li>Some servers limit connections per visitor; NovaGet lowers the count by itself when a server refuses more.</li>
+    <li>Check that the speed limiter is off (status bar) and that no per-download limit is set in the progress dialog.</li>
+  </ul>
+
+  <h2>Why is a video refused as “protected”?</h2>
+  <p>The site encrypts the stream with DRM (such as Widevine or PlayReady). NovaGet never removes copy protection.
+    Unprotected streams, including ones encrypted with a key the site hands to every viewer (AES-128 HLS), download normally.</p>
+
+  <h2>The checksum doesn't match. What now?</h2>
+  <p>The file differs from what the website published: the download may be damaged or the file replaced. NovaGet keeps
+    the file and marks the download; download it again (right-click → Redownload) or get it from another source before
+    opening it.</p>
+
+  <h2>Can I use NovaGet behind a proxy?</h2>
+  <p>Yes: Options → Proxy/Socks. By default NovaGet uses the Windows proxy settings. You can also give an automatic
+    configuration (PAC) script, an HTTP/HTTPS/FTP proxy, or a SOCKS 4/4a/5 proxy, each with a login. <b>Test</b> checks
+    the settings with an address of your choice. If an FTP server doesn't work, try turning <b>Use FTP in PASV mode</b>
+    off.</p>
+
+  <h2>How do I switch to Arabic, or to the dark theme?</h2>
+  <p>View → Language (applies at the next start), and Options → General → Color theme (applies at once; “Use Windows
+    setting” follows the Windows app mode).</p>
+
+  <h2>Does NovaGet send anything about me anywhere?</h2>
+  <p>No. Apart from your downloads, the only connection it makes is a weekly check for a newer version, which you can
+    turn off in Options → Advanced.</p>
+
+  <h2>Where are my settings, and can I move them to another PC?</h2>
+  <p>Settings and the download list are in <code>%APPDATA%\NovaGet</code>. Options → Advanced → Export settings writes a
+    file you can import on another PC (passwords are not included). For a USB stick, use portable mode: an empty
+    <code>portable.flag</code> next to <code>NovaGet.exe</code> keeps everything in its <code>Data</code> folder.</p>
+
+  <h2>Something went wrong. Is there a log?</h2>
+  <p>Yes: <code>%LOCALAPPDATA%\NovaGet\logs</code> (or <code>Data\logs</code> in portable mode). Logs never contain passwords.</p>
+
+  <h2>Can I use a different FFmpeg?</h2>
+  <p>Yes. FFmpeg is a separate program in the <code>ffmpeg</code> folder of the install folder (an unmodified LGPL build);
+    replace its files with another Windows build. If it is missing, NovaGet looks for <code>ffmpeg.exe</code> on the PATH,
+    and without one it saves the video and audio tracks as separate files.</p>
+
+  <h2>How do I uninstall?</h2>
+  <p>Windows Settings → Apps → NovaGet → Uninstall. NovaGet is closed first, and you are asked whether to remove your
+    download list and settings (by default they stay). Everything else NovaGet added — shortcuts, browser registration,
+    start-up entry, scheduled wake tasks — is removed.</p>
+</main>
+</body>
+</html>

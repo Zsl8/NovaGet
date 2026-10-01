@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Globalization;
 using FlaUI.Core;
 using FlaUI.Core.AutomationElements;
 using FlaUI.Core.Definitions;
@@ -53,8 +54,39 @@ public sealed class AppSession : IDisposable
         var found = Retry.WhileNull(
             () => App.GetAllTopLevelWindows(Automation).FirstOrDefault(w => w.Title == title),
             s_wait, TimeSpan.FromMilliseconds(200), throwOnTimeout: false);
-        return found.Result ?? throw new InvalidOperationException(
-            $"No window '{title}'; open: {string.Join(", ", App.GetAllTopLevelWindows(Automation).Select(w => $"'{w.Title}'"))}");
+        if (found.Result is { } window)
+        {
+            return window;
+        }
+
+        throw new InvalidOperationException($"No window '{title}'. {Describe()}");
+    }
+
+    /// <summary>What the app shows right now (for failures): its windows, their buttons, and a screen capture in CI.</summary>
+    public string Describe()
+    {
+        var text = new System.Text.StringBuilder();
+        text.Append(CultureInfo.InvariantCulture, $"Process exited: {App.HasExited}. Windows:");
+        foreach (var window in App.GetAllTopLevelWindows(Automation))
+        {
+            var buttons = window.FindAllDescendants(cf => cf.ByControlType(ControlType.Button)).Select(b => $"{b.Name}{(b.IsEnabled ? string.Empty : " (disabled)")}");
+            text.Append(CultureInfo.InvariantCulture, $" '{window.Title}' [modal: {window.IsModal}; buttons: {string.Join(", ", buttons)}]");
+        }
+
+        if (Environment.GetEnvironmentVariable("NOVAGET_SCREENSHOTS") is { Length: > 0 } folder)
+        {
+            try
+            {
+                Directory.CreateDirectory(folder);
+                FlaUI.Core.Capturing.Capture.Screen().ToFile(Path.Combine(folder, $"ui-failure-{DateTime.UtcNow:HHmmssfff}.png"));
+            }
+            catch (Exception ex) when (ex is IOException or InvalidOperationException or System.ComponentModel.Win32Exception)
+            {
+                text.Append(CultureInfo.InvariantCulture, $" (screen capture failed: {ex.Message})");
+            }
+        }
+
+        return text.ToString();
     }
 
     public void WaitUntilClosed(string title)
@@ -65,13 +97,17 @@ public sealed class AppSession : IDisposable
         Assert.True(closed.Success, $"'{title}' is still open");
     }
 
+    /// <summary>The app's menu bar (not the title bar's "System" menu, which is a menu bar too).</summary>
     public Menu MenuBar =>
-        MainWindow.FindFirstDescendant(cf => cf.ByControlType(ControlType.MenuBar))?.AsMenu() ?? throw new InvalidOperationException("No menu bar.");
+        MainWindow.FindAllDescendants(cf => cf.ByControlType(ControlType.MenuBar))
+            .FirstOrDefault(m => m.Name != "System" && m.FindFirstChild(cf => cf.ByControlType(ControlType.MenuItem)) is not null)?.AsMenu()
+        ?? throw new InvalidOperationException("No menu bar.");
 
     /// <summary>Opens a top-level menu and invokes one of its items (names as shown, without access-key underscores).</summary>
     public void InvokeMenu(string menu, string item)
     {
-        var top = MenuBar.Items.First(i => i.Name == menu);
+        var top = MenuBar.Items.FirstOrDefault(i => i.Name == menu)
+            ?? throw new InvalidOperationException($"No menu '{menu}': {string.Join(", ", MenuBar.Items.Select(i => i.Name))}");
         top.Expand();
         var entry = Retry.WhileNull(() => top.Items.FirstOrDefault(i => i.Name == item), s_wait, throwOnTimeout: false).Result
             ?? throw new InvalidOperationException($"No '{item}' in {menu}: {string.Join(", ", top.Items.Select(i => i.Name))}");

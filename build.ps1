@@ -282,8 +282,9 @@ Invoke-Step '6. Copy runtime assets' {
         }
     }
     New-Item -ItemType Directory -Path (Join-Path $appOut 'docs') -Force | Out-Null
-    Copy-Item (Join-Path $root 'docs/install-extension.html') (Join-Path $appOut 'docs')
-    Copy-Item (Join-Path $root 'docs/command-line.html') (Join-Path $appOut 'docs')
+    foreach ($page in @('index.html', 'faq.html', 'install-extension.html', 'command-line.html')) {
+        Copy-Item (Join-Path $root "docs/$page") (Join-Path $appOut 'docs')
+    }
 }
 
 if (-not $SkipInstaller) {

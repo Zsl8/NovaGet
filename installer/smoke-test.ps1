@@ -112,7 +112,8 @@ if (App-Running) { throw 'NovaGet is already running on this machine; stop it be
 # ---------------------------------------------------------------- install
 Install 'install'
 foreach ($file in @('NovaGet.exe', 'NovaGet.NativeHost.exe', 'ffmpeg\ffmpeg.exe', 'THIRD_PARTY_NOTICES.txt', 'LICENSE.txt',
-                    'docs\install-extension.html', 'docs\command-line.html', 'extension\chromium\manifest.json',
+                    'docs\index.html', 'docs\faq.html', 'docs\install-extension.html', 'docs\command-line.html',
+                    'extension\chromium\manifest.json',
                     'extension\firefox\manifest.json', 'native-host\chrome.json', 'native-host\firefox.json',
                     'install-defaults.json', 'unins000.exe')) {
     Check (Test-Path (Join-Path $appDir $file)) "installed $file"
