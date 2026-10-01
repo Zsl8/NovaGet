@@ -113,11 +113,16 @@ public sealed class AppSession : IDisposable
         Assert.True(closed.Success, $"'{title}' is still open");
     }
 
-    /// <summary>The app's menu bar (not the title bar's "System" menu, which is a menu bar too).</summary>
+    /// <summary>
+    /// The app's menu bar. A WPF Menu reports the Menu control type; the title bar's "System" menu is a MenuBar, so
+    /// both are looked at and the one holding the app's menu items wins.
+    /// </summary>
     public Menu MenuBar =>
-        MainWindow.FindAllDescendants(cf => cf.ByControlType(ControlType.MenuBar))
+        MainWindow.FindAllDescendants(cf => cf.ByControlType(ControlType.Menu).Or(cf.ByControlType(ControlType.MenuBar)))
             .FirstOrDefault(m => m.Name != "System" && m.FindFirstChild(cf => cf.ByControlType(ControlType.MenuItem)) is not null)?.AsMenu()
-        ?? throw new InvalidOperationException("No menu bar.");
+        ?? throw new InvalidOperationException("No menu bar: " + string.Join(", ",
+            MainWindow.FindAllDescendants(cf => cf.ByControlType(ControlType.Menu).Or(cf.ByControlType(ControlType.MenuBar)))
+                .Select(m => $"{m.ControlType} '{m.Name}'")));
 
     /// <summary>Opens a top-level menu and invokes one of its items (names as shown, without access-key underscores).</summary>
     public void InvokeMenu(string menu, string item)
