@@ -15,6 +15,10 @@ namespace NovaGet.UiTests;
 public sealed class AppSession : IDisposable
 {
     private static readonly TimeSpan s_wait = TimeSpan.FromSeconds(30);
+
+    // A cold start (new portable profile, database created, nothing JIT-compiled yet) on a CI machine busy with the
+    // other test projects can take a while.
+    private static readonly TimeSpan s_startup = TimeSpan.FromSeconds(90);
     private static readonly Lazy<string> s_appFolder = new(CopyApp);
 
     private AppSession(Application app, UIA3Automation automation, Window main)
@@ -37,7 +41,8 @@ public sealed class AppSession : IDisposable
         var automation = new UIA3Automation();
         try
         {
-            var main = app.GetMainWindow(automation, s_wait) ?? throw new InvalidOperationException("The main window did not appear.");
+            var main = app.GetMainWindow(automation, s_startup)
+                ?? throw new InvalidOperationException($"The main window did not appear (process exited: {app.HasExited}).");
             return new AppSession(app, automation, main);
         }
         catch
